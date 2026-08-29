@@ -1,63 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { asNumber, asPercent, calculateSpotMath } from "../lib/spot-math-context";
 
-type Module = "home" | "profile" | "hands" | "ai";
+type Module = "home" | "profile" | "hands" | "ai" | "math";
 
-const profileDepths = [
-  [100, "Perfil inicial / análise rápida"],
-  [300, "Análise intermediária"],
-  [500, "Análise avançada"],
-  [1000, "Perfil de alta robustez"],
-  [3000, "Análise profunda do jogador"],
-] as const;
+const profileDepths = [[100,"Perfil inicial / análise rápida"],[300,"Análise intermediária"],[500,"Análise avançada"],[1000,"Perfil de alta robustez"],[3000,"Análise profunda do jogador"]] as const;
 
 export default function Home() {
-  const [module, setModule] = useState<Module>("home");
-  const [selectedDepth, setSelectedDepth] = useState<number | null>(null);
-  const [handText, setHandText] = useState("");
-  const [question, setQuestion] = useState("");
-
-  return (
-    <main>
-      <header className="topbar">
-        <button className="logo" onClick={() => setModule("home")}><span>STACKUP</span> HOLD&apos;EM <b>AI SOLVER</b></button>
-        <span className="status">● PLAYER INTELLIGENCE SYSTEM</span>
-      </header>
-
-      {module === "home" && <>
-        <section className="hero">
-          <p>POKER · SOLVER · IA · DADOS</p>
-          <h1>ELE NÃO APENAS ENSINA POKER.<br/><em>ELE APRENDE COMO VOCÊ JOGA.</em></h1>
-          <div className="hero-copy">Decisões simuladas, mãos reais e dúvidas conectadas para construir uma leitura progressiva do seu jogo.</div>
-        </section>
-        <section className="home-grid">
-          <ModuleCard number="01" eyebrow="PLAYER DNA" title="PERFIL DE JOGADOR" text="Descubra como você realmente joga." action="DESCOBRIR PERFIL" onClick={() => setModule("profile")} />
-          <ModuleCard number="02" eyebrow="AI HAND REVIEW" title="ANÁLISE DE MÃOS" text="Conte uma mão. A IA reconstrói e analisa suas decisões." action="ANALISAR UMA MÃO" onClick={() => setModule("hands")} />
-          <ModuleCard number="03" eyebrow="POKER ASSISTANT" title="PERGUNTE À IA" text="Estratégia, regras, situações e dúvidas sobre poker." action="FAZER UMA PERGUNTA" onClick={() => setModule("ai")} />
-        </section>
-        <section className="memory-strip"><div><small>MEMÓRIA COMPARTILHADA</small><strong>UM JOGADOR · UM CONTEXTO · UMA EVOLUÇÃO</strong></div><p>Perfil, mãos reais e conhecimento estudado formarão uma camada estruturada única — não apenas um histórico de chat.</p></section>
-      </>}
-
-      {module === "profile" && <section className="workspace">
-        <Back onClick={() => setModule("home")}/><div className="eyebrow">PLAYER DNA</div><h2>DESCUBRA COMO VOCÊ REALMENTE JOGA.</h2>
-        {!selectedDepth ? <><p className="lead">Escolha apenas a profundidade da análise. O sistema selecionará automaticamente uma amostra variada e balanceada de situações de poker.</p><div className="depth-grid">{profileDepths.map(([n,label]) => <button key={n} onClick={() => setSelectedDepth(n)}><strong>{n}</strong><span>SPOTS</span><small>{label}</small></button>)}</div><div className="truth-note"><b>MAIS DECISÕES → MAIS DADOS</b><span>Cada nova decisão aumenta a quantidade de dados analisados e melhora a robustez e a confiabilidade da leitura do seu estilo de jogo.</span></div></> : <SpotSession depth={selectedDepth} onReset={() => setSelectedDepth(null)}/>} 
-      </section>}
-
-      {module === "hands" && <section className="workspace"><Back onClick={() => setModule("home")}/><div className="eyebrow purple">AI HAND REVIEW</div><h2>CONTE UMA MÃO.</h2><p className="lead">Escreva naturalmente. Você não precisa preencher dezenas de campos se o relato já contém as informações.</p><div className="hand-layout"><div><textarea value={handText} onChange={e=>setHandText(e.target.value)} placeholder="Ex.: Eu estava no BTN com AK, blinds 1k/2k, tinha 45bb, CO abriu 2.2x, eu 3betei..."/><div className="quick-fields"><input placeholder="Cash / Torneio"/><input placeholder="Blinds"/><input placeholder="Stack efetivo"/></div><button className="primary purple-btn">RECONSTRUIR E ANALISAR</button></div><SharedTable/></div><div className="analysis-preview"><Result title="O QUE ACONTECEU" text="A reconstrução street-by-street aparecerá aqui após a interpretação da mão."/><Result title="ANÁLISE" text="Ranges, posição, stack, SPR, pot odds, blockers, sizing, GTO, exploit e ICM quando aplicável."/><Result title="MELHOR LINHA" text="A recomendação será separada das alternativas e das hipóteses utilizadas."/><Result title="PONTO PRINCIPAL DA MÃO" text="O aprendizado central será destacado e poderá alimentar o perfil do jogador."/></div></section>}
-
-      {module === "ai" && <section className="workspace"><Back onClick={() => setModule("home")}/><div className="eyebrow purple">POKER ASSISTANT</div><h2>PERGUNTE À IA.</h2><p className="lead">Estratégia, regras, acontecimentos e situações de poker — sem confundir uma dúvida geral com análise formal de uma mão.</p><div className="ask-box"><textarea value={question} onChange={e=>setQuestion(e.target.value)} placeholder="Ex.: Dois jogadores foram eliminados na mesma mão. Quem fica melhor colocado?"/><button className="primary purple-btn">PERGUNTAR</button></div><div className="rule-note"><b>CONTEXTO DE REGRAS</b><span>O sistema deverá distinguir regra universal, torneio, cash game, regulamento específico e decisões que dependem do floor.</span></div></section>}
-    </main>
-  );
+  const [module,setModule]=useState<Module>("home");
+  const [selectedDepth,setSelectedDepth]=useState<number|null>(null);
+  const [handText,setHandText]=useState("");
+  const [question,setQuestion]=useState("");
+  return <main>
+    <header className="topbar"><button className="logo" onClick={()=>setModule("home")}><span>STACKUP</span> HOLD&apos;EM <b>AI SOLVER</b></button><span className="status">● PLAYER INTELLIGENCE SYSTEM</span></header>
+    {module==="home"&&<><section className="hero"><p>POKER · SOLVER · IA · DADOS</p><h1>ELE NÃO APENAS ENSINA POKER.<br/><em>ELE APRENDE COMO VOCÊ JOGA.</em></h1><div className="hero-copy">Decisões simuladas, mãos reais, matemática e dúvidas conectadas para construir uma leitura progressiva do seu jogo.</div></section><section className="home-grid four"><ModuleCard number="01" eyebrow="PLAYER DNA" title="PERFIL DE JOGADOR" text="Descubra como você realmente joga." action="DESCOBRIR PERFIL" onClick={()=>setModule("profile")}/><ModuleCard number="02" eyebrow="AI HAND REVIEW" title="ANÁLISE DE MÃOS" text="Conte uma mão. A IA reconstrói e analisa suas decisões." action="ANALISAR UMA MÃO" onClick={()=>setModule("hands")}/><ModuleCard number="03" eyebrow="POKER ASSISTANT" title="PERGUNTE À IA" text="Estratégia, regras, situações e dúvidas sobre poker." action="FAZER UMA PERGUNTA" onClick={()=>setModule("ai")}/><ModuleCard number="04" eyebrow="POKER MATH" title="MATEMÁTICA DO POKER" text="Conceitos, prática e dúvidas com cálculo determinístico." action="ESTUDAR E CALCULAR" onClick={()=>setModule("math")}/></section><section className="memory-strip"><div><small>MEMÓRIA COMPARTILHADA</small><strong>UM JOGADOR · UM CONTEXTO · UMA EVOLUÇÃO</strong></div><p>Perfil, mãos, matemática, notas e conhecimento formam uma única inteligência do jogador.</p></section></>}
+    {module==="profile"&&<section className="workspace"><Back onClick={()=>setModule("home")}/><div className="eyebrow">PLAYER DNA</div><h2>DESCUBRA COMO VOCÊ REALMENTE JOGA.</h2>{!selectedDepth?<><p className="lead">Escolha a profundidade. O sistema selecionará automaticamente uma amostra variada e balanceada.</p><div className="depth-grid">{profileDepths.map(([n,label])=><button key={n} onClick={()=>setSelectedDepth(n)}><strong>{n}</strong><span>SPOTS</span><small>{label}</small></button>)}</div><div className="truth-note"><b>MAIS DECISÕES → MAIS DADOS</b><span>Cada nova decisão melhora a robustez da leitura do seu estilo.</span></div></>:<SpotSession depth={selectedDepth} onReset={()=>setSelectedDepth(null)}/>}</section>}
+    {module==="hands"&&<section className="workspace"><Back onClick={()=>setModule("home")}/><div className="eyebrow purple">AI HAND REVIEW</div><h2>CONTE UMA MÃO.</h2><p className="lead">Escreva naturalmente. O motor matemático calcula; a IA interpreta e explica.</p><div className="hand-layout"><div><textarea value={handText} onChange={e=>setHandText(e.target.value)} placeholder="Ex.: Eu estava no BTN com AK, blinds 1k/2k..."/><div className="quick-fields"><input placeholder="Cash / Torneio"/><input placeholder="Blinds"/><input placeholder="Stack efetivo"/></div><button className="primary purple-btn">RECONSTRUIR E ANALISAR</button></div><SharedTable/></div><div className="analysis-preview"><Result title="O QUE ACONTECEU" text="Reconstrução street-by-street."/><Result title="ANÁLISE" text="Ranges, posição, stack, SPR, pot odds, blockers, sizing, GTO, exploit e ICM."/><Result title="MELHOR LINHA" text="Recomendação separada das alternativas."/><Result title="PONTO PRINCIPAL" text="O aprendizado central poderá alimentar o perfil."/></div></section>}
+    {module==="ai"&&<section className="workspace"><Back onClick={()=>setModule("home")}/><div className="eyebrow purple">POKER ASSISTANT</div><h2>PERGUNTE À IA.</h2><p className="lead">Estratégia, regras, situações e dúvidas. Em spots, números vêm do motor determinístico.</p><div className="ask-box"><textarea value={question} onChange={e=>setQuestion(e.target.value)} placeholder="Ex.: Dois jogadores foram eliminados na mesma mão. Quem fica melhor colocado?"/><button className="primary purple-btn">PERGUNTAR</button></div><div className="rule-note"><b>CONTEXTO DE REGRAS</b><span>O sistema distingue regra universal, torneio, cash, regulamento específico e decisões de floor.</span></div></section>}
+    {module==="math"&&<MathWorkspace onBack={()=>setModule("home")}/>} 
+  </main>;
 }
 
-function ModuleCard({number,eyebrow,title,text,action,onClick}:{number:string;eyebrow:string;title:string;text:string;action:string;onClick:()=>void}) { return <button className="module-card" onClick={onClick}><span className="card-number">{number}</span><small>{eyebrow}</small><h3>{title}</h3><p>{text}</p><b>{action} →</b></button> }
-function Back({onClick}:{onClick:()=>void}) { return <button className="back" onClick={onClick}>← HOME</button> }
-function Result({title,text}:{title:string;text:string}) { return <div className="result"><b>{title}</b><p>{text}</p></div> }
-
-function SharedTable() { return <div className="table-wrap"><div className="poker-table"><span className="seat top">VILLAIN · CO</span><div className="board"><b>A♠</b><b>7♥</b><b>2♣</b><i>?</i><i>?</i></div><div className="pot">POT <strong>—</strong></div><span className="seat bottom">HERO · BTN · A♦ K♦</span></div></div> }
-
-function SpotSession({depth,onReset}:{depth:number;onReset:()=>void}) {
-  const [decision,setDecision] = useState<string | null>(null);
-  return <div className="spot-session"><div className="session-head"><div><small>AMOSTRA SELECIONADA</small><strong>{depth} SPOTS</strong></div><button onClick={onReset}>ALTERAR</button></div><SharedTable/><div className="spot-meta"><span>TORNEIO</span><span>40 BB</span><span>BTN vs BB</span><span>SINGLE-RAISED POT</span><span>FLOP</span></div><h3>QUAL É A SUA DECISÃO?</h3><div className="actions">{["FOLD","CHECK","CALL","BET 33%","BET 75%","ALL-IN"].map(a=><button className={decision===a?"selected":""} key={a} onClick={()=>setDecision(a)}>{a}</button>)}</div>{decision && <div className="decision-record"><b>DECISÃO REGISTRADA: {decision}</b><span>O Profile Engine registrará contexto, posição, street, stack, sizing e decisão para análise multidimensional.</span><button>PRÓXIMO SPOT →</button></div>}</div>
-}
+function MathWorkspace({onBack}:{onBack:()=>void}){const [tab,setTab]=useState<"concepts"|"practice"|"questions">("concepts");const [pot,setPot]=useState(4500);const [bet,setBet]=useState(1500);const [stack,setStack]=useState(15600);const [outs,setOuts]=useState(9);const math=useMemo(()=>calculateSpotMath({potBeforeBet:pot,betToHero:bet,effectiveStack:stack,outs,cardsToCome:2}),[pot,bet,stack,outs]);return <section className="workspace"><Back onClick={onBack}/><div className="eyebrow">POKER MATH ENGINE</div><h2>MATEMÁTICA DO POKER.</h2><div className="math-tabs">{[["concepts","DEFINIÇÃO E CONCEITOS"],["practice","PRÁTICA"],["questions","DÚVIDAS"]].map(([id,label])=><button className={tab===id?"active":""} key={id} onClick={()=>setTab(id as typeof tab)}>{label}</button>)}</div>{tab==="concepts"&&<div className="concept-grid">{["SPR","OUTS","ODDS","POT ODDS","IMPLIED ODDS","REVERSE IMPLIED ODDS","EQUITY","EV","FOLD EQUITY","MDF","ALPHA","NASH","EXPLOIT"].map(x=><button key={x}>{x}</button>)}</div>}{tab==="practice"&&<><div className="math-practice"><div className="math-inputs"><label>POTE<input type="number" value={pot} onChange={e=>setPot(+e.target.value)}/></label><label>APOSTA A ENFRENTAR<input type="number" value={bet} onChange={e=>setBet(+e.target.value)}/></label><label>STACK EFETIVO<input type="number" value={stack} onChange={e=>setStack(+e.target.value)}/></label><label>OUTS<input type="number" value={outs} onChange={e=>setOuts(+e.target.value)}/></label></div><SharedTable/></div><div className="math-results"><Metric name="SPR" value={asNumber(math.spr)} kind={math.spr.kind}/><Metric name="EQUITY NECESSÁRIA" value={asPercent(math.requiredEquity)} kind={math.requiredEquity.kind}/><Metric name="POT ODDS" value={math.potOddsRatio.value===null?"—":`${math.potOddsRatio.value.toFixed(2)} : 1`} kind={math.potOddsRatio.kind}/><Metric name="EQUITY POR OUTS" value={asPercent(math.outsEquity)} kind={math.outsEquity.kind}/></div><div className="truth-note"><b>O MOTOR CALCULA. A IA EXPLICA.</b><span>Resultados exatos e estimativas são identificados separadamente. A IA não inventa valores matemáticos.</span></div></>}{tab==="questions"&&<div className="ask-box"><textarea placeholder="Ex.: Por que preciso de 25% de equity para pagar aqui?"/><button className="primary purple-btn">PERGUNTAR SOBRE MATEMÁTICA</button></div>}</section>}
+function Metric({name,value,kind}:{name:string;value:string;kind:string}){return <div className="metric"><small>{name}</small><strong>{value}</strong><span>{kind}</span></div>}
+function ModuleCard({number,eyebrow,title,text,action,onClick}:{number:string;eyebrow:string;title:string;text:string;action:string;onClick:()=>void}){return <button className="module-card" onClick={onClick}><span className="card-number">{number}</span><small>{eyebrow}</small><h3>{title}</h3><p>{text}</p><b>{action} →</b></button>}
+function Back({onClick}:{onClick:()=>void}){return <button className="back" onClick={onClick}>← HOME</button>}
+function Result({title,text}:{title:string;text:string}){return <div className="result"><b>{title}</b><p>{text}</p></div>}
+function SharedTable(){return <div className="table-wrap"><div className="poker-table"><span className="seat top">VILLAIN · CO</span><div className="board"><b>A♠</b><b>7♥</b><b>2♣</b><i>?</i><i>?</i></div><div className="pot">POT <strong>—</strong></div><span className="seat bottom">HERO · BTN · A♦ K♦</span></div></div>}
+function SpotSession({depth,onReset}:{depth:number;onReset:()=>void}){const [decision,setDecision]=useState<string|null>(null);return <div className="spot-session"><div className="session-head"><div><small>AMOSTRA SELECIONADA</small><strong>{depth} SPOTS</strong></div><button onClick={onReset}>ALTERAR</button></div><SharedTable/><div className="spot-meta"><span>TORNEIO</span><span>40 BB</span><span>BTN vs BB</span><span>SRP</span><span>FLOP</span></div><h3>QUAL É A SUA DECISÃO?</h3><div className="actions">{["FOLD","CHECK","CALL","BET 33%","BET 75%","ALL-IN"].map(a=><button className={decision===a?"selected":""} key={a} onClick={()=>setDecision(a)}>{a}</button>)}</div>{decision&&<div className="decision-record"><b>DECISÃO: {decision}</b><span>Contexto e decisão serão registrados no Player DNA.</span><button onClick={()=>setDecision(null)}>PRÓXIMO SPOT →</button></div>}</div>}
