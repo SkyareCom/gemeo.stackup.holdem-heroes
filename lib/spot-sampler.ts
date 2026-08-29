@@ -70,33 +70,57 @@ export function describeCoverage(spots: SpotDescriptor[]): SampleCoverage {
   return coverage;
 }
 
-function scarcityScore(counts: SampleCoverage, spot: SpotDescriptor) {
-  const dimensions = [
-    counts.street[spot.street] ?? 0,
-    counts.position[spot.heroPosition] ?? 0,
-    counts.stack[spot.stackBucket] ?? 0,
-    counts.potType[spot.potType] ?? 0,
-    counts.players[spot.players] ?? 0,
-    counts.positionRelation[spot.inPosition ? "IP" : "OOP"] ?? 0,
-    counts.gameType[spot.gameType ?? "unspecified"] ?? 0,
-    counts.boardTexture[spot.boardTexture ?? "unspecified"] ?? 0,
-    counts.theme[spot.theme || "unspecified"] ?? 0,
-    counts.actionOpportunity[spot.actionOpportunity ?? "unspecified"] ?? 0,
-  ];
-  return dimensions.reduce((score, count) => score + 1 / (count + 1), 0);
+function scarcity(count: number) {
+  return 1 / (count + 1);
+}
+
+function diagnosticTarget(requested: number, opportunityCount: number) {
+  if (opportunityCount <= 0) return 0;
+  // Preserve breadth in short sessions and progressively push every diagnostic
+  // opportunity toward statistically useful samples as sessions get deeper.
+  if (requested >= 3000) return 100;
+  if (requested >= 1000) return 30;
+  if (requested >= 500) return 20;
+  if (requested >= 300) return 10;
+  return Math.max(1, Math.floor(requested / opportunityCount));
+}
+
+function scarcityScore(counts: SampleCoverage, spot: SpotDescriptor, requested: number, opportunityCount: number) {
+  const opportunityKey = spot.actionOpportunity ?? "unspecified";
+  const opportunityCountSoFar = counts.actionOpportunity[opportunityKey] ?? 0;
+  const target = diagnosticTarget(requested, opportunityCount);
+  const opportunityDeficit = Math.max(0, target - opportunityCountSoFar);
+
+  // Diagnostic opportunities receive the strongest weight because Player DNA
+  // confidence depends on opportunity counts rather than raw total spots.
+  const diagnosticWeight = opportunityDeficit > 0 ? 4 + opportunityDeficit / Math.max(1, target) : 1;
+
+  return (
+    scarcity(counts.street[spot.street] ?? 0) * 1.4 +
+    scarcity(counts.position[spot.heroPosition] ?? 0) * 1.2 +
+    scarcity(counts.stack[spot.stackBucket] ?? 0) * 1.1 +
+    scarcity(counts.potType[spot.potType] ?? 0) * 1.0 +
+    scarcity(counts.players[spot.players] ?? 0) * 0.8 +
+    scarcity(counts.positionRelation[spot.inPosition ? "IP" : "OOP"] ?? 0) * 1.0 +
+    scarcity(counts.gameType[spot.gameType ?? "unspecified"] ?? 0) * 0.9 +
+    scarcity(counts.boardTexture[spot.boardTexture ?? "unspecified"] ?? 0) * 0.8 +
+    scarcity(counts.theme[spot.theme || "unspecified"] ?? 0) * 0.6 +
+    scarcity(opportunityCountSoFar) * diagnosticWeight
+  );
 }
 
 /**
  * Selects spots that look random to the player while actively preferring
- * underrepresented dimensions. This prevents a profile session from becoming
- * accidentally dominated by one street, position, stack depth or theme.
+ * underrepresented dimensions. Diagnostic opportunities are intentionally
+ * weighted more heavily because profile reliability is opportunity-based.
  */
 export function balancedSpotSample(bank: SpotDescriptor[], requested: number, random: () => number = Math.random) {
-  if (requested <= 0 || bank.length === 0) return [];
+  if (!Number.isFinite(requested) || requested <= 0 || bank.length === 0) return [];
   const uniqueBank = Array.from(new Map(bank.map(spot => [spot.id, spot])).values());
   const target = Math.min(Math.floor(requested), uniqueBank.length);
   const remaining = shuffle(uniqueBank, random);
   const result: SpotDescriptor[] = [];
+  const opportunityCount = new Set(uniqueBank.map(spot => spot.actionOpportunity).filter(Boolean)).size;
 
   while (result.length < target && remaining.length > 0) {
     const coverage = describeCoverage(result);
@@ -104,7 +128,7 @@ export function balancedSpotSample(bank: SpotDescriptor[], requested: number, ra
     let candidates: number[] = [];
 
     remaining.forEach((spot, index) => {
-      const score = scarcityScore(coverage, spot);
+      const score = scarcityScore(coverage, spot, target, opportunityCount);
       if (score > bestScore + 1e-9) {
         bestScore = score;
         candidates = [index];
