@@ -18,6 +18,7 @@ export function evaluatePlayerDna(spots: PlayerDnaSpot[], answers: PlayerDnaAnsw
     const spot = spots.find((item) => item.id === answer.spotId);
     if (!spot) continue;
     const selected = spot.weights[answer.action];
+    if (!selected) continue;
     totals.aggression += selected.aggression;
     totals.discipline += selected.discipline;
     totals.pressure += selected.pressure;
