@@ -1,9 +1,8 @@
 "use client";
 
 import {useState} from "react";
-import PlayerDnaWorkspace from "@/components/PlayerDnaWorkspaceV2";
+import PlayerDnaWorkspace from "@/components/PlayerDnaWorkspace";
 import HandReviewWorkspace from "@/components/HandReviewWorkspace";
-import HandVisionImport from "@/components/HandVisionImport";
 import PokerAssistantWorkspace from "@/components/PokerAssistantWorkspace";
 import MathLabWorkspace from "@/components/MathLabWorkspace";
 
@@ -23,7 +22,7 @@ export default function Home(){
     <section className="hero"><p>AI POKER<br/>PERFORMANCE<br/>SYSTEM.</p><h1>UM JOGADOR.<br/><em>QUATRO MÓDULOS.</em><br/>UMA EVOLUÇÃO.</h1></section>
     <nav className="modules">{modules.map(item=><button key={item.id} className={module===item.id?"active":""} onClick={()=>setModule(item.id)}><small>{item.kicker}</small>{item.title}</button>)}</nav>
     {module==="profile"&&<section className="panel profile-panel"><PlayerDnaWorkspace/></section>}
-    {module==="hands"&&<section className="panel"><HandVisionImport/><HandReviewWorkspace/></section>}
+    {module==="hands"&&<section className="panel"><HandReviewWorkspace/></section>}
     {module==="ai"&&<section className="panel"><PokerAssistantWorkspace/></section>}
     {module==="math"&&<section className="panel"><MathLabWorkspace/></section>}
   </main>;
