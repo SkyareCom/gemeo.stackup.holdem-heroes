@@ -5,6 +5,7 @@ import {mathConcepts} from "@/data/math-concepts";
 import {mdf,percent,requiredEquity,spr} from "@/lib/poker-math";
 import PlayerDnaWorkspace from "@/components/PlayerDnaWorkspace";
 import HandReviewWorkspace from "@/components/HandReviewWorkspace";
+import PokerAssistantWorkspace from "@/components/PokerAssistantWorkspace";
 
 type Module="profile"|"hands"|"ai"|"math";
 type MathTab="concepts"|"practice"|"doubts";
@@ -24,7 +25,6 @@ export default function Home(){
   const[conceptId,setConceptId]=useState("pot-odds");
   const[answer,setAnswer]=useState("");
   const[checked,setChecked]=useState(false);
-  const[question,setQuestion]=useState("");
   const[potValue,setPotValue]=useState("80");
   const[betValue,setBetValue]=useState("40");
   const[stackValue,setStackValue]=useState("600");
@@ -43,7 +43,7 @@ export default function Home(){
 
     {module==="hands"&&<section className="panel"><HandReviewWorkspace/></section>}
 
-    {module==="ai"&&<section className="panel"><div className="eyebrow">POKER ASSISTANT</div><h2>PERGUNTE À IA</h2><p>Regras, estratégia, situações de sessão e dúvidas gerais de poker.</p><textarea value={question} onChange={e=>setQuestion(e.target.value)} placeholder="O que você quer entender?"/><button className="primary">PERGUNTAR</button><div className="coming">Interface pronta para conexão do backend de IA.</div></section>}
+    {module==="ai"&&<section className="panel"><PokerAssistantWorkspace/></section>}
 
     {module==="math"&&<section className="math-shell">
       <div className="section-head"><div><div className="eyebrow">POKER MATH LAB</div><h2>MATEMÁTICA DO POKER</h2></div><div className="math-tabs">{(["concepts","practice","doubts"] as MathTab[]).map(t=><button key={t} className={mathTab===t?"active":""} onClick={()=>setMathTab(t)}>{t==="concepts"?"CONCEITOS":t==="practice"?"PRÁTICA":"DÚVIDAS"}</button>)}</div></div>
