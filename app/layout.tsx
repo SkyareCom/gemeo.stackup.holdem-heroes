@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Goldman } from "next/font/google";
 import "./globals.css";
+import "./ui-sync.css";
 
 const goldman = Goldman({ subsets: ["latin"], weight: ["400", "700"], variable: "--font-goldman" });
 
