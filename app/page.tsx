@@ -5,6 +5,7 @@ import {mathConcepts} from "@/data/math-concepts";
 import {mdf,percent,requiredEquity,spr} from "@/lib/poker-math";
 import PlayerDnaWorkspace from "@/components/PlayerDnaWorkspace";
 import HandReviewWorkspace from "@/components/HandReviewWorkspace";
+import HandVisionImport from "@/components/HandVisionImport";
 import PokerAssistantWorkspace from "@/components/PokerAssistantWorkspace";
 
 type Module="profile"|"hands"|"ai"|"math";
@@ -41,7 +42,7 @@ export default function Home(){
 
     {module==="profile"&&<section className="panel profile-panel"><PlayerDnaWorkspace/></section>}
 
-    {module==="hands"&&<section className="panel"><HandReviewWorkspace/></section>}
+    {module==="hands"&&<section className="panel"><HandVisionImport/><HandReviewWorkspace/></section>}
 
     {module==="ai"&&<section className="panel"><PokerAssistantWorkspace/></section>}
 
