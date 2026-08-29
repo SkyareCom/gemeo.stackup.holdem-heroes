@@ -9,17 +9,36 @@ export type TrainingSpot = SpotDescriptor & {
   label: string;
 };
 
-const positions: Position[] = ["UTG", "HJ", "CO", "BTN", "SB", "BB"];
+export const PROFILE_OPPORTUNITIES = [
+  "vpip","pfr","3bet","4bet","squeeze","blind-defense","shove",
+  "cbet","fold-to-cbet","check-raise","probe","delayed-cbet","double-barrel","triple-barrel",
+  "overbet","thin-value","bluff-catch","value","bluff","icm"
+] as const;
+
+const positions: Position[] = ["UTG", "MP", "HJ", "CO", "BTN", "SB", "BB"];
 const streets: Street[] = ["preflop", "flop", "turn", "river"];
 const stacks: StackBucket[] = ["short", "medium", "deep"];
 const pots: PotType[] = ["srp", "3bet", "4bet"];
-const hands = ["A♦K♦", "Q♠Q♥", "J♣T♣", "9♠8♠", "A♥5♥", "K♣Q♦", "7♦6♦", "A♣Q♣", "T♥T♣", "K♠J♠", "5♣5♦", "Q♥J♥"];
+const hands = ["A♦K♦", "Q♠Q♥", "J♣T♣", "9♠8♠", "A♥5♥", "K♣Q♦", "7♦6♦", "A♣Q♣", "T♥T♣", "K♠J♠", "5♣5♦", "Q♥J♥", "A♠J♦", "8♣8♦"];
 const boards: Record<Street, string[][]> = {
   preflop: [[]],
   flop: [["A♠","7♥","2♣"],["J♠","T♠","4♦"],["8♥","8♣","3♦"],["K♣","9♣","6♣"],["Q♦","6♠","2♥"],["9♥","7♦","5♣"]],
   turn: [["A♠","7♥","2♣","T♦"],["J♠","T♠","4♦","2♥"],["8♥","8♣","3♦","K♠"],["K♣","9♣","6♣","2♣"],["Q♦","6♠","2♥","J♣"]],
   river: [["A♠","7♥","2♣","T♦","4♠"],["J♠","T♠","4♦","2♥","A♣"],["8♥","8♣","3♦","K♠","6♥"],["K♣","9♣","6♣","2♣","J♦"],["Q♦","6♠","2♥","J♣","3♠"]],
 };
+
+const PREFLOP_OPPORTUNITIES = ["vpip","pfr","3bet","4bet","squeeze","blind-defense","shove","icm"];
+const FLOP_OPPORTUNITIES = ["cbet","fold-to-cbet","check-raise","bluff-catch","value","bluff","overbet","shove"];
+const TURN_OPPORTUNITIES = ["probe","delayed-cbet","double-barrel","check-raise","bluff-catch","value","bluff","overbet","shove"];
+const RIVER_OPPORTUNITIES = ["triple-barrel","thin-value","bluff-catch","value","bluff","overbet","check-raise","shove","icm"];
+
+const opportunitiesForStreet = (street: Street) => street === "preflop"
+  ? PREFLOP_OPPORTUNITIES
+  : street === "flop"
+    ? FLOP_OPPORTUNITIES
+    : street === "turn"
+      ? TURN_OPPORTUNITIES
+      : RIVER_OPPORTUNITIES;
 
 const texture = (board: string[]): TrainingSpot["boardTexture"] => {
   if (board.length === 0) return "none";
@@ -36,11 +55,22 @@ function stackBB(bucket: StackBucket, variant = 0) {
   return Math.max(8, base + offsets[variant % offsets.length]);
 }
 
+function legalActions(street: Street, opportunity: string, facingBet: boolean) {
+  if (street === "preflop") {
+    if (["4bet","squeeze","shove"].includes(opportunity)) return ["FOLD","CALL","RAISE","ALL-IN"];
+    return ["FOLD","CALL","RAISE","ALL-IN"];
+  }
+  if (["fold-to-cbet","bluff-catch"].includes(opportunity) || facingBet) return ["FOLD","CALL","RAISE","ALL-IN"];
+  if (["check-raise"].includes(opportunity)) return ["CHECK","RAISE","ALL-IN"];
+  return ["CHECK","BET 33%","BET 75%","ALL-IN"];
+}
+
 export function generateTrainingSpotBank(): TrainingSpot[] {
   const bank: TrainingSpot[] = [];
   let id = 1;
-  // 16 scenario variants across 216 structural combinations = 3,456 unique spots.
-  for (let variant = 0; variant < 16; variant++) {
+  // 18 variants x 4 streets x 3 stacks x 3 pot types x 7 positions = 4,536 structural candidates
+  // before the rare hero/villain collision filter. Enough headroom for 3,000 unique diagnostic spots.
+  for (let variant = 0; variant < 18; variant++) {
     for (const street of streets) {
       for (const stackBucket of stacks) {
         for (const potType of pots) {
@@ -53,12 +83,15 @@ export function generateTrainingSpotBank(): TrainingSpot[] {
             const board = boardVariants[(id + variant) % boardVariants.length];
             const potBase = potType === "srp" ? 6.5 : potType === "3bet" ? 18 : 42;
             const potBB = Math.round((potBase * (0.85 + (variant % 6) * 0.06)) * 10) / 10;
-            const isFacingBet = street !== "preflop" && variant % 3 !== 0;
-            const betFraction = variant % 4 === 0 ? .25 : variant % 4 === 1 ? .33 : variant % 4 === 2 ? .66 : 1;
+            const opportunityPool = opportunitiesForStreet(street);
+            let opportunity = opportunityPool[(variant + p + pots.indexOf(potType) + stacks.indexOf(stackBucket)) % opportunityPool.length];
+            const gameType = variant % 3 === 0 ? "cash" : "tournament";
+            if (opportunity === "icm" && gameType !== "tournament") opportunity = street === "river" ? "thin-value" : street === "preflop" ? "shove" : "value";
+            if (opportunity === "blind-defense" && !["SB","BB"].includes(heroPosition)) opportunity = variant % 2 ? "vpip" : "pfr";
+            const naturallyFacing = ["fold-to-cbet","bluff-catch","check-raise"].includes(opportunity);
+            const isFacingBet = street !== "preflop" && (naturallyFacing || variant % 3 !== 0);
+            const betFraction = opportunity === "overbet" ? 1.25 : variant % 4 === 0 ? .25 : variant % 4 === 1 ? .33 : variant % 4 === 2 ? .66 : 1;
             const facingBetBB = isFacingBet ? Math.round(potBB * betFraction * 10) / 10 : undefined;
-            const opportunity = street === "preflop"
-              ? (heroPosition === "BB" || heroPosition === "SB" ? "blind-defense" : potType === "3bet" ? "3bet" : variant % 2 ? "pfr" : "vpip")
-              : facingBetBB ? (variant % 2 ? "bluff-catch" : "value") : (variant % 3 ? "value" : "bluff");
             const bb = stackBB(stackBucket, variant);
             bank.push({
               id: `spot-${String(id++).padStart(5,"0")}`,
@@ -70,15 +103,15 @@ export function generateTrainingSpotBank(): TrainingSpot[] {
               players: variant % 7 === 0 ? "multiway" : "heads-up",
               inPosition,
               theme: `${street}-${potType}-${inPosition ? "ip" : "oop"}-${opportunity}`,
-              gameType: variant % 3 === 0 ? "cash" : "tournament",
+              gameType,
               boardTexture: texture(board),
               actionOpportunity: opportunity,
               heroHand: hands[(id + variant) % hands.length],
               board,
               potBB,
               facingBetBB,
-              legalActions: street === "preflop" ? ["FOLD","CALL","RAISE","ALL-IN"] : facingBetBB ? ["FOLD","CALL","RAISE","ALL-IN"] : ["CHECK","BET 33%","BET 75%","ALL-IN"],
-              label: `${heroPosition} vs ${villainPosition} · ${bb} BB · ${potType.toUpperCase()} · ${street.toUpperCase()}`,
+              legalActions: legalActions(street, opportunity, Boolean(facingBetBB)),
+              label: `${heroPosition} vs ${villainPosition} · ${bb} BB · ${potType.toUpperCase()} · ${street.toUpperCase()} · ${opportunity.toUpperCase()}`,
             });
           }
         }
