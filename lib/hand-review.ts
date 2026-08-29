@@ -67,13 +67,15 @@ export function validateHandReview(input:HandReviewInput):HandReviewValidation{
     if(!(input.villainStacks[position]&&input.villainStacks[position]!>0))missing.push(`STACK ${position}`);
     if(!input.villainActions[position])missing.push(`AÇÃO ${position}`);
   });
-  if(input.heroCards.length!==2)missing.push("2 CARTAS DO HERÓI");
+  const heroCards=input.heroCards.filter(Boolean);
+  if(heroCards.length!==2)missing.push("2 CARTAS DO HERÓI");
   const required=requiredBoardCards(input.street);
-  if(input.board.length!==required)missing.push(`BOARD COMPLETO NO ${input.street}`);
+  const board=input.board.filter(Boolean);
+  if(board.length!==required)missing.push(`BOARD COMPLETO NO ${input.street}`);
   if(!input.heroAction)missing.push("AÇÃO DO HERÓI");
 
   if(input.heroPosition&&input.villainPositions.includes(input.heroPosition))conflicts.push("HERÓI E VILÃO NÃO PODEM OCUPAR A MESMA POSIÇÃO");
-  const allCards=[...input.heroCards,...input.board];
+  const allCards=[...heroCards,...board];
   if(new Set(allCards).size!==allCards.length)conflicts.push("A MESMA CARTA FOI USADA MAIS DE UMA VEZ");
   if(input.tableSize&&input.villainPositions.length+1>input.tableSize)conflicts.push("JOGADORES INFORMADOS EXCEDEM O TAMANHO DA MESA");
 
@@ -90,10 +92,10 @@ export function handReviewSummary(input:HandReviewInput){
   return{
     modality:tournament,
     table:input.tableSize?`${input.tableSize}-MAX`:"—",
-    hero:input.heroPosition?`${input.heroPosition} · ${input.heroCards.join(" ")} · ${input.heroStack ?? "—"} BB`:"—",
+    hero:input.heroPosition?`${input.heroPosition} · ${input.heroCards.filter(Boolean).join(" ")} · ${input.heroStack ?? "—"} BB`:"—",
     villains:input.villainPositions.map(position=>`${position} ${input.villainStacks[position] ?? "—"} BB · ${input.villainActions[position] ?? "—"}`).join(" · "),
     street:input.street,
-    board:input.board.length?input.board.join(" "):"PREFLOP",
+    board:input.board.filter(Boolean).length?input.board.filter(Boolean).join(" "):"PREFLOP",
     heroAction:input.heroAction??"—",
     effectiveStack:effectiveStack(input),
   };
