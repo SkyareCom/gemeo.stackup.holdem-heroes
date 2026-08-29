@@ -1,11 +1,12 @@
 "use client";
 
-import {useMemo,useState} from "react";
+import {useMemo,useRef,useState} from "react";
 import {
   actionNeedsAmount,actions,calculateHandMath,fieldLeftOptions,formatBB,handReviewSummary,positions,ranks,requiredBoardCards,streets,suits,
   tableSizes,tournamentPhases,tournamentTypes,trim,validateHandReview,
   type Card,type FieldLeft,type HandAction,type HandGameMode,type HandReviewInput,type Position,type Rank,type Street,type Suit,type TableSize,type TournamentPhase,type TournamentType,
 } from "@/lib/hand-review";
+import type {VisionHandDraft} from "@/lib/vision-hand-draft";
 import styles from "./HandReviewWorkspace.module.css";
 
 type PickerTarget={kind:"hero"|"board";index:number}|null;
@@ -22,6 +23,14 @@ export default function HandReviewWorkspace(){
   const[picker,setPicker]=useState<PickerTarget>(null);
   const[pickRank,setPickRank]=useState<Rank|null>(null);
   const[pickSuit,setPickSuit]=useState<Suit|null>(null);
+  const[visionFile,setVisionFile]=useState<File|null>(null);
+  const[visionPreview,setVisionPreview]=useState("");
+  const[visionDraft,setVisionDraft]=useState<VisionHandDraft|null>(null);
+  const[visionBusy,setVisionBusy]=useState(false);
+  const[visionError,setVisionError]=useState("");
+  const[visionContext,setVisionContext]=useState("");
+  const cameraRef=useRef<HTMLInputElement>(null);
+  const galleryRef=useRef<HTMLInputElement>(null);
   const validation=useMemo(()=>validateHandReview(input),[input]);
   const math=useMemo(()=>calculateHandMath(input),[input]);
 
@@ -41,13 +50,77 @@ export default function HandReviewWorkspace(){
   function commitCard(rank:Rank,suit:Suit){if(!picker)return;const card=`${rank}${suit}` as Card;const used=[...input.heroCards,...input.board];const current=picker.kind==="hero"?input.heroCards[picker.index]:input.board[picker.index];if(used.includes(card)&&current!==card)return;setInput(prev=>{const list=[...(picker.kind==="hero"?prev.heroCards:prev.board)];list[picker.index]=card;return picker.kind==="hero"?{...prev,heroCards:list as Card[]}:{...prev,board:list as Card[]}});setSubmitted(false);setPicker(null);setPickRank(null);setPickSuit(null)}
   function clearCard(){if(!picker)return;setInput(prev=>{const list=[...(picker.kind==="hero"?prev.heroCards:prev.board)];list.splice(picker.index,1);return picker.kind==="hero"?{...prev,heroCards:list as Card[]}:{...prev,board:list as Card[]}});setPicker(null);setSubmitted(false)}
   function analyze(){setSubmitted(true);if(validation.valid)window.scrollTo({top:0,behavior:"smooth"})}
-  function reset(){setInput(emptyInput);setSubmitted(false)}
+  function reset(){setInput(emptyInput);setSubmitted(false);setVisionDraft(null);setVisionError("");setVisionFile(null);setVisionPreview("")}
+
+  function chooseVisionFile(file:File|null){
+    if(!file)return;
+    if(!["image/jpeg","image/png","image/webp"].includes(file.type)){setVisionError("USE JPG, PNG OU WEBP.");return}
+    if(file.size>8*1024*1024){setVisionError("A IMAGEM DEVE TER NO MÁXIMO 8 MB.");return}
+    if(visionPreview)URL.revokeObjectURL(visionPreview);
+    setVisionFile(file);setVisionPreview(URL.createObjectURL(file));setVisionDraft(null);setVisionError("");
+  }
+
+  async function extractVision(){
+    if(!visionFile||visionBusy)return;
+    setVisionBusy(true);setVisionError("");setVisionDraft(null);
+    try{
+      const form=new FormData();form.set("image",visionFile);form.set("mode","HAND_REVIEW");form.set("question",visionContext.trim());
+      const response=await fetch("/api/poker-vision",{method:"POST",body:form});
+      const data=await response.json() as {draft?:VisionHandDraft;error?:string};
+      if(!response.ok||!data.draft)throw new Error(data.error||"VISION_TEMPORARILY_UNAVAILABLE");
+      setVisionDraft(data.draft);
+    }catch(error){
+      const code=error instanceof Error?error.message:"VISION_TEMPORARILY_UNAVAILABLE";
+      setVisionError(code==="VISION_PARSE_FAILED"?"A IA NÃO CONSEGUIU ESTRUTURAR ESTA IMAGEM. TENTE OUTRO PRINT OU FOTO MAIS NÍTIDA.":code==="DAILY_LIMIT"||code==="MONTHLY_CREDITS"?"LIMITE DO STACKUP AI ATINGIDO.":"NÃO FOI POSSÍVEL LER A IMAGEM AGORA.");
+    }finally{setVisionBusy(false)}
+  }
+
+  function applyVisionDraft(){
+    if(!visionDraft)return;
+    setInput(prev=>{
+      const villainPositions=visionDraft.villains.length?visionDraft.villains.map(v=>v.position).filter(p=>p!==visionDraft.heroPosition):prev.villainPositions;
+      const villainStacks={...prev.villainStacks};const villainActions={...prev.villainActions};const villainActionAmounts={...prev.villainActionAmounts};
+      visionDraft.villains.forEach(v=>{if(v.position===visionDraft.heroPosition)return;if(v.stack!==null)villainStacks[v.position]=v.stack;if(v.action)villainActions[v.position]=v.action;if(v.actionAmount!==null)villainActionAmounts[v.position]=v.actionAmount});
+      const visionNote=[visionDraft.notes,visionDraft.needsConfirmation.length?`CONFIRMAR: ${visionDraft.needsConfirmation.join(" · ")}`:""].filter(Boolean).join(" | ");
+      return{
+        ...prev,
+        game:visionDraft.game??prev.game,
+        tournamentTypes:visionDraft.tournamentTypes.length?visionDraft.tournamentTypes:prev.tournamentTypes,
+        tournamentPhase:visionDraft.tournamentPhase??prev.tournamentPhase,
+        fieldLeft:visionDraft.fieldLeft??prev.fieldLeft,
+        tableSize:visionDraft.tableSize??prev.tableSize,
+        bigBlind:visionDraft.bigBlind??prev.bigBlind,
+        ante:visionDraft.ante??prev.ante,
+        pot:visionDraft.pot??prev.pot,
+        street:visionDraft.street??prev.street,
+        heroPosition:visionDraft.heroPosition??prev.heroPosition,
+        heroCards:visionDraft.heroCards.length?visionDraft.heroCards:prev.heroCards,
+        heroStack:visionDraft.heroStack??prev.heroStack,
+        heroAction:visionDraft.heroAction??prev.heroAction,
+        heroActionAmount:visionDraft.heroActionAmount??prev.heroActionAmount,
+        board:visionDraft.board.length?visionDraft.board:prev.board,
+        villainPositions,villainStacks,villainActions,villainActionAmounts,
+        notes:visionNote?[prev.notes,`STACKUP VISION (${visionDraft.confidence}): ${visionNote}`].filter(Boolean).join("\n"):prev.notes,
+      };
+    });
+    setSubmitted(false);setVisionDraft(null);
+  }
 
   if(submitted&&validation.valid)return <Analysis input={input} onBack={()=>setSubmitted(false)} onReset={reset}/>;
   const boardCount=requiredBoardCards(input.street);
 
   return <div className={styles.workspace}>
     <header className={styles.intro}><div className="eyebrow">AI HAND REVIEW</div><h2>MONTE A MÃO</h2><p>PREENCHA NA ORDEM EM QUE A MÃO ACONTECEU. OS CÁLCULOS SÃO ATUALIZADOS SEM DUPLICAR CONTRIBUIÇÕES NO POTE.</p></header>
+
+    <section style={{border:"1px solid rgba(92,187,126,.25)",borderRadius:16,padding:16,background:"rgba(7,20,12,.72)"}}>
+      <div style={{display:"flex",justifyContent:"space-between",gap:12,alignItems:"center",flexWrap:"wrap"}}><div><div className="eyebrow">STACKUP AI VISION</div><h3 style={{margin:"5px 0 4px"}}>PREENCHER A PARTIR DE FOTO / PRINT</h3><p style={{margin:0,opacity:.72,fontSize:12}}>A IA extrai os dados. Você confirma antes de analisar.</p></div><div style={{display:"flex",gap:8,flexWrap:"wrap"}}><button type="button" className={styles.choice} onClick={()=>cameraRef.current?.click()}>CÂMERA</button><button type="button" className={styles.choice} onClick={()=>galleryRef.current?.click()}>ANEXAR IMAGEM</button></div></div>
+      <input ref={cameraRef} hidden type="file" accept="image/jpeg,image/png,image/webp" capture="environment" onChange={e=>chooseVisionFile(e.target.files?.[0]||null)}/><input ref={galleryRef} hidden type="file" accept="image/jpeg,image/png,image/webp" onChange={e=>chooseVisionFile(e.target.files?.[0]||null)}/>
+      {visionFile&&<div style={{display:"grid",gridTemplateColumns:"110px 1fr",gap:12,marginTop:14,alignItems:"stretch"}}><img src={visionPreview} alt="Imagem para leitura" style={{width:110,height:110,objectFit:"cover",borderRadius:10,border:"1px solid rgba(92,187,126,.22)"}}/><div style={{display:"flex",flexDirection:"column",gap:8}}><textarea value={visionContext} onChange={e=>setVisionContext(e.target.value)} placeholder="CONTEXTO OPCIONAL: ex. Hero está no BTN; o valor cortado no canto é 15.000..." style={{minHeight:64}}/><button type="button" className="primary" onClick={()=>void extractVision()} disabled={visionBusy}>{visionBusy?"LENDO IMAGEM...":"IDENTIFICAR E PREENCHER"}</button></div></div>}
+      {visionError&&<div className={styles.validation} style={{marginTop:12}}><strong>{visionError}</strong></div>}
+      {visionDraft&&<div style={{marginTop:14,borderTop:"1px solid rgba(92,187,126,.18)",paddingTop:14}}><div style={{display:"flex",justifyContent:"space-between",gap:8,flexWrap:"wrap"}}><strong>LEITURA VISUAL · CONFIANÇA {visionDraft.confidence}</strong><span style={{fontSize:11,opacity:.7}}>CONFIRA ANTES DE APLICAR</span></div><div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(145px,1fr))",gap:8,marginTop:10}}>{[
+        ["MODALIDADE",visionDraft.game],["BB",visionDraft.bigBlind],["ANTE",visionDraft.ante],["POTE",visionDraft.pot],["STREET",visionDraft.street],["HERO",visionDraft.heroPosition],["CARTAS",visionDraft.heroCards.join(" ")||null],["STACK HERO",visionDraft.heroStack],["BOARD",visionDraft.board.join(" ")||null],["VILÕES",visionDraft.villains.map(v=>v.position).join(", ")||null]
+      ].map(([label,value])=><div key={String(label)} style={{padding:9,border:"1px solid rgba(92,187,126,.14)",borderRadius:9}}><small style={{display:"block",opacity:.55}}>{label}</small><b>{value??"NÃO IDENTIFICADO"}</b></div>)}</div>{visionDraft.needsConfirmation.length>0&&<p style={{fontSize:12,margin:"10px 0",opacity:.8}}>CONFIRMAR: {visionDraft.needsConfirmation.join(" · ")}</p>}<button type="button" className="primary" onClick={applyVisionDraft}>APLICAR NOS CAMPOS</button></div>}
+    </section>
 
     <Step n="01" title="CONTEXTO DO JOGO">
       <Section title="MODALIDADE"><div className={styles.two}>{(["CASH","TORNEIO"] as HandGameMode[]).map(game=><Choice key={game} active={input.game===game} onClick={()=>setGame(game)}>{game}</Choice>)}</div></Section>
