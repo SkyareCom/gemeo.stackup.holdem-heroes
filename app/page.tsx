@@ -1,7 +1,7 @@
 "use client";
 
 import {useState} from "react";
-import PlayerDnaWorkspace from "@/components/PlayerDnaWorkspace";
+import PlayerDnaWorkspace from "@/components/PlayerDnaWorkspaceV2";
 import HandReviewWorkspace from "@/components/HandReviewWorkspace";
 import HandVisionImport from "@/components/HandVisionImport";
 import PokerAssistantWorkspace from "@/components/PokerAssistantWorkspace";
