@@ -27,18 +27,10 @@ const boards: Record<Street, string[][]> = {
   river: [["A♠","7♥","2♣","T♦","4♠"],["J♠","T♠","4♦","2♥","A♣"],["8♥","8♣","3♦","K♠","6♥"],["K♣","9♣","6♣","2♣","J♦"],["Q♦","6♠","2♥","J♣","3♠"]],
 };
 
-const PREFLOP_OPPORTUNITIES = ["vpip","pfr","3bet","4bet","squeeze","blind-defense","shove","icm-pressure"];
+const PREFLOP_NONBLIND_OPPORTUNITIES = ["vpip","pfr","3bet","4bet","squeeze","shove","icm-pressure"];
 const FLOP_OPPORTUNITIES = ["cbet","fold-to-cbet","check-raise","bluff-catch","value","bluff","overbet","shove"];
 const TURN_OPPORTUNITIES = ["probe","delayed-cbet","double-barrel","check-raise","bluff-catch","value","bluff","overbet","shove"];
 const RIVER_OPPORTUNITIES = ["triple-barrel","thin-value","bluff-catch","value","bluff","overbet","check-raise","shove","icm-pressure"];
-
-const opportunitiesForStreet = (street: Street) => street === "preflop"
-  ? PREFLOP_OPPORTUNITIES
-  : street === "flop"
-    ? FLOP_OPPORTUNITIES
-    : street === "turn"
-      ? TURN_OPPORTUNITIES
-      : RIVER_OPPORTUNITIES;
 
 const texture = (board: string[]): TrainingSpot["boardTexture"] => {
   if (board.length === 0) return "none";
@@ -53,6 +45,20 @@ function stackBB(bucket: StackBucket, variant = 0) {
   const base = bucket === "short" ? 20 : bucket === "medium" ? 40 : 100;
   const offsets = bucket === "short" ? [-8,-5,-2,0,3,5,8,10] : bucket === "medium" ? [-10,-7,-4,0,5,10,15,20] : [-25,-15,-10,0,15,25,40,60];
   return Math.max(8, base + offsets[variant % offsets.length]);
+}
+
+function chooseOpportunity(street: Street, heroPosition: Position, variant: number, p: number, potType: PotType, stackBucket: StackBucket, gameType: "cash"|"tournament") {
+  const offset = variant + p + pots.indexOf(potType) + stacks.indexOf(stackBucket);
+  if (street === "preflop") {
+    if (["SB","BB"].includes(heroPosition) && variant % 2 === 0) return "blind-defense";
+    let opportunity = PREFLOP_NONBLIND_OPPORTUNITIES[offset % PREFLOP_NONBLIND_OPPORTUNITIES.length];
+    if (opportunity === "icm-pressure" && gameType !== "tournament") opportunity = "shove";
+    return opportunity;
+  }
+  const pool = street === "flop" ? FLOP_OPPORTUNITIES : street === "turn" ? TURN_OPPORTUNITIES : RIVER_OPPORTUNITIES;
+  let opportunity = pool[offset % pool.length];
+  if (opportunity === "icm-pressure" && gameType !== "tournament") opportunity = "thin-value";
+  return opportunity;
 }
 
 function legalActions(street: Street, opportunity: string, facingBet: boolean) {
@@ -78,11 +84,8 @@ export function generateTrainingSpotBank(): TrainingSpot[] {
             const board = boardVariants[(id + variant) % boardVariants.length];
             const potBase = potType === "srp" ? 6.5 : potType === "3bet" ? 18 : 42;
             const potBB = Math.round((potBase * (0.85 + (variant % 6) * 0.06)) * 10) / 10;
-            const opportunityPool = opportunitiesForStreet(street);
-            let opportunity = opportunityPool[(variant + p + pots.indexOf(potType) + stacks.indexOf(stackBucket)) % opportunityPool.length];
             const gameType = variant % 3 === 0 ? "cash" : "tournament";
-            if (opportunity === "icm-pressure" && gameType !== "tournament") opportunity = street === "river" ? "thin-value" : street === "preflop" ? "shove" : "value";
-            if (opportunity === "blind-defense" && !["SB","BB"].includes(heroPosition)) opportunity = variant % 2 ? "vpip" : "pfr";
+            const opportunity = chooseOpportunity(street, heroPosition, variant, p, potType, stackBucket, gameType);
             const naturallyFacing = ["fold-to-cbet","bluff-catch","check-raise"].includes(opportunity);
             const isFacingBet = street !== "preflop" && (naturallyFacing || variant % 3 !== 0);
             const betFraction = opportunity === "overbet" ? 1.25 : variant % 4 === 0 ? .25 : variant % 4 === 1 ? .33 : variant % 4 === 2 ? .66 : 1;
