@@ -2,10 +2,11 @@
 
 import {useMemo,useState,type ReactNode} from "react";
 import {evaluatePlayerDna,type PlayerDnaAnswer} from "@/lib/player-dna";
+import {buildBalancedSpotSession} from "@/lib/player-dna-sampler";
 import {playerDnaSpots,type GameMode,type PlayerAction,type PlayerDnaSpot} from "@/data/player-dna-spots";
 import styles from "./PlayerDnaWorkspace.module.css";
 
-const depths=[100,300,500,1000,3000] as const;
+const depths=[100,250,500,1000,1500,3000] as const;
 
 export default function PlayerDnaWorkspace(){
   const[mode,setMode]=useState<GameMode>("CASH");
@@ -13,12 +14,13 @@ export default function PlayerDnaWorkspace(){
   const[index,setIndex]=useState(0);
   const[answers,setAnswers]=useState<PlayerDnaAnswer[]>([]);
   const[finished,setFinished]=useState(false);
+  const[sessionSeed,setSessionSeed]=useState(1);
 
-  const pool=useMemo(()=>playerDnaSpots.filter(s=>s.mode===mode),[mode]);
-  const spot=pool[index%pool.length];
-  const result=useMemo(()=>evaluatePlayerDna(playerDnaSpots,answers),[answers]);
+  const session=useMemo(()=>target?buildBalancedSpotSession(playerDnaSpots,mode,target,sessionSeed):[],[mode,target,sessionSeed]);
+  const spot=session[index];
+  const result=useMemo(()=>evaluatePlayerDna(session,answers),[session,answers]);
 
-  function start(depth:number){setTarget(depth);setIndex(0);setAnswers([]);setFinished(false)}
+  function start(depth:number){setSessionSeed(Date.now());setTarget(depth);setIndex(0);setAnswers([]);setFinished(false)}
   function reset(){setTarget(null);setIndex(0);setAnswers([]);setFinished(false)}
   function answer(action:PlayerAction){
     if(!spot||!target)return;
@@ -45,12 +47,15 @@ export default function PlayerDnaWorkspace(){
     <button className="primary" onClick={reset}>NOVA AVALIAÇÃO</button>
   </div>;
 
+  if(!spot)return <div className={styles.result}><h3>DADOS INSUFICIENTES</h3><button className="primary" onClick={reset}>VOLTAR</button></div>;
+
   return <div className={styles.session}>
     <div className={styles.progressHead}><span>SPOT {answers.length+1} / {target}</span><strong>{Math.round(((answers.length+1)/target)*100)}%</strong></div>
     <div className={styles.track}><i style={{width:`${((answers.length+1)/target)*100}%`}}/></div>
-    <Board spot={spot}/><Pot spot={spot}/><Players spot={spot}/><Scenario spot={spot}/>
-    <p className={styles.prompt}>{spot.prompt}</p>
+    <Board spot={spot}/><Pot spot={spot}/><Players spot={spot}/>
+    <p className={styles.prompt}>QUAL A SUA AÇÃO?</p>
     <div className={styles.actions}>{spot.actions.map(action=><button key={action} onClick={()=>answer(action)}>{action}</button>)}</div>
+    <Scenario spot={spot}/>
   </div>;
 }
 
@@ -58,7 +63,7 @@ function Board({spot}:{spot:PlayerDnaSpot}){const cards=spot.board?.split(" ").f
 
 function Pot({spot}:{spot:PlayerDnaSpot}){return <section className={styles.block}><h4 className={styles.blockTitle}>POT</h4><div className={styles.potRows}><div className={styles.potRow}><span className={styles.badge}>MAIN</span><span className={styles.potValue}>{fmt(spot.pot.main,spot.mode)}</span><span className={styles.participants}>{spot.players.map(p=>p.position).join(" · ")}</span></div>{spot.pot.sides?.map((side,i)=><div className={styles.potRow} key={i}><span className={styles.badge}>SIDE {i+1}</span><span className={styles.potValue}>{fmt(side.value,spot.mode)}</span><span className={styles.participants}>{side.players.join(" · ")}</span></div>)}</div></section>}
 
-function Players({spot}:{spot:PlayerDnaSpot}){return <section className={styles.block}><h4 className={styles.blockTitle}>JOGADORES</h4><div className={styles.players}>{spot.players.map(player=><div className={`${styles.playerRow} ${player.hero?styles.hero:""}`} key={player.position}><Cell label="POSIÇÃO"><span className={styles.badge}>{player.position}</span></Cell><Cell label="CARTAS">{player.hero?<div className={styles.cards}>{spot.heroCards.split(" ").map(card=><span className={styles.card} key={card}>{card}</span>)}</div>:<div className={styles.closedCards}><span className={styles.closed}/><span className={styles.closed}/></div>}</Cell><Cell label="STACK"><span className={styles.value}>{fmt(player.stack,spot.mode)}</span></Cell><Cell label="AÇÃO"><span className={styles.value}>{player.action}</span></Cell><Cell label="VALOR"><span className={styles.value}>{player.value===0?"—":fmt(player.value,spot.mode)}</span></Cell></div>)}</div></section>}
+function Players({spot}:{spot:PlayerDnaSpot}){return <section className={styles.block}><h4 className={styles.blockTitle}>JOGADORES</h4><div className={styles.players}>{spot.players.map(player=><div className={`${styles.playerRow} ${player.hero?styles.hero:""}`} key={player.position}><Cell label="POSIÇÃO"><span className={styles.badge}>{player.position}</span></Cell><Cell label="CARTAS">{player.hero?<div className={styles.cards}>{spot.heroCards.split(" ").map(card=><span className={styles.card} key={card}>{card}</span>)}</div>:<div className={styles.closedCards}><span className={styles.closed}/><span className={styles.closed}/></div>}</Cell><Cell label="STACK"><span className={styles.value}>{fmt(player.stack,spot.mode)}</span></Cell><Cell label="AÇÃO"><span className={styles.value}>{player.hero?"---":player.action}</span></Cell><Cell label="VALOR"><span className={styles.value}>{player.hero?"---":player.value===0?"---":fmt(player.value,spot.mode)}</span></Cell></div>)}</div></section>}
 
 function Scenario({spot}:{spot:PlayerDnaSpot}){return <section className={styles.block}><h4 className={styles.blockTitle}>CENÁRIO</h4><div className={styles.scenario}>{spot.scenario.map(item=><span className={styles.badge} key={item}>{item}</span>)}</div></section>}
 function Cell({label,children}:{label:string;children:ReactNode}){return <div className={styles.cell}><span className={styles.label}>{label}</span>{children}</div>}
