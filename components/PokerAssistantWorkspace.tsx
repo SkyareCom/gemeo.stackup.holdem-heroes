@@ -1,6 +1,6 @@
 "use client";
 
-import {useState} from "react";
+import {useRef,useState} from "react";
 import styles from "./PokerAssistantWorkspace.module.css";
 
 type Usage={plan:"FREE"|"PRO"|"ELITE"|"UNLIMITED";dayQuestions:number;dailyLimit:number|null;monthCredits:number;monthlyCredits:number|null};
@@ -12,12 +12,33 @@ export default function PokerAssistantWorkspace(){
   const[meta,setMeta]=useState<AiMeta|null>(null);
   const[loading,setLoading]=useState(false);
   const[error,setError]=useState("");
+  const[image,setImage]=useState<File|null>(null);
+  const[preview,setPreview]=useState("");
+  const cameraRef=useRef<HTMLInputElement>(null);
+  const fileRef=useRef<HTMLInputElement>(null);
+
+  function chooseImage(file:File|undefined){
+    if(!file)return;
+    if(!["image/jpeg","image/png","image/webp"].includes(file.type)){setError("Use uma imagem JPG, PNG ou WEBP.");return}
+    if(file.size>8*1024*1024){setError("A imagem deve ter no máximo 8 MB.");return}
+    setImage(file);setError("");setAnswer("");
+    if(preview)URL.revokeObjectURL(preview);
+    setPreview(URL.createObjectURL(file));
+  }
+
+  function clearImage(){if(preview)URL.revokeObjectURL(preview);setImage(null);setPreview("")}
 
   async function ask(){
-    const text=question.trim();if(!text||loading)return;
+    const text=question.trim();if((!text&&!image)||loading)return;
     setLoading(true);setError("");setAnswer("");
     try{
-      const response=await fetch("/api/poker-ai",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({question:text})});
+      let response:Response;
+      if(image){
+        const form=new FormData();form.append("image",image);form.append("mode","QUESTION");form.append("question",text);
+        response=await fetch("/api/poker-vision",{method:"POST",body:form});
+      }else{
+        response=await fetch("/api/poker-ai",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({question:text})});
+      }
       const data=await response.json() as {answer?:string;error?:string;meta?:AiMeta;usage?:Usage};
       if(!response.ok||!data.answer){if(data.usage)setMeta({plan:data.usage.plan,usage:data.usage});throw new Error(data.error||"AI_TEMPORARILY_UNAVAILABLE")}
       setAnswer(data.answer);setMeta(data.meta||null);
@@ -25,7 +46,9 @@ export default function PokerAssistantWorkspace(){
       const code=error instanceof Error?error.message:"AI_TEMPORARILY_UNAVAILABLE";
       if(code==="DAILY_LIMIT")setError("Limite diário do plano FREE atingido.");
       else if(code==="MONTHLY_CREDITS")setError("Créditos STACKUP AI do plano esgotados neste mês.");
-      else if(code==="AI_TEMPORARILY_UNAVAILABLE")setError("STACKUP AI indisponível no momento. Verifique a configuração do provedor de IA no servidor.");
+      else if(code==="IMAGE_TOO_LARGE")setError("A imagem deve ter no máximo 8 MB.");
+      else if(code==="UNSUPPORTED_IMAGE")setError("Formato de imagem não suportado.");
+      else if(code==="VISION_TEMPORARILY_UNAVAILABLE"||code==="AI_TEMPORARILY_UNAVAILABLE")setError("STACKUP AI indisponível no momento. Verifique a configuração do provedor no servidor.");
       else setError("Não foi possível processar a pergunta.");
     }finally{setLoading(false)}
   }
@@ -36,13 +59,22 @@ export default function PokerAssistantWorkspace(){
   return <div className={styles.shell}>
     <div className="eyebrow">POKER ASSISTANT</div>
     <h2>PERGUNTE À IA</h2>
-    <p className={styles.intro}>Perguntas e dúvidas sobre poker. O STACKUP AI seleciona automaticamente a profundidade adequada ao plano e permanece independente do Player DNA.</p>
+    <p className={styles.intro}>Perguntas e dúvidas sobre poker. Você também pode fotografar ou anexar uma imagem para a STACKUP AI interpretar visualmente.</p>
 
     {usage&&<div className={styles.usage}><b>STACKUP AI · {usage.plan}</b><span>{usage.dailyLimit!==null?`${usage.dayQuestions}/${usage.dailyLimit} perguntas hoje`:usage.monthlyCredits!==null?`${usage.monthCredits}/${usage.monthlyCredits} créditos no mês`:"USO JUSTO"}</span></div>}
 
+    <div className={styles.mediaActions}>
+      <input ref={cameraRef} type="file" accept="image/*" capture="environment" hidden onChange={e=>chooseImage(e.target.files?.[0])}/>
+      <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" hidden onChange={e=>chooseImage(e.target.files?.[0])}/>
+      <button type="button" onClick={()=>cameraRef.current?.click()}>📷 CÂMERA</button>
+      <button type="button" onClick={()=>fileRef.current?.click()}>🖼 ANEXAR IMAGEM</button>
+    </div>
+
+    {preview&&<div className={styles.preview}><img src={preview} alt="Imagem anexada para análise"/><div><b>IMAGEM PRONTA</b><span>{image?.name}</span><button type="button" onClick={clearImage}>REMOVER</button></div></div>}
+
     <div className={styles.composer}>
-      <textarea value={question} maxLength={4000} onChange={e=>setQuestion(e.target.value)} onKeyDown={onKeyDown} placeholder="Ex.: O que acontece se o dealer virar uma carta sem querer durante a distribuição?"/>
-      <div className={styles.composerFooter}><small>{question.length}/4000 · CTRL/⌘ + ENTER PARA ENVIAR</small><button className="primary" type="button" onClick={()=>void ask()} disabled={loading||question.trim().length<3}>{loading?"ANALISANDO...":"PERGUNTAR"}</button></div>
+      <textarea value={question} maxLength={4000} onChange={e=>setQuestion(e.target.value)} onKeyDown={onKeyDown} placeholder={image?"Pergunte algo sobre a imagem ou apenas envie para interpretação...":"Ex.: O que acontece se o dealer virar uma carta sem querer durante a distribuição?"}/>
+      <div className={styles.composerFooter}><small>{question.length}/4000 · IMAGEM OPCIONAL</small><button className="primary" type="button" onClick={()=>void ask()} disabled={loading||(!image&&question.trim().length<3)}>{loading?"ANALISANDO...":"PERGUNTAR"}</button></div>
     </div>
 
     {error&&<div className={styles.error}>{error}</div>}
