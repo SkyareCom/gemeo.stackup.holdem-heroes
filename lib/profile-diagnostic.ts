@@ -25,6 +25,8 @@ const usable = (metric: ProfileMetric) => metric.value !== null;
 
 export function profileMetrics(dna: PlayerDNA): ProfileMetric[] {
   return [
+    dna.vpipFrequency,
+    dna.pfrFrequency,
     dna.aggression,
     dna.selectivity,
     dna.callFrequency,
@@ -78,60 +80,64 @@ export function diagnosticReadiness(dna: PlayerDNA): DiagnosticReadiness {
 
 export function classifyPlayerArchetype(dna: PlayerDNA): { archetype: PlayerArchetype; confidence: number; reasons: string[] } {
   const readiness = diagnosticReadiness(dna);
+  const vpip = value(dna.vpipFrequency);
+  const pfr = value(dna.pfrFrequency);
   const agg = value(dna.aggression);
-  const selective = value(dna.selectivity);
   const calls = value(dna.callFrequency);
   const folds = value(dna.foldFrequency);
   const threeBet = value(dna.threeBetFrequency);
   const bluff = value(dna.bluffAggression);
   const valueAgg = value(dna.valueAggression);
 
-  if ([agg, selective, calls, folds].some(metric => metric === null) || readiness.readyMetrics < 6) {
+  if ([vpip, pfr, agg, calls, folds].some(metric => metric === null) || readiness.readyMetrics < 8) {
     return { archetype: "UNDETERMINED", confidence: readiness.ratio, reasons: ["Amostra ainda insuficiente para classificar o estilo sem forçar precisão."] };
   }
 
+  const vpi = vpip as number;
+  const pf = pfr as number;
   const a = agg as number;
-  const s = selective as number;
   const c = calls as number;
   const f = folds as number;
   const t = threeBet ?? 0;
   const b = bluff ?? 0;
-  const v = valueAgg ?? a;
-  const loose = s < 0.48;
-  const tight = s > 0.62;
-  const aggressive = a > 0.43 || t > 0.10;
-  const passive = a < 0.28;
-  const highCall = c > 0.36;
+  const va = valueAgg ?? a;
+  const gap = Math.max(0, vpi - pf);
+
+  const loose = vpi > 0.33;
+  const tight = vpi < 0.22;
+  const aggressive = a > 0.43 || pf > 0.24 || t > 0.10;
+  const passive = a < 0.28 || gap > 0.16;
+  const highCall = c > 0.36 || gap > 0.18;
   const highFold = f > 0.48;
-  const extremeAggression = a > 0.62 || b > 0.62;
+  const extremeAggression = a > 0.62 || b > 0.62 || (pf > 0.34 && t > 0.14);
 
   let archetype: PlayerArchetype = "BALANCED";
   const reasons: string[] = [];
 
   if (extremeAggression && !tight) {
     archetype = "OVERAGGRESSIVE";
-    reasons.push("Frequência de agressão muito elevada para a seletividade observada.");
+    reasons.push("Pressão agressiva extrema em relação à participação observada.");
   } else if (tight && highFold && passive) {
     archetype = "NIT";
-    reasons.push("Alta seletividade, excesso de folds e baixa agressão.");
+    reasons.push("VPIP baixo, folds elevados e pouca iniciativa agressiva.");
   } else if (loose && highCall && passive) {
     archetype = "CALLING STATION";
-    reasons.push("Entrada ampla em pots, muitos calls e pouca agressão.");
+    reasons.push("VPIP alto, gap VPIP/PFR amplo e frequência elevada de calls.");
   } else if (tight && passive) {
     archetype = "TIGHT PASSIVE";
-    reasons.push("Seleção restrita de mãos com baixa iniciativa agressiva.");
+    reasons.push("Participação restrita com pouca conversão de VPIP em agressão pré-flop.");
   } else if (loose && passive) {
     archetype = "LOOSE PASSIVE";
-    reasons.push("Range amplo combinado com baixa agressão.");
+    reasons.push("Participação ampla com gap VPIP/PFR e agressividade insuficiente.");
   } else if (tight && aggressive) {
     archetype = "TAG";
-    reasons.push("Seleção disciplinada combinada com agressão consistente.");
+    reasons.push("VPIP controlado, PFR proporcional e agressão consistente.");
   } else if (loose && aggressive) {
     archetype = "LAG";
-    reasons.push("Participação ampla combinada com pressão agressiva frequente.");
+    reasons.push("VPIP amplo acompanhado de PFR e pressão agressiva frequentes.");
   } else {
-    reasons.push("Frequências centrais sem desvio extremo para tight/loose ou passivo/agressivo.");
-    if (Math.abs(v - b) < 0.2) reasons.push("Relação entre agressão por valor e bluff sem desequilíbrio extremo detectado.");
+    reasons.push("VPIP, PFR e agressão permanecem em faixas intermediárias sem desvio extremo.");
+    if (Math.abs(va - b) < 0.2) reasons.push("Agressão por valor e bluff não apresenta desequilíbrio extremo detectável.");
   }
 
   const confidence = Math.min(1, readiness.ratio * (dna.sampleSize >= 1000 ? 1 : dna.sampleSize >= 500 ? 0.9 : dna.sampleSize >= 300 ? 0.8 : 0.65));
