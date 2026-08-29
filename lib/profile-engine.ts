@@ -10,7 +10,27 @@ export type PokerDecision = {
   gameType?: "cash" | "tournament";
   action: "fold" | "check" | "call" | "bet" | "raise" | "3bet" | "4bet" | "allin";
   facingAggression: boolean;
-  opportunity?: "vpip" | "pfr" | "3bet" | "4bet" | "blind-defense" | "bluff-catch" | "value" | "bluff";
+  opportunity?:
+    | "vpip"
+    | "pfr"
+    | "3bet"
+    | "4bet"
+    | "squeeze"
+    | "blind-defense"
+    | "cbet"
+    | "fold-to-cbet"
+    | "check-raise"
+    | "probe"
+    | "delayed-cbet"
+    | "double-barrel"
+    | "triple-barrel"
+    | "overbet"
+    | "bluff-catch"
+    | "thin-value"
+    | "value"
+    | "bluff"
+    | "shove"
+    | "icm-pressure";
   correct?: boolean;
   tags?: string[];
 };
@@ -34,12 +54,24 @@ export type PlayerDNA = {
   foldFrequency: ProfileMetric;
   threeBetFrequency: ProfileMetric;
   fourBetFrequency: ProfileMetric;
+  squeezeFrequency: ProfileMetric;
   blindDefense: ProfileMetric;
   inPositionAggression: ProfileMetric;
   outOfPositionAggression: ProfileMetric;
+  cbetFrequency: ProfileMetric;
+  foldToCbet: ProfileMetric;
+  checkRaiseFrequency: ProfileMetric;
+  probeFrequency: ProfileMetric;
+  delayedCbetFrequency: ProfileMetric;
+  doubleBarrelFrequency: ProfileMetric;
+  tripleBarrelFrequency: ProfileMetric;
+  overbetFrequency: ProfileMetric;
   bluffCatchFrequency: ProfileMetric;
+  thinValueFrequency: ProfileMetric;
   valueAggression: ProfileMetric;
   bluffAggression: ProfileMetric;
+  shoveFrequency: ProfileMetric;
+  icmPressureDiscipline: ProfileMetric;
   discipline: ProfileMetric;
 };
 
@@ -65,6 +97,11 @@ function metric(hits: number, opportunities: number, label: string): ProfileMetr
 
 const aggressive = (a: PokerDecision["action"]) => ["bet", "raise", "3bet", "4bet", "allin"].includes(a);
 const voluntaryPreflop = (a: PokerDecision["action"]) => ["call", "bet", "raise", "3bet", "4bet", "allin"].includes(a);
+const opportunity = (decisions: PokerDecision[], kind: PokerDecision["opportunity"]) => decisions.filter(d => d.opportunity === kind);
+const aggressiveRate = (decisions: PokerDecision[], kind: PokerDecision["opportunity"], label: string) => {
+  const opps = opportunity(decisions, kind);
+  return metric(opps.filter(d => aggressive(d.action)).length, opps.length, label);
+};
 
 export function buildPlayerDNA(decisions: PokerDecision[]): PlayerDNA {
   const actions = decisions.length;
@@ -72,14 +109,19 @@ export function buildPlayerDNA(decisions: PokerDecision[]): PlayerDNA {
   const calls = decisions.filter(d => d.action === "call").length;
   const folds = decisions.filter(d => d.action === "fold").length;
 
-  const vpipOpps = decisions.filter(d => d.opportunity === "vpip");
+  const vpipOpps = opportunity(decisions, "vpip");
   const vpipEntered = vpipOpps.filter(d => voluntaryPreflop(d.action)).length;
-  const threeBetOpps = decisions.filter(d => d.opportunity === "3bet");
-  const fourBetOpps = decisions.filter(d => d.opportunity === "4bet");
-  const blindOpps = decisions.filter(d => d.opportunity === "blind-defense");
-  const bluffCatchOpps = decisions.filter(d => d.opportunity === "bluff-catch");
-  const valueOpps = decisions.filter(d => d.opportunity === "value");
-  const bluffOpps = decisions.filter(d => d.opportunity === "bluff");
+  const threeBetOpps = opportunity(decisions, "3bet");
+  const fourBetOpps = opportunity(decisions, "4bet");
+  const squeezeOpps = opportunity(decisions, "squeeze");
+  const blindOpps = opportunity(decisions, "blind-defense");
+  const foldToCbetOpps = opportunity(decisions, "fold-to-cbet");
+  const bluffCatchOpps = opportunity(decisions, "bluff-catch");
+  const thinValueOpps = opportunity(decisions, "thin-value");
+  const valueOpps = opportunity(decisions, "value");
+  const bluffOpps = opportunity(decisions, "bluff");
+  const shoveOpps = opportunity(decisions, "shove");
+  const icmOpps = opportunity(decisions, "icm-pressure");
 
   const ip = decisions.filter(d => d.inPosition);
   const oop = decisions.filter(d => !d.inPosition);
@@ -95,12 +137,24 @@ export function buildPlayerDNA(decisions: PokerDecision[]): PlayerDNA {
     foldFrequency: metric(folds, actions, "FREQUÊNCIA DE FOLD"),
     threeBetFrequency: metric(threeBetOpps.filter(d => d.action === "3bet").length, threeBetOpps.length, "3-BET"),
     fourBetFrequency: metric(fourBetOpps.filter(d => d.action === "4bet").length, fourBetOpps.length, "4-BET"),
+    squeezeFrequency: metric(squeezeOpps.filter(d => ["3bet", "4bet", "allin"].includes(d.action)).length, squeezeOpps.length, "SQUEEZE"),
     blindDefense: metric(blindOpps.filter(d => d.action !== "fold").length, blindOpps.length, "DEFESA DE BLINDS"),
     inPositionAggression: metric(ip.filter(d => aggressive(d.action)).length, ip.length, "AGRESSIVIDADE IP"),
     outOfPositionAggression: metric(oop.filter(d => aggressive(d.action)).length, oop.length, "AGRESSIVIDADE OOP"),
+    cbetFrequency: aggressiveRate(decisions, "cbet", "C-BET"),
+    foldToCbet: metric(foldToCbetOpps.filter(d => d.action === "fold").length, foldToCbetOpps.length, "FOLD TO C-BET"),
+    checkRaiseFrequency: aggressiveRate(decisions, "check-raise", "CHECK-RAISE"),
+    probeFrequency: aggressiveRate(decisions, "probe", "PROBE"),
+    delayedCbetFrequency: aggressiveRate(decisions, "delayed-cbet", "DELAYED C-BET"),
+    doubleBarrelFrequency: aggressiveRate(decisions, "double-barrel", "DOUBLE BARREL"),
+    tripleBarrelFrequency: aggressiveRate(decisions, "triple-barrel", "TRIPLE BARREL"),
+    overbetFrequency: aggressiveRate(decisions, "overbet", "OVERBET"),
     bluffCatchFrequency: metric(bluffCatchOpps.filter(d => d.action === "call").length, bluffCatchOpps.length, "BLUFF CATCH"),
+    thinValueFrequency: metric(thinValueOpps.filter(d => aggressive(d.action)).length, thinValueOpps.length, "THIN VALUE"),
     valueAggression: metric(valueOpps.filter(d => aggressive(d.action)).length, valueOpps.length, "AGRESSÃO POR VALOR"),
     bluffAggression: metric(bluffOpps.filter(d => aggressive(d.action)).length, bluffOpps.length, "AGRESSÃO EM BLUFF"),
+    shoveFrequency: metric(shoveOpps.filter(d => d.action === "allin").length, shoveOpps.length, "SHOVE"),
+    icmPressureDiscipline: metric(icmOpps.filter(d => d.correct === true).length, icmOpps.filter(d => typeof d.correct === "boolean").length, "DISCIPLINA SOB ICM"),
     discipline: metric(correct, scored.length, "DISCIPLINA"),
   };
 }
