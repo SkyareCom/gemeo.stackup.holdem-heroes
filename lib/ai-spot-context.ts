@@ -16,6 +16,7 @@ export type AISpotContextInput = {
   solverExplanation?: string;
   userQuestion: string;
   outs?: number;
+  heroEquity?: number;
 };
 
 export function buildAISpotContext(input: AISpotContextInput) {
@@ -25,6 +26,7 @@ export function buildAISpotContext(input: AISpotContextInput) {
     effectiveStack: Math.min(input.heroStack, input.villainStack),
     outs: input.outs,
     cardsToCome: input.street.toUpperCase() === "FLOP" ? 2 : 1,
+    heroEquity: input.heroEquity,
   });
 
   return {
@@ -45,8 +47,13 @@ export function buildAISpotContext(input: AISpotContextInput) {
       spr: math.spr,
       pot_odds: math.potOddsRatio,
       equity_necessaria: math.requiredEquity,
-      equity_outs_aproximada: math.outsEquity,
+      mdf: math.minimumDefenseFrequency,
+      bluff_breakeven: math.bluffBreakEvenFrequency,
+      equity_outs_exata: math.outsEquityExact,
+      equity_outs_aproximada: math.outsEquityApprox,
+      ev_call: math.callExpectedValue,
     },
+    contrato_numerico: "Use os calculos determinísticos acima como fonte de verdade numérica. Não invente valores ausentes.",
     pergunta_usuario: input.userQuestion,
   };
 }
