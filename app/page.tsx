@@ -1,11 +1,43 @@
 "use client";
-import {useState} from "react";
+import {useEffect,useState} from "react";
 import MathWorkspace from "../components/MathWorkspace";
 import SharedPokerTable from "../components/SharedPokerTable";
+import {formatProfileMetric, type PokerDecision, type PlayerDNA} from "../lib/profile-engine";
+import {getPlayerDNAFromMemory, recordDecision} from "../lib/player-memory";
+
 type Module="home"|"profile"|"hands"|"ai"|"math";
 const depths=[[100,"Perfil inicial / análise rápida"],[300,"Análise intermediária"],[500,"Análise avançada"],[1000,"Perfil de alta robustez"],[3000,"Análise profunda do jogador"]] as const;
+
 export default function Home(){const[module,setModule]=useState<Module>("home");const[selectedDepth,setSelectedDepth]=useState<number|null>(null);const[handText,setHandText]=useState("");const[question,setQuestion]=useState("");return <main><header className="topbar"><button className="logo" onClick={()=>setModule("home")}><span>STACKUP</span> HOLD&apos;EM <b>AI SOLVER</b></button><span className="status">● PLAYER INTELLIGENCE SYSTEM</span></header>{module==="home"&&<><section className="hero"><p>POKER · SOLVER · IA · DADOS</p><h1>ELE NÃO APENAS ENSINA POKER.<br/><em>ELE APRENDE COMO VOCÊ JOGA.</em></h1><div className="hero-copy">Decisões simuladas, mãos reais, matemática e dúvidas conectadas para construir uma leitura progressiva do seu jogo.</div></section><section className="home-grid four"><Card n="01" eye="PLAYER DNA" title="PERFIL DE JOGADOR" text="Descubra como você realmente joga." action="DESCOBRIR PERFIL" click={()=>setModule("profile")}/><Card n="02" eye="AI HAND REVIEW" title="ANÁLISE DE MÃOS" text="Conte uma mão. A IA reconstrói e analisa suas decisões." action="ANALISAR UMA MÃO" click={()=>setModule("hands")}/><Card n="03" eye="POKER ASSISTANT" title="PERGUNTE À IA" text="Estratégia, regras, situações e dúvidas sobre poker." action="FAZER UMA PERGUNTA" click={()=>setModule("ai")}/><Card n="04" eye="POKER MATH" title="MATEMÁTICA DO POKER" text="Conceitos, prática e dúvidas com cálculo determinístico." action="ESTUDAR E CALCULAR" click={()=>setModule("math")}/></section><section className="memory-strip"><div><small>MEMÓRIA COMPARTILHADA</small><strong>UM JOGADOR · UM CONTEXTO · UMA EVOLUÇÃO</strong></div><p>Perfil, mãos, matemática, notas e conhecimento formam uma única inteligência do jogador.</p></section></>}{module==="profile"&&<section className="workspace"><Back click={()=>setModule("home")}/><div className="eyebrow">PLAYER DNA</div><h2>DESCUBRA COMO VOCÊ REALMENTE JOGA.</h2>{!selectedDepth?<><p className="lead">Escolha a profundidade. A seleção será variada e balanceada entre situações do jogo.</p><div className="depth-grid">{depths.map(([n,label])=><button key={n} onClick={()=>setSelectedDepth(n)}><strong>{n}</strong><span>SPOTS</span><small>{label}</small></button>)}</div><div className="truth-note"><b>MAIS DECISÕES → MAIS DADOS</b><span>Quanto mais spots você jogar, maior a robustez e a confiabilidade do seu perfil.</span></div></>:<SpotSession depth={selectedDepth} reset={()=>setSelectedDepth(null)}/>}</section>}{module==="hands"&&<section className="workspace"><Back click={()=>setModule("home")}/><div className="eyebrow purple">AI HAND REVIEW</div><h2>CONTE UMA MÃO.</h2><p className="lead">Escreva naturalmente. O motor matemático calcula; a IA interpreta e explica.</p><div className="hand-layout"><div><textarea value={handText} onChange={e=>setHandText(e.target.value)} placeholder="Ex.: Eu estava no BTN com AK, blinds 1k/2k..."/><div className="quick-fields"><input placeholder="Cash / Torneio"/><input placeholder="Blinds"/><input placeholder="Stack efetivo"/></div><button className="primary purple-btn">RECONSTRUIR E ANALISAR</button></div><SharedPokerTable/></div><div className="analysis-preview"><Result title="O QUE ACONTECEU" text="Reconstrução street-by-street."/><Result title="ANÁLISE" text="Ranges, posição, stack, SPR, pot odds, blockers, sizing, GTO, exploit e ICM."/><Result title="MELHOR LINHA" text="Recomendação separada das alternativas."/><Result title="PONTO PRINCIPAL" text="O aprendizado central poderá alimentar o perfil."/></div></section>}{module==="ai"&&<section className="workspace"><Back click={()=>setModule("home")}/><div className="eyebrow purple">POKER ASSISTANT</div><h2>PERGUNTE À IA.</h2><p className="lead">Estratégia, regras, situações e dúvidas sobre poker.</p><div className="ask-box"><textarea value={question} onChange={e=>setQuestion(e.target.value)} placeholder="Ex.: Dois jogadores foram eliminados na mesma mão. Quem fica melhor colocado?"/><button className="primary purple-btn">PERGUNTAR</button></div><div className="rule-note"><b>CONTEXTO DE REGRAS</b><span>O sistema distingue regra universal, torneio, cash, regulamento específico e decisões de floor.</span></div></section>}{module==="math"&&<MathWorkspace onBack={()=>setModule("home")}/>}</main>}
+
 function Card({n,eye,title,text,action,click}:{n:string;eye:string;title:string;text:string;action:string;click:()=>void}){return <button className="module-card" onClick={click}><span className="card-number">{n}</span><small>{eye}</small><h3>{title}</h3><p>{text}</p><b>{action} →</b></button>}
 function Back({click}:{click:()=>void}){return <button className="back" onClick={click}>← HOME</button>}
 function Result({title,text}:{title:string;text:string}){return <div className="result"><b>{title}</b><p>{text}</p></div>}
-function SpotSession({depth,reset}:{depth:number;reset:()=>void}){const[decision,setDecision]=useState<string|null>(null);const[index,setIndex]=useState(1);function next(){setDecision(null);setIndex(i=>Math.min(depth,i+1))}return <div className="spot-session"><div className="session-head"><div><small>PROGRESSO</small><strong>{index} / {depth} SPOTS</strong></div><button onClick={reset}>ALTERAR</button></div><SharedPokerTable/><div className="spot-meta"><span>TORNEIO</span><span>40 BB</span><span>BTN vs BB</span><span>SRP</span><span>FLOP</span></div><h3>QUAL É A SUA DECISÃO?</h3><div className="actions">{["FOLD","CHECK","CALL","BET 33%","BET 75%","ALL-IN"].map(a=><button className={decision===a?"selected":""} key={a} onClick={()=>setDecision(a)}>{a}</button>)}</div>{decision&&<div className="decision-record"><b>DECISÃO: {decision}</b><span>Contexto e decisão serão registrados no Player DNA.</span><button onClick={next}>{index>=depth?"FINALIZAR":"PRÓXIMO SPOT →"}</button></div>}</div>}
+
+const actionMap:Record<string,PokerDecision["action"]>={FOLD:"fold",CHECK:"check",CALL:"call","BET 33%":"bet","BET 75%":"bet","ALL-IN":"allin"};
+
+function SpotSession({depth,reset}:{depth:number;reset:()=>void}){
+  const[decision,setDecision]=useState<string|null>(null);
+  const[index,setIndex]=useState(1);
+  const[dna,setDna]=useState<PlayerDNA|null>(null);
+  const[finished,setFinished]=useState(false);
+  useEffect(()=>{setDna(getPlayerDNAFromMemory())},[]);
+
+  function commitDecision(){
+    if(!decision)return;
+    recordDecision({spotId:`profile-${depth}-${index}`,street:"flop",position:"BTN",villainPosition:"BB",inPosition:true,stackBB:40,gameType:"tournament",action:actionMap[decision]??"check",facingAggression:false,opportunity:decision==="CALL"?"bluff-catch":"value"});
+    setDna(getPlayerDNAFromMemory());
+    if(index>=depth){setFinished(true);return;}
+    setDecision(null);setIndex(i=>i+1);
+  }
+
+  if(finished)return <div className="spot-session"><div className="session-head"><div><small>SESSÃO CONCLUÍDA</small><strong>{depth} / {depth} SPOTS</strong></div><button onClick={reset}>NOVA SESSÃO</button></div><PlayerDnaPanel dna={dna}/></div>;
+
+  return <div className="spot-session"><div className="session-head"><div><small>PROGRESSO</small><strong>{index} / {depth} SPOTS</strong></div><button onClick={reset}>ALTERAR</button></div><SharedPokerTable/><div className="spot-meta"><span>TORNEIO</span><span>40 BB</span><span>BTN vs BB</span><span>SRP</span><span>FLOP</span></div><h3>QUAL É A SUA DECISÃO?</h3><div className="actions">{["FOLD","CHECK","CALL","BET 33%","BET 75%","ALL-IN"].map(a=><button className={decision===a?"selected":""} key={a} onClick={()=>setDecision(a)}>{a}</button>)}</div>{decision&&<div className="decision-record"><b>DECISÃO: {decision}</b><span>A decisão será persistida e incorporada ao Player DNA.</span><button onClick={commitDecision}>{index>=depth?"FINALIZAR":"PRÓXIMO SPOT →"}</button></div>}<PlayerDnaPanel dna={dna}/></div>
+}
+
+function PlayerDnaPanel({dna}:{dna:PlayerDNA|null}){
+  if(!dna)return null;
+  const metrics=[dna.aggression,dna.selectivity,dna.callFrequency,dna.foldFrequency,dna.threeBetFrequency,dna.blindDefense,dna.inPositionAggression,dna.outOfPositionAggression,dna.discipline];
+  return <div className="analysis-preview"><Result title="ROBUSTEZ" text={`${dna.robustness} · ${dna.sampleSize} decisões registradas`}/>{metrics.map(m=><Result key={m.label} title={m.label} text={`${formatProfileMetric(m)} · ${m.opportunities} oportunidades · ${m.confidence}`}/>)}</div>
+}
