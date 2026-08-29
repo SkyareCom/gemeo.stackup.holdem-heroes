@@ -2,6 +2,7 @@ export type LocalAISettings = {
   provider: "openai" | "anthropic" | "custom";
   apiKey: string;
   model: string;
+  baseUrl?: string;
   maxQuestionsPerSpot: number;
 };
 
@@ -11,6 +12,7 @@ export const defaultAISettings: LocalAISettings = {
   provider: "openai",
   apiKey: "",
   model: "",
+  baseUrl: "",
   maxQuestionsPerSpot: 3,
 };
 
