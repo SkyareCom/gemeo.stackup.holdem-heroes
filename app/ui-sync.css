@@ -4,9 +4,9 @@
   --ui-title:16px;
   --ui-subtitle:14px;
   --ui-text:12px;
-  --ui-active-bg:#12341d;
-  --ui-active-border:#8de3a7;
-  --ui-active-text:#edf7f0;
+  --ui-active-bg:#67d992;
+  --ui-active-border:#8cf0b2;
+  --ui-active-text:#031008;
   --ui-idle-border:#245239;
   --ui-radius:12px;
 }
@@ -29,7 +29,8 @@ p,small,span,strong,button,input,textarea,select,option,[class*="value"],[class*
 /* Global card spacing */
 .modules,.spot-grid,.metrics,.dna-metrics,.action-grid,.calc-grid,.scenario,
 [class*="Grid"],[class*="grid"],[class*="players"],[class*="actions"],[class*="resultGrid"],
-[class*="stepGrid"],[class*="moneyGrid"],[class*="positionGrid"],[class*="analysisGrid"],[class*="summary"]{
+[class*="stepGrid"],[class*="moneyGrid"],[class*="positionGrid"],[class*="analysisGrid"],[class*="summary"],
+[class*="setup"],[class*="session"],[class*="workspace"],[class*="result"]{
   gap:var(--ui-gap)!important;
   row-gap:var(--ui-gap)!important;
   column-gap:var(--ui-gap)!important;
@@ -56,9 +57,10 @@ button:disabled,[aria-disabled="true"]{opacity:.35!important;cursor:not-allowed!
 /* Every selected/highlighted useful card uses the same green state */
 .selected,.highlighted,
 [class*="selected"],[class*="Selected"],
-[class*="highlighted"],[class*="Highlighted"],
-[class*="hero"]:not(.hero):not([class="hero"]){
+[class*="highlighted"],[class*="Highlighted"]{
   border-color:var(--ui-active-border)!important;
+  background:var(--ui-active-bg)!important;
+  color:var(--ui-active-text)!important;
 }
 
 /* Player DNA: wrappers are structural only; inner useful cards retain borders */
@@ -77,8 +79,10 @@ button:disabled,[aria-disabled="true"]{opacity:.35!important;cursor:not-allowed!
 [class*="playerRow"][class*="hero"]{
   border-color:var(--ui-active-border)!important;
   background:var(--ui-active-bg)!important;
+  color:var(--ui-active-text)!important;
   box-shadow:inset 0 0 0 1px rgba(141,227,167,.16)!important;
 }
+[class*="playerRow"][class*="hero"] *{color:var(--ui-active-text)!important}
 
 /* Player card redistribution without increasing row height: position, cards, then three distinct information rows */
 [class*="playerRow"]{
