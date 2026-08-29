@@ -38,7 +38,7 @@ export default function Home(){
     <section className="hero"><p>AI POKER<br/>PERFORMANCE<br/>SYSTEM.</p><h1>UM JOGADOR.<br/><em>QUATRO MÓDULOS.</em><br/>UMA EVOLUÇÃO.</h1></section>
     <nav className="modules">{modules.map(m=><button key={m.id} className={module===m.id?"active":""} onClick={()=>setModule(m.id)}><small>{m.kicker}</small>{m.title}</button>)}</nav>
 
-    {module==="profile"&&<section className="panel profile-panel"><div className="eyebrow">PLAYER DNA</div><h2>DESCUBRA SEU PERFIL</h2><PlayerDnaWorkspace/></section>}
+    {module==="profile"&&<section className="panel profile-panel"><PlayerDnaWorkspace/></section>}
 
     {module==="hands"&&<section className="panel"><div className="eyebrow">AI HAND REVIEW</div><h2>ANÁLISE DE MÃOS</h2><PokerTable/><textarea placeholder="Descreva a mão, stacks, posições e ação..."/><button className="primary">ANALISAR MÃO</button><div className="coming">Interface pronta para receber parsing estruturado e análise do backend.</div></section>}
 
