@@ -4,6 +4,7 @@ import {useMemo,useState} from "react";
 import {mathConcepts} from "@/data/math-concepts";
 import {mdf,percent,requiredEquity,spr} from "@/lib/poker-math";
 import PlayerDnaWorkspace from "@/components/PlayerDnaWorkspace";
+import HandReviewWorkspace from "@/components/HandReviewWorkspace";
 
 type Module="profile"|"hands"|"ai"|"math";
 type MathTab="concepts"|"practice"|"doubts";
@@ -40,7 +41,7 @@ export default function Home(){
 
     {module==="profile"&&<section className="panel profile-panel"><PlayerDnaWorkspace/></section>}
 
-    {module==="hands"&&<section className="panel"><div className="eyebrow">AI HAND REVIEW</div><h2>ANÁLISE DE MÃOS</h2><PokerTable/><textarea placeholder="Descreva a mão, stacks, posições e ação..."/><button className="primary">ANALISAR MÃO</button><div className="coming">Interface pronta para receber parsing estruturado e análise do backend.</div></section>}
+    {module==="hands"&&<section className="panel"><HandReviewWorkspace/></section>}
 
     {module==="ai"&&<section className="panel"><div className="eyebrow">POKER ASSISTANT</div><h2>PERGUNTE À IA</h2><p>Regras, estratégia, situações de sessão e dúvidas gerais de poker.</p><textarea value={question} onChange={e=>setQuestion(e.target.value)} placeholder="O que você quer entender?"/><button className="primary">PERGUNTAR</button><div className="coming">Interface pronta para conexão do backend de IA.</div></section>}
 
