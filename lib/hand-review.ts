@@ -35,21 +35,11 @@ export interface HandReviewInput{
 
 export interface HandReviewValidation{valid:boolean;missing:string[];conflicts:string[]}
 export interface HandMathResult{
-  basePot:number;
-  basePotBB:number|null;
-  potBeforeHeroAction:number;
-  potBeforeHeroActionBB:number|null;
-  potAfterActions:number;
-  potAfterActionsBB:number|null;
-  heroCallCost:number|null;
-  heroCallCostBB:number|null;
-  potOdds:number|null;
-  equityRequired:number|null;
-  effectiveStack:number|null;
-  effectiveStackBB:number|null;
-  spr:number|null;
-  alpha:number|null;
-  mdf:number|null;
+  basePot:number;basePotBB:number|null;potBeforeHeroAction:number;potBeforeHeroActionBB:number|null;potAfterActions:number;potAfterActionsBB:number|null;
+  heroCallCost:number|null;heroCallCostBB:number|null;potOdds:number|null;equityRequired:number|null;effectiveStack:number|null;effectiveStackBB:number|null;spr:number|null;alpha:number|null;mdf:number|null;
+}
+export interface PreflopAllInAssessment{
+  applies:boolean;handClass:string;estimatedJamRange:number|null;estimatedEquity:number|null;requiredEquity:number|null;margin:number|null;recommendedAction:"CALL"|"FOLD"|null;classification:"DECISÃO CORRETA"|"DECISÃO INCORRETA"|"DADOS INSUFICIENTES";reason:string;
 }
 
 export const positions:Position[]=["SB","BB","UTG1","UTG2","MP1","MP2","LJ","HJ","CO","BTN"];
@@ -81,8 +71,7 @@ export function validateHandReview(input:HandReviewInput):HandReviewValidation{
   if(!(input.heroStack&&input.heroStack>0))missing.push("STACK DO HERÓI");
   input.villainPositions.forEach(position=>{
     if(!(input.villainStacks[position]&&input.villainStacks[position]!>0))missing.push(`STACK ${position}`);
-    const action=input.villainActions[position];
-    if(!action)missing.push(`AÇÃO ${position}`);
+    const action=input.villainActions[position];if(!action)missing.push(`AÇÃO ${position}`);
     if(actionNeedsAmount(action)&&!(input.villainActionAmounts[position]&&input.villainActionAmounts[position]!>0))missing.push(`VALOR DA AÇÃO ${position}`);
   });
   const heroCards=input.heroCards.filter(Boolean);if(heroCards.length!==2)missing.push("2 CARTAS DO HERÓI");
@@ -101,39 +90,49 @@ export function effectiveStack(input:HandReviewInput){
 }
 
 export function calculateHandMath(input:HandReviewInput):HandMathResult{
-  const bb=input.bigBlind&&input.bigBlind>0?input.bigBlind:null;
-  const basePot=Math.max(0,input.pot??0);
+  const bb=input.bigBlind&&input.bigBlind>0?input.bigBlind:null;const basePot=Math.max(0,input.pot??0);
   const villainContrib=input.villainPositions.reduce((sum,position)=>sum+Math.max(0,input.villainActionAmounts[position]??0),0);
-  const heroContribution=Math.max(0,input.heroActionAmount??0);
-  const potBeforeHeroAction=basePot+villainContrib;
-  const potAfterActions=potBeforeHeroAction+heroContribution;
+  const heroContribution=Math.max(0,input.heroActionAmount??0);const potBeforeHeroAction=basePot+villainContrib;const potAfterActions=potBeforeHeroAction+heroContribution;
   const heroCallCost=input.heroAction==="CALL"&&heroContribution>0?heroContribution:null;
   const potOdds=heroCallCost!==null&&potBeforeHeroAction+heroCallCost>0?heroCallCost/(potBeforeHeroAction+heroCallCost)*100:null;
-  const eff=effectiveStack(input);
-  const spr=eff!==null&&potBeforeHeroAction>0?eff/potBeforeHeroAction:null;
-  const alpha=heroCallCost!==null&&potBeforeHeroAction+heroCallCost>0?heroCallCost/(potBeforeHeroAction+heroCallCost)*100:null;
-  const mdf=alpha!==null?100-alpha:null;
-  return{
-    basePot,basePotBB:bb?basePot/bb:null,
-    potBeforeHeroAction,potBeforeHeroActionBB:bb?potBeforeHeroAction/bb:null,
-    potAfterActions,potAfterActionsBB:bb?potAfterActions/bb:null,
-    heroCallCost,heroCallCostBB:bb&&heroCallCost!==null?heroCallCost/bb:null,
-    potOdds,equityRequired:potOdds,effectiveStack:eff,effectiveStackBB:bb&&eff!==null?eff/bb:null,spr,alpha,mdf,
-  };
+  const eff=effectiveStack(input);const spr=eff!==null&&potBeforeHeroAction>0?eff/potBeforeHeroAction:null;
+  const alpha=heroCallCost!==null&&potBeforeHeroAction+heroCallCost>0?heroCallCost/(potBeforeHeroAction+heroCallCost)*100:null;const mdf=alpha!==null?100-alpha:null;
+  return{basePot,basePotBB:bb?basePot/bb:null,potBeforeHeroAction,potBeforeHeroActionBB:bb?potBeforeHeroAction/bb:null,potAfterActions,potAfterActionsBB:bb?potAfterActions/bb:null,heroCallCost,heroCallCostBB:bb&&heroCallCost!==null?heroCallCost/bb:null,potOdds,equityRequired:potOdds,effectiveStack:eff,effectiveStackBB:bb&&eff!==null?eff/bb:null,spr,alpha,mdf};
 }
 
 export function formatBB(chips:number|null|undefined,bigBlind:number|null|undefined){if(chips===null||chips===undefined||!bigBlind||bigBlind<=0)return"— BB";return`${trim(chips/bigBlind)} BB`}
 export function trim(value:number){return Number(value.toFixed(2)).toLocaleString("pt-BR",{maximumFractionDigits:2})}
 
+function cardRank(card:Card){return card[0] as Rank}
+export function preflopHandClass(cards:Card[]){
+  if(cards.length!==2)return"";const order="23456789TJQKA";const a=cardRank(cards[0]),b=cardRank(cards[1]);
+  if(a===b)return`${a}${b}`;const hi=order.indexOf(a)>order.indexOf(b)?a:b;const lo=hi===a?b:a;const suited=cards[0].slice(-1)===cards[1].slice(-1);return`${hi}${lo}${suited?"s":"o"}`;
+}
+function estimateJamRange(input:HandReviewInput,math:HandMathResult){
+  if(!input.bigBlind||math.effectiveStackBB===null)return null;const hasJam=input.villainPositions.some(p=>input.villainActions[p]==="ALL-IN");if(!hasJam)return null;
+  const eff=math.effectiveStackBB;let width=eff<=10?18:eff<=15?14:eff<=20?11:eff<=25?8.5:6.5;
+  if(input.villainPositions.includes("BB")&&["UTG1","UTG2","MP1"].includes(input.heroPosition??"BTN"))width*=.82;
+  const notes=input.notes.toUpperCase();if(/AGRESS|3[- ]?BET ALTO|VPIP ALTO/.test(notes))width*=1.2;if(/PASSIV|NIT|3[- ]?BET BAIXO|VPIP BAIXO/.test(notes))width*=.8;
+  return Math.max(3,Math.min(24,width));
+}
+function estimateEquityVsJam(handClass:string,jamRange:number){
+  const pair:Record<string,number>={AA:81,KK:68,QQ:60,JJ:46+jamRange*.85,TT:41+jamRange*.75,"99":37+jamRange*.7,"88":34+jamRange*.65};
+  if(pair[handClass]!==undefined)return Math.max(5,Math.min(92,pair[handClass]));
+  const other:Record<string,number>={AKs:58,AKo:55,AQs:49,AQo:45,AJs:43,KQs:42};if(other[handClass]!==undefined)return Math.max(5,Math.min(92,other[handClass]+(jamRange-8)*.35));
+  return null;
+}
+export function assessPreflopAllIn(input:HandReviewInput):PreflopAllInAssessment{
+  const math=calculateHandMath(input);const handClass=preflopHandClass(input.heroCards.filter(Boolean));
+  const applies=input.street==="PREFLOP"&&input.villainPositions.some(p=>input.villainActions[p]==="ALL-IN");
+  if(!applies)return{applies:false,handClass,estimatedJamRange:null,estimatedEquity:null,requiredEquity:math.equityRequired,margin:null,recommendedAction:null,classification:"DADOS INSUFICIENTES",reason:"A calibração de all-in pré-flop não se aplica a este spot."};
+  const jamRange=estimateJamRange(input,math);const equity=jamRange!==null?estimateEquityVsJam(handClass,jamRange):null;const required=math.equityRequired;
+  if(jamRange===null||equity===null||required===null)return{applies:true,handClass,estimatedJamRange:jamRange,estimatedEquity:equity,requiredEquity:required,margin:null,recommendedAction:null,classification:"DADOS INSUFICIENTES",reason:"Faltam dados para comparar equity estimada com a equity mínima exigida pelo pote."};
+  const margin=equity-required;const recommendedAction:PreflopAllInAssessment["recommendedAction"]=margin>=0?"CALL":"FOLD";const hero=input.heroAction==="CALL"?"CALL":input.heroAction==="FOLD"?"FOLD":null;
+  const classification=hero&&hero===recommendedAction?"DECISÃO CORRETA":hero?"DECISÃO INCORRETA":"DADOS INSUFICIENTES";
+  return{applies:true,handClass,estimatedJamRange:jamRange,estimatedEquity:equity,requiredEquity:required,margin,recommendedAction,classification,reason:`${handClass} tem equity estimada de ${trim(equity)}% contra um range de shove de aproximadamente ${trim(jamRange)}%. O pote exige ${trim(required)}%. Margem: ${margin>=0?"+":""}${trim(margin)} p.p.`};
+}
+
 export function handReviewSummary(input:HandReviewInput){
-  const tournament=input.game==="TORNEIO"?`${input.tournamentTypes.join(" + ")} · ${input.tournamentPhase} · FIELD LEFT ${input.fieldLeft}`:"CASH";
-  const math=calculateHandMath(input);
-  return{
-    modality:tournament,
-    table:input.tableSize?`${input.tableSize}-MAX`:"—",
-    blinds:input.bigBlind?`BB ${input.bigBlind.toLocaleString("pt-BR")} · ANTE ${(input.ante??0).toLocaleString("pt-BR")}`:"—",
-    hero:input.heroPosition?`${input.heroPosition} · ${input.heroCards.filter(Boolean).join(" ")} · ${formatBB(input.heroStack,input.bigBlind)}`:"—",
-    villains:input.villainPositions.map(position=>`${position} ${formatBB(input.villainStacks[position],input.bigBlind)} · ${input.villainActions[position]??"—"}${input.villainActionAmounts[position]?` ${formatBB(input.villainActionAmounts[position],input.bigBlind)}`:""}`).join(" · "),
-    street:input.street,board:input.board.filter(Boolean).length?input.board.filter(Boolean).join(" "):"PREFLOP",heroAction:input.heroAction??"—",effectiveStack:math.effectiveStack,effectiveStackBB:math.effectiveStackBB,math,
-  };
+  const tournament=input.game==="TORNEIO"?`${input.tournamentTypes.join(" + ")} · ${input.tournamentPhase} · FIELD LEFT ${input.fieldLeft}`:"CASH";const math=calculateHandMath(input);
+  return{modality:tournament,table:input.tableSize?`${input.tableSize}-MAX`:"—",blinds:input.bigBlind?`BB ${input.bigBlind.toLocaleString("pt-BR")} · ANTE ${(input.ante??0).toLocaleString("pt-BR")}`:"—",hero:input.heroPosition?`${input.heroPosition} · ${input.heroCards.filter(Boolean).join(" ")} · ${formatBB(input.heroStack,input.bigBlind)}`:"—",villains:input.villainPositions.map(position=>`${position} ${formatBB(input.villainStacks[position],input.bigBlind)} · ${input.villainActions[position]??"—"}${input.villainActionAmounts[position]?` ${formatBB(input.villainActionAmounts[position],input.bigBlind)}`:""}`).join(" · "),street:input.street,board:input.board.filter(Boolean).length?input.board.filter(Boolean).join(" "):"PREFLOP",heroAction:input.heroAction??"—",effectiveStack:math.effectiveStack,effectiveStackBB:math.effectiveStackBB,math};
 }
