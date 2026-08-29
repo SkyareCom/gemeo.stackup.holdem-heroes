@@ -48,6 +48,8 @@ export type ProfileMetric = {
 export type PlayerDNA = {
   sampleSize: number;
   robustness: ReturnType<typeof profileRobustnessLabel>;
+  vpipFrequency: ProfileMetric;
+  pfrFrequency: ProfileMetric;
   aggression: ProfileMetric;
   selectivity: ProfileMetric;
   callFrequency: ProfileMetric;
@@ -97,6 +99,7 @@ function metric(hits: number, opportunities: number, label: string): ProfileMetr
 
 const aggressive = (a: PokerDecision["action"]) => ["bet", "raise", "3bet", "4bet", "allin"].includes(a);
 const voluntaryPreflop = (a: PokerDecision["action"]) => ["call", "bet", "raise", "3bet", "4bet", "allin"].includes(a);
+const preflopRaise = (a: PokerDecision["action"]) => ["raise", "3bet", "4bet", "allin"].includes(a);
 const opportunity = (decisions: PokerDecision[], kind: PokerDecision["opportunity"]) => decisions.filter(d => d.opportunity === kind);
 const aggressiveRate = (decisions: PokerDecision[], kind: PokerDecision["opportunity"], label: string) => {
   const opps = opportunity(decisions, kind);
@@ -111,6 +114,8 @@ export function buildPlayerDNA(decisions: PokerDecision[]): PlayerDNA {
 
   const vpipOpps = opportunity(decisions, "vpip");
   const vpipEntered = vpipOpps.filter(d => voluntaryPreflop(d.action)).length;
+  const pfrOpps = opportunity(decisions, "pfr");
+  const pfrRaises = pfrOpps.filter(d => preflopRaise(d.action)).length;
   const threeBetOpps = opportunity(decisions, "3bet");
   const fourBetOpps = opportunity(decisions, "4bet");
   const squeezeOpps = opportunity(decisions, "squeeze");
@@ -131,6 +136,8 @@ export function buildPlayerDNA(decisions: PokerDecision[]): PlayerDNA {
   return {
     sampleSize: actions,
     robustness: profileRobustnessLabel(actions),
+    vpipFrequency: metric(vpipEntered, vpipOpps.length, "VPIP"),
+    pfrFrequency: metric(pfrRaises, pfrOpps.length, "PFR"),
     aggression: metric(aggressiveCount, actions, "AGRESSIVIDADE"),
     selectivity: metric(vpipOpps.length - vpipEntered, vpipOpps.length, "SELETIVIDADE"),
     callFrequency: metric(calls, actions, "FREQUÊNCIA DE CALL"),
