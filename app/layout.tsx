@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
+import { Goldman } from "next/font/google";
 import "./globals.css";
 
+const goldman = Goldman({ subsets: ["latin"], weight: ["400", "700"], variable: "--font-goldman" });
+
 export const metadata: Metadata = {
-  title: "STACKUP SOLVER",
-  description: "Poker intelligence, analysis and training in one app.",
+  title: "STACKUP HOLD'EM HEROES",
+  description: "AI Poker Performance System.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" className={goldman.variable}>
       <body>{children}</body>
     </html>
   );
