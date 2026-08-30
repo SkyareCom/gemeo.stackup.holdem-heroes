@@ -1,91 +1,19 @@
 import type {PlayerDnaAnswer} from "@/lib/player-dna";
 import type {DnaDevelopmentReport} from "@/lib/player-dna-report";
 import type {GameMode,PlayerDnaSpot} from "@/data/player-dna-spots";
-import {createExchangeEnvelope,isStackupExchangeEnvelope,STACKUP_EXCHANGE_VERSION,type StackupExchangeEnvelope,type StackupSpotExchange,type StackupTrainingPrescription} from "@/lib/stackup-exchange";
+import {createExchangeEnvelope,isStackupExchangeEnvelope,STACKUP_EXCHANGE_VERSION,type StackupExchangeEnvelope,type StackupLeakExchange,type StackupSpotExchange,type StackupTrainingPrescription} from "@/lib/stackup-exchange";
 
-export type PlayerDnaExchangeInput={
-  reportId:string;
-  reportName:string;
-  mode:GameMode;
-  completedAt:number;
-  answers:PlayerDnaAnswer[];
-  spots:PlayerDnaSpot[];
-  development:DnaDevelopmentReport;
-};
-
+export type PlayerDnaExchangeInput={reportId:string;reportName:string;mode:GameMode;completedAt:number;answers:PlayerDnaAnswer[];spots:PlayerDnaSpot[];development:DnaDevelopmentReport;};
 const PLAYER_ID="local-player";
 
 export function buildPlayerDnaExchange(input:PlayerDnaExchangeInput):StackupExchangeEnvelope{
-  const byId=new Map(input.spots.map(spot=>[spot.id,spot]));
-  const spots:StackupSpotExchange[]=input.answers.flatMap((answer,index)=>{
-    const spot=byId.get(answer.spotId);if(!spot)return[];
-    const hero=spot.players.find(player=>player.hero);
-    return [{
-      exchangeVersion:STACKUP_EXCHANGE_VERSION,
-      id:`player-dna:${input.reportId}:${answer.spotId}:${index}`,
-      source:"PLAYER_DNA",
-      sourceApp:"Stackup Hold'em Solver",
-      sourceRecordId:input.reportId,
-      player:{playerId:PLAYER_ID},
-      mode:spot.mode,
-      street:spot.street,
-      heroPosition:hero?.position??null,
-      heroCards:spot.heroCards.split(" ").filter(Boolean),
-      board:spot.board?.split(" ").filter(Boolean)??[],
-      stacks:Object.fromEntries(spot.players.map(player=>[player.position,player.stack])),
-      pot:spot.pot.main,
-      actions:spot.players.filter(player=>!player.hero).map((player,sequence)=>({actor:player.position,action:player.action,amount:player.value||null,street:spot.street,sequence})),
-      selectedAction:answer.action,
-      expectedAction:null,
-      correct:null,
-      tags:[...spot.scenario],
-      leakTags:input.development.weaknesses.filter(weakness=>spot.scenario.some(tag=>weakness.trainingTag.includes(tag)||tag.includes(weakness.trainingTag))).map(weakness=>weakness.title),
-      trainingTags:input.development.weaknesses.map(weakness=>weakness.trainingTag),
-      confidence:input.development.confidence,
-      occurredAt:input.completedAt,
-      metadata:{reportName:input.reportName,prompt:spot.prompt}
-    }];
-  });
-
-  const prescriptions:StackupTrainingPrescription[]=input.development.checklist.map(item=>({
-    id:`player-dna:${input.reportId}:task:${item.id}`,
-    player:{playerId:PLAYER_ID},
-    createdBy:"PLAYER_DNA",
-    analysisId:input.reportId,
-    title:item.title,
-    reason:item.reason,
-    priority:item.priority==="MÉDIA"?"MEDIA":item.priority,
-    trainingTags:[item.trainingTag],
-    targetSpots:item.trainingTag==="PLAYER DNA RETEST"?100:50,
-    dueAt:item.dueAt,
-    status:item.status==="EM ESTUDO"?"EM_ESTUDO":item.status==="CONCLUÍDO"?"CONCLUIDO":"PENDENTE",
-    createdAt:input.completedAt
-  }));
-
-  const evidences=input.development.evidences.map((evidence,index)=>({
-    id:`player-dna:${input.reportId}:evidence:${index}`,
-    player:{playerId:PLAYER_ID},
-    source:"PLAYER_DNA" as const,
-    sourceRecordId:input.reportId,
-    metric:`scenario:${evidence.label}`,
-    value:evidence.percent,
-    weight:evidence.total,
-    confidence:input.development.confidence,
-    tags:[evidence.label],
-    explanation:evidence.explanation,
-    createdAt:input.completedAt
-  }));
-
-  return createExchangeEnvelope({producer:"Stackup Hold'em Solver",player:{playerId:PLAYER_ID},spots,evidences,prescriptions,evolution:[{
-    id:`player-dna:${input.reportId}:evolution`,player:{playerId:PLAYER_ID},analysisId:input.reportId,createdAt:input.completedAt,confidence:input.development.confidence,
-    metrics:{evolutionScore:input.development.evolutionScore},activeLeaks:input.development.weaknesses.map(weakness=>weakness.title),improvedLeaks:[]
-  }]});
+ const byId=new Map(input.spots.map(spot=>[spot.id,spot]));
+ const spots:StackupSpotExchange[]=input.answers.flatMap((answer,index)=>{const spot=byId.get(answer.spotId);if(!spot)return[];const hero=spot.players.find(player=>player.hero);return[{exchangeVersion:STACKUP_EXCHANGE_VERSION,id:`player-dna:${input.reportId}:${answer.spotId}:${index}`,source:"PLAYER_DNA",sourceApp:"Stackup Hold'em Solver",sourceRecordId:input.reportId,player:{playerId:PLAYER_ID},mode:spot.mode,street:spot.street,heroPosition:hero?.position??null,heroCards:spot.heroCards.split(" ").filter(Boolean),board:spot.board?.split(" ").filter(Boolean)??[],stacks:Object.fromEntries(spot.players.map(player=>[player.position,player.stack])),pot:spot.pot.main,actions:spot.players.filter(player=>!player.hero).map((player,sequence)=>({actor:player.position,action:player.action,amount:player.value||null,street:spot.street,sequence})),selectedAction:answer.action,expectedAction:null,correct:null,tags:[...spot.scenario],leakTags:input.development.weaknesses.filter(w=>spot.scenario.some(tag=>w.trainingTag.includes(tag)||tag.includes(w.trainingTag))).map(w=>w.title),trainingTags:input.development.weaknesses.map(w=>w.trainingTag),confidence:input.development.confidence,occurredAt:input.completedAt,metadata:{reportName:input.reportName,prompt:spot.prompt}}]});
+ const evidences=input.development.evidences.map((evidence,index)=>({id:`player-dna:${input.reportId}:evidence:${index}`,player:{playerId:PLAYER_ID},source:"PLAYER_DNA" as const,sourceRecordId:input.reportId,metric:`scenario:${evidence.label}`,value:evidence.percent,weight:evidence.total,confidence:input.development.confidence,sampleSize:evidence.total,tags:[evidence.label],explanation:evidence.explanation,createdAt:input.completedAt}));
+ const evidenceIds=evidences.map(row=>row.id);
+ const leaks:StackupLeakExchange[]=input.development.weaknesses.map((weakness,index)=>({id:`player-dna:${input.reportId}:leak:${index}`,player:{playerId:PLAYER_ID},analysisId:input.reportId,title:weakness.title,description:weakness.why,severity:weakness.severity==="MÉDIA"?"MEDIA":weakness.severity as "ALTA"|"BAIXA",confidence:input.development.confidence,sourceEvidenceIds:evidenceIds,trainingTags:[weakness.trainingTag],firstSeenAt:input.completedAt,lastSeenAt:input.completedAt,status:"ATIVO"}));
+ const prescriptions:StackupTrainingPrescription[]=input.development.checklist.map((item,index)=>({id:`player-dna:${input.reportId}:task:${item.id}`,player:{playerId:PLAYER_ID},createdBy:"PLAYER_DNA",analysisId:input.reportId,leakId:leaks[index]?.id,title:item.title,reason:item.reason,priority:item.priority==="MÉDIA"?"MEDIA":item.priority,trainingTags:[item.trainingTag],targetSpots:item.trainingTag==="PLAYER DNA RETEST"?100:50,dueAt:item.dueAt,status:item.status==="EM ESTUDO"?"EM_ESTUDO":item.status==="CONCLUÍDO"?"CONCLUIDO":"PENDENTE",createdAt:input.completedAt}));
+ return createExchangeEnvelope({producer:"Stackup Hold'em Solver",player:{playerId:PLAYER_ID},spots,evidences,leaks,prescriptions,evolution:[{id:`player-dna:${input.reportId}:evolution`,player:{playerId:PLAYER_ID},analysisId:input.reportId,createdAt:input.completedAt,confidence:input.development.confidence,metrics:{evolutionScore:input.development.evolutionScore},activeLeaks:leaks.map(leak=>leak.title),improvedLeaks:[]}]});
 }
-
 export type ImportedTrainingBundle={prescriptions:StackupTrainingPrescription[];spots:StackupSpotExchange[];producer:string;exportedAt:number};
-
-export function parsePlayerDnaExchange(text:string):ImportedTrainingBundle{
-  const parsed:unknown=JSON.parse(text);
-  if(!isStackupExchangeEnvelope(parsed))throw new Error("Arquivo STACKUP EXCHANGE inválido ou versão incompatível.");
-  return{prescriptions:parsed.prescriptions??[],spots:parsed.spots??[],producer:parsed.producer,exportedAt:parsed.exportedAt};
-}
+export function parsePlayerDnaExchange(text:string):ImportedTrainingBundle{const parsed:unknown=JSON.parse(text);if(!isStackupExchangeEnvelope(parsed))throw new Error("Arquivo STACKUP EXCHANGE inválido ou versão incompatível.");return{prescriptions:parsed.prescriptions??[],spots:parsed.spots??[],producer:parsed.producer,exportedAt:parsed.exportedAt};}
