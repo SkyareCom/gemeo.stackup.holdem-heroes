@@ -7,6 +7,7 @@ import {
   type Card,type FieldLeft,type HandAction,type HandGameMode,type HandReviewInput,type Position,type Rank,type Street,type Suit,type TableSize,type TournamentPhase,type TournamentType,
 } from "@/lib/hand-review";
 import type {VisionHandDraft} from "@/lib/vision-hand-draft";
+import HandReviewIntelligencePanel from "./HandReviewIntelligencePanel";
 import styles from "./HandReviewWorkspace.module.css";
 
 type PickerTarget={kind:"hero"|"board";index:number}|null;
@@ -168,6 +169,7 @@ function Analysis({input,onBack,onReset}:{input:HandReviewInput;onBack:()=>void;
     <div className={styles.verdict}><small>VEREDITO MATEMÁTICO</small><strong>{mathReason}</strong></div>
     <div className={styles.analysisGrid}><AnalysisCard title="O QUE ACONTECEU" text={`${summary.hero} enfrenta ${input.villainPositions.join(", ")} em ${input.street}. O pote passou de ${formatBB(math.basePot,input.bigBlind)} para ${formatBB(math.potAfterActions,input.bigBlind)} após as ações registradas.`}/><AnalysisCard title="ANÁLISE" text={`STACK EFETIVO ${formatBB(math.effectiveStack,input.bigBlind)}. SPR ${math.spr!==null?trim(math.spr):"—"}. ${math.potOdds!==null?`POT ODDS ${trim(math.potOdds)}%.`:"SEM CALL, POT ODDS NÃO SE APLICA."} ${input.notes?`OBSERVAÇÕES CONSIDERADAS: ${input.notes}`:"SEM OBSERVAÇÕES ADICIONAIS."}`}/><AnalysisCard title="MELHOR LINHA" text="A camada matemática está ativa e não inventa equity. A recomendação estratégica final deve comparar equity/ranges com estes thresholds exatos antes de classificar a ação."/><AnalysisCard title="ALTERNATIVAS" text="Cada alternativa poderá ser comparada contra o mesmo estado reconstruído do pote, evitando inconsistência de pot odds entre call, raise e all-in."/><AnalysisCard title="PONTO PRINCIPAL DA MÃO" text="Pote e valores de ação agora são dados estruturados. O sistema soma cada contribuição uma vez e separa POT ANTES DO HERÓI de POT APÓS AS AÇÕES."/></div>
     <div className={styles.metrics}><Metric label="STACK EFETIVO" value={math.effectiveStackBB!==null?`${trim(math.effectiveStackBB)} BB · EXACT`:"DADOS INSUFICIENTES"}/><Metric label="POT ANTES DO HERÓI" value={`${formatBB(math.potBeforeHeroAction,input.bigBlind)} · EXACT`}/><Metric label="POT ODDS" value={math.potOdds!==null?`${trim(math.potOdds)}% · EXACT`:"NÃO SE APLICA"}/><Metric label="EQUITY MÍNIMA" value={math.equityRequired!==null?`${trim(math.equityRequired)}% · EXACT`:"NÃO SE APLICA"}/><Metric label="SPR" value={math.spr!==null?`${trim(math.spr)} · EXACT`:"DADOS INSUFICIENTES"}/><Metric label="MDF" value={math.mdf!==null?`${trim(math.mdf)}% · EXACT`:"NÃO SE APLICA"}/></div>
+    <HandReviewIntelligencePanel input={input}/>
     <button className="primary" onClick={onReset}>NOVA MÃO</button></div>;
 }
 
