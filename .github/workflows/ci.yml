@@ -2,9 +2,10 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, work/ui-sync-2026-08-29]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -15,5 +16,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
       - run: npm install --no-audit --no-fund
       - run: npm run build
