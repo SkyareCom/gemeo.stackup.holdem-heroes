@@ -1,0 +1,137 @@
+/* UI sync 2026-08-29 · canonical visual overrides */
+:root{
+  --ui-gap:6px;
+  --ui-title:16px;
+  --ui-subtitle:14px;
+  --ui-text:12px;
+  --ui-active-bg:#67d992;
+  --ui-active-border:#8cf0b2;
+  --ui-active-text:#031008;
+  --ui-idle-border:#245239;
+  --ui-radius:12px;
+}
+
+/* Three-level typography only */
+h1,h2,h3,h4,h5,h6,.brand,.section-title,[class*="blockTitle"],[class*="stepHead"] strong{
+  font-size:var(--ui-title)!important;
+  line-height:1.25!important;
+}
+.eyebrow,label,[class*="label"],[class*="sectionTitle"],[class*="subhead"],[class*="progressHead"]{
+  font-size:var(--ui-subtitle)!important;
+  line-height:1.3!important;
+}
+p,small,span,strong,button,input,textarea,select,option,[class*="value"],[class*="participants"],[class*="helper"],[class*="muted"]{
+  font-size:var(--ui-text)!important;
+  line-height:1.4!important;
+}
+.brand,.topbar .brand{font-size:var(--ui-title)!important}
+
+/* Global card spacing */
+.modules,.spot-grid,.metrics,.dna-metrics,.action-grid,.calc-grid,.scenario,
+[class*="Grid"],[class*="grid"],[class*="players"],[class*="actions"],[class*="resultGrid"],
+[class*="stepGrid"],[class*="moneyGrid"],[class*="positionGrid"],[class*="analysisGrid"],[class*="summary"],
+[class*="setup"],[class*="session"],[class*="workspace"],[class*="result"]{
+  gap:var(--ui-gap)!important;
+  row-gap:var(--ui-gap)!important;
+  column-gap:var(--ui-gap)!important;
+}
+
+/* Main action buttons and every selected/active button share one visual state */
+.primary,
+button.active,
+button[aria-selected="true"],
+button[aria-pressed="true"],
+[class*="modeButtonActive"],
+[class*="choice"][class*="active"],
+[class*="tab"][class*="active"]{
+  background:var(--ui-active-bg)!important;
+  color:var(--ui-active-text)!important;
+  border:1px solid var(--ui-active-border)!important;
+  border-radius:var(--ui-radius)!important;
+  box-shadow:inset 0 0 0 1px rgba(141,227,167,.2),0 0 14px rgba(65,151,91,.12)!important;
+  opacity:1!important;
+}
+button{border-radius:var(--ui-radius)!important}
+button:disabled,[aria-disabled="true"]{opacity:.35!important;cursor:not-allowed!important}
+
+/* Every selected/highlighted useful card uses the same green state */
+.selected,.highlighted,
+[class*="selected"],[class*="Selected"],
+[class*="highlighted"],[class*="Highlighted"]{
+  border-color:var(--ui-active-border)!important;
+  background:var(--ui-active-bg)!important;
+  color:var(--ui-active-text)!important;
+}
+
+/* Player DNA: wrappers are structural only; inner useful cards retain borders */
+[class*="block"]:has([class*="boardRow"]),
+[class*="block"]:has([class*="players"]){
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  padding-left:0!important;
+  padding-right:0!important;
+}
+[class*="boardRow"],[class*="playerRow"]{
+  border:1px solid var(--ui-idle-border)!important;
+  border-radius:var(--ui-radius)!important;
+}
+[class*="playerRow"][class*="hero"]{
+  border-color:var(--ui-active-border)!important;
+  background:var(--ui-active-bg)!important;
+  color:var(--ui-active-text)!important;
+  box-shadow:inset 0 0 0 1px rgba(141,227,167,.16)!important;
+}
+[class*="playerRow"][class*="hero"] *{color:var(--ui-active-text)!important}
+
+/* Player card redistribution without increasing row height: position, cards, then three distinct information rows */
+[class*="playerRow"]{
+  display:grid!important;
+  grid-template-columns:minmax(64px,.78fr) minmax(78px,.95fr) minmax(116px,1.35fr)!important;
+  grid-template-rows:repeat(3,minmax(0,1fr))!important;
+  column-gap:var(--ui-gap)!important;
+  row-gap:2px!important;
+  align-items:center!important;
+  padding:8px 10px!important;
+  min-height:0!important;
+}
+[class*="playerRow"]>[class*="cell"]:nth-child(1){grid-column:1;grid-row:1/4;align-self:center}
+[class*="playerRow"]>[class*="cell"]:nth-child(2){grid-column:2;grid-row:1/4;align-self:center}
+[class*="playerRow"]>[class*="cell"]:nth-child(3){grid-column:3;grid-row:1}
+[class*="playerRow"]>[class*="cell"]:nth-child(4){grid-column:3;grid-row:2}
+[class*="playerRow"]>[class*="cell"]:nth-child(5){grid-column:3;grid-row:3}
+[class*="playerRow"]>[class*="cell"]{min-width:0!important;padding-right:2px!important}
+[class*="playerRow"] [class*="label"]{display:block!important;margin:0 0 2px!important;white-space:nowrap!important}
+[class*="playerRow"]>[class*="cell"]:nth-child(3),
+[class*="playerRow"]>[class*="cell"]:nth-child(4),
+[class*="playerRow"]>[class*="cell"]:nth-child(5){
+  display:grid!important;
+  grid-template-columns:minmax(92px,auto) minmax(0,1fr)!important;
+  align-items:center!important;
+  gap:var(--ui-gap)!important;
+}
+[class*="playerRow"]>[class*="cell"]:nth-child(3) [class*="label"],
+[class*="playerRow"]>[class*="cell"]:nth-child(4) [class*="label"],
+[class*="playerRow"]>[class*="cell"]:nth-child(5) [class*="label"]{margin:0!important}
+[class*="playerRow"]>[class*="cell"]:nth-child(5) [class*="label"]{font-size:0!important}
+[class*="playerRow"]>[class*="cell"]:nth-child(5) [class*="label"]::after{content:"VALOR DA AÇÃO";font-size:var(--ui-subtitle)!important}
+[class*="playerRow"] [class*="cards"],[class*="playerRow"] [class*="closedCards"]{gap:var(--ui-gap)!important}
+
+/* Board/pot separation */
+[class*="boardRow"]{margin-bottom:var(--ui-gap)!important}
+[class*="potRows"]{margin-top:var(--ui-gap)!important}
+
+/* Hand-review headers/configuration must scroll naturally */
+[class*="history"],[class*="History"],[class*="config"],[class*="Config"],
+[class*="intro"],[class*="sectionHead"]{
+  position:static!important;
+  top:auto!important;
+  z-index:auto!important;
+}
+
+@media(max-width:800px){
+  [class*="playerRow"]{
+    grid-template-columns:minmax(58px,.72fr) minmax(66px,.9fr) minmax(108px,1.3fr)!important;
+    padding:7px 8px!important;
+  }
+}
