@@ -6,7 +6,6 @@ import HandReviewWorkspace from "@/components/HandReviewWorkspace";
 import PokerAssistantWorkspace from "@/components/PokerAssistantWorkspace";
 import MathLabWorkspace from "@/components/MathLabWorkspace";
 import StackupEvolutionWorkspace from "@/components/StackupEvolutionWorkspace";
-import StackupTrainingWorkspace from "@/components/StackupTrainingWorkspace";
 
 type Module="profile"|"hands"|"ai"|"math";
 
@@ -23,7 +22,7 @@ export default function Home(){
     <header className="topbar"><div><span className="brand">STACKUP HOLD&apos;EM HEROES</span></div><span className="status">● AI POKER PERFORMANCE SYSTEM</span></header>
     <section className="hero"><p>AI POKER<br/>PERFORMANCE<br/>SYSTEM.</p><h1>UM JOGADOR.<br/><em>QUATRO MÓDULOS.</em><br/>UMA EVOLUÇÃO.</h1></section>
     <nav className="modules">{modules.map(item=><button key={item.id} className={module===item.id?"active":""} onClick={()=>setModule(item.id)}><small>{item.kicker}</small>{item.title}</button>)}</nav>
-    {module==="profile"&&<section className="panel profile-panel"><StackupEvolutionWorkspace/><StackupTrainingWorkspace/><PlayerDnaWorkspace/></section>}
+    {module==="profile"&&<section className="panel profile-panel"><StackupEvolutionWorkspace/><PlayerDnaWorkspace/></section>}
     {module==="hands"&&<section className="panel"><HandReviewWorkspace/></section>}
     {module==="ai"&&<section className="panel"><PokerAssistantWorkspace/></section>}
     {module==="math"&&<section className="panel"><MathLabWorkspace/></section>}
