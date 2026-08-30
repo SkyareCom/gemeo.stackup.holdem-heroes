@@ -1,5 +1,5 @@
 import type {DnaDevelopmentReport} from "./player-dna-report";
-import type {StackupDailyPulseMessage,StackupDailyPulsePreference,StackupGameMode,StackupLeakExchange,StackupPlayerRef,StackupSpotExchange,StackupSource,StackupTrainingPrescription} from "./stackup-exchange";
+import type {StackupDailyPulseMessage,StackupDailyPulsePreference,StackupLeakExchange,StackupPlayerRef,StackupSpotExchange,StackupSource,StackupTrainingPrescription} from "./stackup-exchange";
 
 export type DailyPulseCandidate={kind:StackupDailyPulseMessage["kind"];title:string;body:string;conceptTags:string[];leakTags:string[];trainingTags:string[];difficulty:number;source:StackupSource;sourceRecordId?:string|null;spot?:StackupSpotExchange|null;options?:{id:string;label:string}[];correctOptionId?:string|null;explanation?:string|null;priority:number};
 
@@ -9,7 +9,7 @@ const FACTS:DailyPulseCandidate[]=[
 ];
 
 export function candidatesFromPlayerDna(report:DnaDevelopmentReport,analysisId:string):DailyPulseCandidate[]{
- const weakness=report.weaknesses.map((w,i)=>({kind:"REVISAO_LEAK" as const,title:"REVISÃO DE LEAK",body:`${w.title}: ${w.why}`,conceptTags:[w.trainingTag],leakTags:[w.title],trainingTags:[w.trainingTag],difficulty:w.severity==="ALTA"?4:w.severity==="MEDIA"?3:2,source:"PLAYER_DNA" as const,sourceRecordId:analysisId,explanation:`Treino recomendado: ${w.trainingTag}.`,priority:100-i*5}));
+ const weakness=report.weaknesses.map((w,i)=>({kind:"REVISAO_LEAK" as const,title:"REVISÃO DE LEAK",body:`${w.title}: ${w.why}`,conceptTags:[w.trainingTag],leakTags:[w.title],trainingTags:[w.trainingTag],difficulty:w.severity==="ALTA"?4:w.severity==="MÉDIA"?3:2,source:"PLAYER_DNA" as const,sourceRecordId:analysisId,explanation:`Treino recomendado: ${w.trainingTag}.`,priority:100-i*5}));
  const checklist=report.checklist.filter(i=>i.status!=="CONCLUÍDO").map((item,i)=>({kind:"CONCEITO" as const,title:"FOCO DE EVOLUÇÃO",body:item.reason,conceptTags:[item.trainingTag],leakTags:[],trainingTags:[item.trainingTag],difficulty:item.priority==="ALTA"?4:3,source:"PLAYER_DNA" as const,sourceRecordId:analysisId,priority:75-i}));
  return [...weakness,...checklist];
 }
@@ -32,5 +32,5 @@ export function buildDailyPulseQueue(args:{player:StackupPlayerRef;preference:St
 function score(c:DailyPulseCandidate,p:StackupDailyPulsePreference,recent:Set<string>){let n=c.priority;if(p.prioritizeLeaks&&c.leakTags.length)n+=30;if(p.spacedRepetition&&c.kind==="REVISAO_LEAK")n+=15;if([...c.leakTags,...c.trainingTags,...c.conceptTags].some(t=>recent.has(t)))n-=25;return n}
 function scheduleAt(p:StackupDailyPulsePreference,index:number,now:number){const raw=p.preferredTimes?.[index];if(!raw)return now+(index+1)*60*60*1000;const [h,m]=raw.split(":").map(Number);const d=new Date(now);d.setHours(Number.isFinite(h)?h:12,Number.isFinite(m)?m:0,0,0);if(d.getTime()<now)d.setDate(d.getDate()+1);return d.getTime()}
 function spotPrompt(s:StackupSpotExchange){const hero=(s.context?.heroCards??s.heroCards??[]).join(" ");const board=(s.context?.board??s.board??[]).join(" ");const pos=s.context?.heroPosition??s.heroPosition??"HERO";return `${s.mode} · ${s.street} · ${pos}${hero?` · ${hero}`:""}${board?` · BOARD ${board}`:""}. Qual é a melhor ação?`}
-function actionOptions(s:StackupSpotExchange){const values=[...(s.acceptedActions??[]),...(s.expectedAction?[s.expectedAction]:[]),"FOLD","CALL","RAISE","ALL-IN"].filter((v,i,a)=>v&&a.indexOf(v)===i).slice(0,4);return values.map((label,i)=>({id:String.fromCharCode(65+i),label}))}
+function actionOptions(s:StackupSpotExchange){const expected=s.expectedAction?[s.expectedAction]:[];const values=[...expected,...(s.acceptedActions??[]),"FOLD","CALL","RAISE","ALL-IN"].filter((v,i,a)=>v&&a.indexOf(v)===i).slice(0,4);return values.map((label,i)=>({id:String.fromCharCode(65+i),label}))}
 function correctOption(s:StackupSpotExchange){if(!s.expectedAction)return null;const opts=actionOptions(s);return opts.find(o=>o.label===s.expectedAction)?.id??null}
