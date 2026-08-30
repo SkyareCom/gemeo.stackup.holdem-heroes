@@ -5,6 +5,7 @@ import {buildBalancedSpotSession} from "@/lib/player-dna-sampler";
 import {buildPlayerDnaExchange} from "@/lib/player-dna-exchange";
 import type {DnaDevelopmentReport} from "@/lib/player-dna-report";
 import type {PlayerDnaAnswer} from "@/lib/player-dna";
+import type {StackupSpotExchange} from "@/lib/stackup-exchange";
 import {playerDnaSpots,type GameMode} from "@/data/player-dna-spots";
 import {evolutionSummary,importLegacyHandReviews,readEvolutionLibrary,topLeakTags,upsertEvolutionEnvelope,type StackupEvolutionLibrary,type StackupEvolutionRecord} from "@/lib/stackup-evolution-store";
 
@@ -19,75 +20,19 @@ export default function StackupEvolutionWorkspace(){
  const summary=useMemo(()=>evolutionSummary(library),[library]);
  const leakTags=useMemo(()=>topLeakTags(summary.activeLeaks),[summary.activeLeaks]);
  const selected=library.records.find(record=>record.id===selectedId)??null;
-
  useEffect(()=>{sync()},[]);
- function sync(){
-  try{
-   importLegacyHandReviews(localStorage);
-   const raw=localStorage.getItem(PLAYER_DNA_KEY);
-   if(raw){
-    const parsed=JSON.parse(raw) as {reports?:LegacyDnaReport[]};
-    for(const report of parsed.reports??[]){
-     if(!report?.id||!report?.development||!Array.isArray(report.answers))continue;
-     const spots=buildBalancedSpotSession(playerDnaSpots,report.mode,report.target,report.sessionSeed);
-     const envelope=buildPlayerDnaExchange({reportId:report.id,reportName:report.name,mode:report.mode,completedAt:report.completedAt,answers:report.answers,spots,development:report.development});
-     upsertEvolutionEnvelope(envelope,"PLAYER_DNA",report.name,localStorage);
-    }
-   }
-   setLibrary(readEvolutionLibrary(localStorage));
-  }catch{}
- }
- function refresh(){sync()}
+ function sync(){try{importLegacyHandReviews(localStorage);const raw=localStorage.getItem(PLAYER_DNA_KEY);if(raw){const parsed=JSON.parse(raw) as {reports?:LegacyDnaReport[]};for(const report of parsed.reports??[]){if(!report?.id||!report?.development||!Array.isArray(report.answers))continue;const spots=buildBalancedSpotSession(playerDnaSpots,report.mode,report.target,report.sessionSeed);const envelope=buildPlayerDnaExchange({reportId:report.id,reportName:report.name,mode:report.mode,completedAt:report.completedAt,answers:report.answers,spots,development:report.development});upsertEvolutionEnvelope(envelope,"PLAYER_DNA",report.name,localStorage)}}setLibrary(readEvolutionLibrary(localStorage))}catch{}}
  function openRecord(record:StackupEvolutionRecord){setSelectedId(record.id);setOpen(true)}
-
- return <section style={{marginBottom:16,border:"1px solid rgba(92,187,126,.28)",borderRadius:16,padding:16,background:"rgba(7,20,12,.78)"}}>
-  <div style={{display:"flex",justifyContent:"space-between",gap:10,alignItems:"center",flexWrap:"wrap"}}>
-   <div><div className="eyebrow">STACKUP INTELLIGENCE</div><h3 style={{margin:"6px 0"}}>ANÁLISES & EVOLUÇÃO</h3><p style={{margin:0,opacity:.72,fontSize:12}}>PLAYER DNA, análises de mãos, leaks e treinos no mesmo histórico.</p></div>
-   <div style={{display:"flex",gap:8,flexWrap:"wrap"}}><button type="button" onClick={refresh}>ATUALIZAR</button><button type="button" className="primary" onClick={()=>{setOpen(v=>!v);if(open)setSelectedId(null)}}>{open?"FECHAR HISTÓRICO":"ABRIR HISTÓRICO"}</button></div>
-  </div>
-  <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(140px,1fr))",gap:8,marginTop:12}}>
-   <Info label="ANÁLISES" value={String(summary.records)}/><Info label="PLAYER DNA" value={String(summary.playerDna)}/><Info label="MÃOS" value={String(summary.handReviews)}/><Info label="LEAKS ATIVOS" value={String(summary.activeLeaks.length)}/><Info label="TREINOS PENDENTES" value={String(summary.pendingTraining.length)}/>
-  </div>
-  {leakTags.length>0&&<div style={{marginTop:10,fontSize:12,opacity:.8}}>FOCOS ATUAIS: {leakTags.map(([tag,count])=>`${tag} (${count})`).join(" · ")}</div>}
-
-  {selected&&<RecordDetail record={selected} onBack={()=>setSelectedId(null)}/>} 
-
-  {open&&!selected&&<div style={{display:"grid",gap:8,marginTop:14}}>{library.records.length===0?<small>NENHUMA EVIDÊNCIA REGISTRADA AINDA.</small>:library.records.map(record=>{
-   const spots=record.envelope.spots?.length??0;const leaks=record.envelope.leaks?.filter(l=>l.status!=="RESOLVIDO").length??0;const training=record.envelope.prescriptions?.filter(p=>p.status!=="CONCLUIDO").length??0;
-   return <button type="button" key={record.id} onClick={()=>openRecord(record)} style={{textAlign:"left",padding:12,border:"1px solid rgba(92,187,126,.16)",borderRadius:10,background:"rgba(255,255,255,.02)",color:"inherit",cursor:"pointer"}}><div style={{display:"flex",justifyContent:"space-between",gap:8,flexWrap:"wrap"}}><strong>{record.title}</strong><span style={{fontSize:11,opacity:.62}}>{record.source}</span></div><small style={{display:"block",marginTop:5,opacity:.7}}>{new Date(record.createdAt).toLocaleString("pt-BR")} · {spots} SPOTS · {leaks} LEAKS · {training} TREINOS</small><small style={{display:"block",marginTop:7,opacity:.82}}>ABRIR DETALHES →</small></button>
-  })}</div>}
+ return <section style={{marginBottom:16,border:"1px solid rgba(92,187,126,.28)",borderRadius:16,padding:16,background:"rgba(7,20,12,.78)"}}><div style={{display:"flex",justifyContent:"space-between",gap:10,alignItems:"center",flexWrap:"wrap"}}><div><div className="eyebrow">STACKUP INTELLIGENCE</div><h3 style={{margin:"6px 0"}}>ANÁLISES & EVOLUÇÃO</h3><p style={{margin:0,opacity:.72,fontSize:12}}>PLAYER DNA, análises de mãos, leaks e treinos no mesmo histórico.</p></div><div style={{display:"flex",gap:8,flexWrap:"wrap"}}><button type="button" onClick={sync}>ATUALIZAR</button><button type="button" className="primary" onClick={()=>{setOpen(v=>!v);if(open)setSelectedId(null)}}>{open?"FECHAR HISTÓRICO":"ABRIR HISTÓRICO"}</button></div></div>
+ <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(140px,1fr))",gap:8,marginTop:12}}><Info label="ANÁLISES" value={String(summary.records)}/><Info label="PLAYER DNA" value={String(summary.playerDna)}/><Info label="MÃOS" value={String(summary.handReviews)}/><Info label="LEAKS ATIVOS" value={String(summary.activeLeaks.length)}/><Info label="TREINOS PENDENTES" value={String(summary.pendingTraining.length)}/></div>
+ {leakTags.length>0&&<div style={{marginTop:10,fontSize:12,opacity:.8}}>FOCOS ATUAIS: {leakTags.map(([tag,count])=>`${tag} (${count})`).join(" · ")}</div>}
+ {selected&&<RecordDetail record={selected} onBack={()=>setSelectedId(null)}/>} 
+ {open&&!selected&&<div style={{display:"grid",gap:8,marginTop:14}}>{library.records.length===0?<small>NENHUMA EVIDÊNCIA REGISTRADA AINDA.</small>:library.records.map(record=>{const spots=record.envelope.spots?.length??0;const leaks=record.envelope.leaks?.filter(l=>l.status!=="RESOLVIDO").length??0;const training=record.envelope.prescriptions?.filter(p=>p.status!=="CONCLUIDO").length??0;return <button type="button" key={record.id} onClick={()=>openRecord(record)} style={{textAlign:"left",padding:12,border:"1px solid rgba(92,187,126,.16)",borderRadius:10,background:"rgba(255,255,255,.02)",color:"inherit",cursor:"pointer"}}><div style={{display:"flex",justifyContent:"space-between",gap:8,flexWrap:"wrap"}}><strong>{record.title}</strong><span style={{fontSize:11,opacity:.62}}>{record.source}</span></div><small style={{display:"block",marginTop:5,opacity:.7}}>{new Date(record.createdAt).toLocaleString("pt-BR")} · {spots} SPOTS · {leaks} LEAKS · {training} TREINOS</small><small style={{display:"block",marginTop:7,opacity:.82}}>ABRIR DETALHES →</small></button>})}</div>}
  </section>
 }
 
-function RecordDetail({record,onBack}:{record:StackupEvolutionRecord;onBack:()=>void}){
- const spot=record.envelope.spots?.[0];
- const leaks=record.envelope.leaks??[];
- const prescriptions=record.envelope.prescriptions??[];
- const evolution=record.envelope.evolution?.[0];
- const dnaReport=readDnaReport(record);
- return <div style={{marginTop:16,borderTop:"1px solid rgba(92,187,126,.18)",paddingTop:14}}>
-  <div style={{display:"flex",justifyContent:"space-between",gap:8,alignItems:"center",flexWrap:"wrap"}}><div><small style={{opacity:.6}}>{record.source} · {new Date(record.createdAt).toLocaleString("pt-BR")}</small><h3 style={{margin:"5px 0"}}>{record.title}</h3></div><button type="button" onClick={onBack}>← LINHA DO TEMPO</button></div>
-  {record.source==="PLAYER_DNA"&&dnaReport?<PlayerDnaDetail report={dnaReport}/>:<HandDetail spot={spot}/>} 
-  <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(140px,1fr))",gap:8,marginTop:10}}><Info label="LEAKS" value={String(leaks.length)}/><Info label="TREINOS" value={String(prescriptions.length)}/><Info label="SPOTS" value={String(record.envelope.spots?.length??0)}/><Info label="CONFIANÇA" value={evolution?.confidence!=null?`${evolution.confidence}%`:spot?.confidence!=null?`${spot.confidence}%`:"—"}/></div>
-  {leaks.length>0&&<div style={{display:"grid",gap:8,marginTop:12}}>{leaks.map(leak=><div key={leak.id} style={{padding:12,border:"1px solid rgba(255,170,80,.2)",borderRadius:10}}><small>{leak.severity} · LEAK</small><strong style={{display:"block",marginTop:4}}>{leak.title}</strong><p style={{margin:"5px 0 0",fontSize:12,opacity:.76}}>{leak.description}</p></div>)}</div>}
-  {prescriptions.length>0&&<div style={{display:"grid",gap:8,marginTop:12}}>{prescriptions.map(item=><div key={item.id} style={{padding:12,border:"1px solid rgba(92,187,126,.18)",borderRadius:10}}><small>{item.priority} · {item.status}</small><strong style={{display:"block",marginTop:4}}>{item.title}</strong><p style={{margin:"5px 0 0",fontSize:12,opacity:.76}}>{item.targetSpots} SPOTS · {item.trainingTags.join(" · ")}</p></div>)}</div>}
- </div>
-}
-
-function PlayerDnaDetail({report}:{report:LegacyDnaReport}){
- const scores=report.result?.scores??{};
- return <div><div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(140px,1fr))",gap:8,marginTop:10}}><Info label="PERFIL" value={report.development.archetype}/><Info label="EVOLUTION SCORE" value={`${report.development.evolutionScore}/100`}/><Info label="CONFIANÇA" value={`${report.development.confidence}%`}/><Info label="SPOTS" value={String(report.answers.length)}/></div><div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(120px,1fr))",gap:8,marginTop:8}}>{Object.entries(scores).map(([label,value])=><Info key={label} label={label.toUpperCase()} value={`${value}%`}/>)}</div>{report.development.strengths.length>0&&<p style={{fontSize:12,opacity:.78}}>FORÇAS: {report.development.strengths.join(" · ")}</p>}</div>
-}
-
-function HandDetail({spot}:{spot:StackupEvolutionRecord["envelope"]["spots"] extends Array<infer T>|undefined?T|undefined:never}){
- if(!spot)return <p style={{fontSize:12,opacity:.72}}>DETALHES ESTRUTURADOS NÃO DISPONÍVEIS.</p>;
- const decision=spot.decision?.outcome??"NAO_AVALIADA";
- const board=Array.isArray(spot.board)?spot.board.join(" "):"";
- return <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(140px,1fr))",gap:8,marginTop:10}}><Info label="MODALIDADE" value={spot.mode}/><Info label="STREET" value={spot.street}/><Info label="HERÓI" value={spot.heroPosition??"—"}/><Info label="CARTAS" value={Array.isArray(spot.heroCards)?spot.heroCards.join(" "):"—"}/><Info label="BOARD" value={board||"PRÉ-FLOP"}/><Info label="RESULTADO" value={decision}/><Info label="AÇÃO" value={spot.selectedAction??"—"}/><Info label="ESPERADA" value={spot.expectedAction??"—"}/></div>
-}
-
-function readDnaReport(record:StackupEvolutionRecord):LegacyDnaReport|null{
- if(typeof window==="undefined"||record.source!=="PLAYER_DNA")return null;
- try{const raw=localStorage.getItem(PLAYER_DNA_KEY);const parsed=raw?JSON.parse(raw) as {reports?:LegacyDnaReport[]}:{};const sourceId=record.envelope.spots?.[0]?.sourceRecordId??record.id;return(parsed.reports??[]).find(report=>report.id===sourceId||report.id===record.id)??null}catch{return null}
-}
+function RecordDetail({record,onBack}:{record:StackupEvolutionRecord;onBack:()=>void}){const spot=record.envelope.spots?.[0];const leaks=record.envelope.leaks??[];const prescriptions=record.envelope.prescriptions??[];const evolution=record.envelope.evolution?.[0];const dnaReport=readDnaReport(record);return <div style={{marginTop:16,borderTop:"1px solid rgba(92,187,126,.18)",paddingTop:14}}><div style={{display:"flex",justifyContent:"space-between",gap:8,alignItems:"center",flexWrap:"wrap"}}><div><small style={{opacity:.6}}>{record.source} · {new Date(record.createdAt).toLocaleString("pt-BR")}</small><h3 style={{margin:"5px 0"}}>{record.title}</h3></div><button type="button" onClick={onBack}>← LINHA DO TEMPO</button></div>{record.source==="PLAYER_DNA"&&dnaReport?<PlayerDnaDetail report={dnaReport}/>:<HandDetail spot={spot}/>}<div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(140px,1fr))",gap:8,marginTop:10}}><Info label="LEAKS" value={String(leaks.length)}/><Info label="TREINOS" value={String(prescriptions.length)}/><Info label="SPOTS" value={String(record.envelope.spots?.length??0)}/><Info label="CONFIANÇA" value={evolution?.confidence!=null?`${evolution.confidence}%`:spot?.confidence!=null?`${spot.confidence}%`:"—"}/></div>{leaks.length>0&&<div style={{display:"grid",gap:8,marginTop:12}}>{leaks.map(leak=><div key={leak.id} style={{padding:12,border:"1px solid rgba(255,170,80,.2)",borderRadius:10}}><small>{leak.severity} · LEAK</small><strong style={{display:"block",marginTop:4}}>{leak.title}</strong><p style={{margin:"5px 0 0",fontSize:12,opacity:.76}}>{leak.description}</p></div>)}</div>}{prescriptions.length>0&&<div style={{display:"grid",gap:8,marginTop:12}}>{prescriptions.map(item=><div key={item.id} style={{padding:12,border:"1px solid rgba(92,187,126,.18)",borderRadius:10}}><small>{item.priority} · {item.status}</small><strong style={{display:"block",marginTop:4}}>{item.title}</strong><p style={{margin:"5px 0 0",fontSize:12,opacity:.76}}>{item.targetSpots} SPOTS · {item.trainingTags.join(" · ")}</p></div>)}</div>}</div>}
+function PlayerDnaDetail({report}:{report:LegacyDnaReport}){const scores=report.result?.scores??{};return <div><div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(140px,1fr))",gap:8,marginTop:10}}><Info label="PERFIL" value={report.development.archetype}/><Info label="EVOLUTION SCORE" value={`${report.development.evolutionScore}/100`}/><Info label="CONFIANÇA" value={`${report.development.confidence}%`}/><Info label="SPOTS" value={String(report.answers.length)}/></div><div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(120px,1fr))",gap:8,marginTop:8}}>{Object.entries(scores).map(([label,value])=><Info key={label} label={label.toUpperCase()} value={`${value}%`}/>)}</div>{report.development.strengths.length>0&&<p style={{fontSize:12,opacity:.78}}>FORÇAS: {report.development.strengths.join(" · ")}</p>}</div>}
+function HandDetail({spot}:{spot?:StackupSpotExchange}){if(!spot)return <p style={{fontSize:12,opacity:.72}}>DETALHES ESTRUTURADOS NÃO DISPONÍVEIS.</p>;const decision=spot.decision?.outcome??"NAO_AVALIADA";const board=Array.isArray(spot.board)?spot.board.join(" "):"";return <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(140px,1fr))",gap:8,marginTop:10}}><Info label="MODALIDADE" value={spot.mode}/><Info label="STREET" value={spot.street}/><Info label="HERÓI" value={spot.heroPosition??"—"}/><Info label="CARTAS" value={Array.isArray(spot.heroCards)?spot.heroCards.join(" "):"—"}/><Info label="BOARD" value={board||"PRÉ-FLOP"}/><Info label="RESULTADO" value={decision}/><Info label="AÇÃO" value={spot.selectedAction??"—"}/><Info label="ESPERADA" value={spot.expectedAction??"—"}/></div>}
+function readDnaReport(record:StackupEvolutionRecord):LegacyDnaReport|null{if(typeof window==="undefined"||record.source!=="PLAYER_DNA")return null;try{const raw=localStorage.getItem(PLAYER_DNA_KEY);const parsed=raw?JSON.parse(raw) as {reports?:LegacyDnaReport[]}:{};const sourceId=record.envelope.spots?.[0]?.sourceRecordId??record.id;return(parsed.reports??[]).find(report=>report.id===sourceId||report.id===record.id)??null}catch{return null}}
 function Info({label,value}:{label:string;value:string}){return <div style={{padding:10,border:"1px solid rgba(92,187,126,.14)",borderRadius:9}}><small style={{display:"block",opacity:.55}}>{label}</small><b>{value}</b></div>}
