@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { Goldman } from "next/font/google";
+import { Changa } from "next/font/google";
 import "./globals.css";
 
-const goldman = Goldman({ subsets: ["latin"], weight: ["400", "700"], variable: "--font-goldman" });
+const changa = Changa({ subsets: ["latin"], variable: "--font-changa" });
 
 export const metadata: Metadata = {
   title: "STACKUP HOLD'EM HEROES",
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="pt-BR" className={goldman.variable}>
+    <html lang="pt-BR" className={changa.variable}>
       <body>{children}</body>
     </html>
   );
