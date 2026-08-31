@@ -1,4 +1,5 @@
 import Link from "next/link";
 import PlayerDnaWorkspace from "@/components/PlayerDnaWorkspace";
+import BackButton from "@/components/BackButton";
 
-export default function PlayerDnaPage(){return <main className="module-page player-dna-page"><Link className="module-back" href="/">← MÓDULOS</Link><section className="panel profile-panel"><PlayerDnaWorkspace/></section></main>}
+export default function PlayerDnaPage(){return <main className="module-page player-dna-page"><nav className="module-navigation" aria-label="Navegação do módulo"><BackButton eventName="player-dna-previous"/><Link className="module-back" href="/">MÓDULOS</Link></nav><section className="panel profile-panel"><PlayerDnaWorkspace/></section></main>}

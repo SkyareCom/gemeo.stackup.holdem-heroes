@@ -1,6 +1,6 @@
 "use client";
 
-import {useEffect,useMemo,useState,type ReactNode} from "react";
+import {useEffect,useMemo,useState} from "react";
 import {evaluatePlayerDna,type PlayerDnaAnswer} from "@/lib/player-dna";
 import {buildBalancedSpotSession} from "@/lib/player-dna-sampler";
 import {playerDnaSpots,type GameMode,type PlayerAction,type PlayerDnaSpot} from "@/data/player-dna-spots";
@@ -20,6 +20,7 @@ const emptyLibrary:DnaLibrary={active:null,reports:[]};
 export default function PlayerDnaWorkspace(){
   const[mode,setMode]=useState<GameMode>("CASH");
   const[target,setTarget]=useState<number|null>(null);
+  const[selectedDepth,setSelectedDepth]=useState<number|null>(null);
   const[index,setIndex]=useState(0);
   const[answers,setAnswers]=useState<PlayerDnaAnswer[]>([]);
   const[selectedAction,setSelectedAction]=useState<PlayerAction|null>(null);
@@ -70,7 +71,19 @@ export default function PlayerDnaWorkspace(){
     });
   },[hydrated,target,finished,answers,mode,index,sessionSeed,result]);
 
-  function start(depth:number){const seed=Date.now();setSelectedReportId(null);setHistoryOpen(false);setSessionSeed(seed);setTarget(depth);setIndex(0);setAnswers([]);setSelectedAction(null);setFinished(false)}
+  useEffect(()=>{
+    const previous=()=>{
+      if(editingId){setEditingId(null);setEditingName("");return}
+      if(selectedReportId){setSelectedReportId(null);return}
+      if(historyOpen){setHistoryOpen(false);return}
+      if(target!==null||finished){leave();return}
+      window.location.assign("/");
+    };
+    window.addEventListener("player-dna-previous",previous);
+    return()=>window.removeEventListener("player-dna-previous",previous);
+  },[editingId,selectedReportId,historyOpen,target,finished]);
+
+  function start(depth:number){const selectedMode=(document.querySelector<HTMLInputElement>('input[name="player-dna-mode"]:checked')?.value as GameMode|undefined)??mode;const seed=Date.now();setSelectedDepth(depth);setMode(selectedMode);setSelectedReportId(null);setHistoryOpen(false);setSessionSeed(seed);setTarget(depth);setIndex(0);setAnswers([]);setSelectedAction(null);setFinished(false);window.requestAnimationFrame(()=>document.querySelector(".profile-panel")?.scrollIntoView({behavior:"smooth",block:"start"}))}
   function leave(){setTarget(null);setIndex(0);setAnswers([]);setSelectedAction(null);setFinished(false);setSelectedReportId(null)}
   function continueSaved(){const saved=library.active;if(!saved)return;setSelectedReportId(null);setHistoryOpen(false);setMode(saved.mode);setTarget(saved.target);setIndex(Math.min(saved.index,Math.max(0,saved.target-1)));setAnswers(saved.answers);setSelectedAction(null);setFinished(false);setSessionSeed(saved.sessionSeed)}
   function resetAll(){try{localStorage.removeItem(STORAGE_KEY);localStorage.removeItem(LEGACY_STORAGE_KEY)}catch{}setLibrary(emptyLibrary);setSelectedReportId(null);setHistoryOpen(false);setEditingId(null);setTarget(null);setIndex(0);setAnswers([]);setSelectedAction(null);setFinished(false);setSessionSeed(1)}
@@ -91,26 +104,79 @@ export default function PlayerDnaWorkspace(){
 
   if(target===null)return <div className={styles.setup}>
     <div><div className="eyebrow">PLAYER DNA</div><h2>DESCUBRA SEU PERFIL</h2><p className="setup-intro">Escolha a modalidade e a profundidade da análise. Seu progresso e seus relatórios ficam salvos neste dispositivo.</p></div>
-    {library.active&&<div style={{border:"1px solid rgba(92,187,126,.28)",borderRadius:16,padding:16,background:"rgba(9,31,18,.62)",display:"grid",gap:12}}><div style={{display:"flex",justifyContent:"space-between",gap:12,alignItems:"center",flexWrap:"wrap"}}><div><div className="eyebrow">ANÁLISE SALVA</div><strong style={{display:"block",marginTop:4}}>{library.active.mode} · {library.active.answers.length} / {library.active.target} SPOTS</strong><small style={{opacity:.65}}>CONTINUE EXATAMENTE DO PONTO EM QUE PAROU</small></div><strong>{Math.round((Math.min(library.active.answers.length,library.active.target)/library.active.target)*100)}%</strong></div><div className={styles.track}><i style={{width:`${(Math.min(library.active.answers.length,library.active.target)/library.active.target)*100}%`}}/></div><div style={{display:"flex",gap:8,flexWrap:"wrap"}}><button type="button" className="primary" onClick={continueSaved}>CONTINUAR ANÁLISE</button></div></div>}
-    <div className={`${styles.modeGrid} mode-choices`}><button type="button" aria-pressed={mode==="CASH"} className={`${styles.modeButton} ${mode==="CASH"?styles.modeButtonActive:""}`} onClick={()=>setMode("CASH")}><strong>CASH</strong></button><button type="button" aria-pressed={mode==="TORNEIO"} className={`${styles.modeButton} ${mode==="TORNEIO"?styles.modeButtonActive:""}`} onClick={()=>setMode("TORNEIO")}><strong>TORNEIO</strong></button></div>
-    <div className={`${styles.depthGrid} depth-choices`}>{depths.map(n=><button type="button" key={n} onClick={()=>start(n)}><strong>{n}</strong><span>SPOTS</span></button>)}</div>
-    <div className="history-panel" style={{border:"1px solid rgba(92,187,126,.22)",borderRadius:16,padding:16,background:"rgba(5,20,12,.7)",display:"grid",gap:12}}><div style={{display:"flex",justifyContent:"space-between",gap:12,alignItems:"center",flexWrap:"wrap"}}><div><div className="eyebrow history-eyebrow">RELATÓRIOS E HISTÓRICO</div><strong className="history-count" style={{display:"block",marginTop:4}}>{library.reports.length} {library.reports.length===1?"ANÁLISE CONCLUÍDA":"ANÁLISES CONCLUÍDAS"}</strong><small className="history-description" style={{opacity:.65}}>ACESSE RESULTADOS FINAIS, DATAS E NOMES DAS SUAS ANÁLISES.</small></div><button type="button" aria-expanded={historyOpen} className={`${styles.modeButton} history-action`} style={{minHeight:44}} onClick={()=>setHistoryOpen(v=>!v)}><strong>{historyOpen?"FECHAR":"ABRIR HISTÓRICO"}</strong></button></div>
+    <div className={`${styles.modeGrid} mode-choices`}>
+      {(["CASH","TORNEIO"] as const).map(option=><label key={option} className={styles.modeButton}><input type="radio" name="player-dna-mode" value={option} defaultChecked={mode===option}/><strong>{option}</strong></label>)}
+    </div>
+    <div className={`${styles.depthGrid} depth-choices`}>{depths.map(n=><button type="button" key={n} aria-pressed={selectedDepth===n} onPointerDown={()=>setSelectedDepth(n)} onClick={()=>start(n)}><strong>{n}</strong><span>SPOTS</span></button>)}</div>
+    <div className="saved-analysis-panel" style={{border:"1px solid rgba(92,187,126,.28)",borderRadius:16,padding:16,background:"rgba(9,31,18,.62)",display:"grid",gap:12}}>
+      <div>
+        <div className="eyebrow saved-analysis-title">ANÁLISE SALVA</div>
+        {library.active?<>
+          <strong className="saved-analysis-status" style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:6,flexWrap:"nowrap",width:"100%",marginTop:4}}>
+            <span>{library.active.mode} · {library.active.answers.length} / {library.active.target} SPOTS</span>
+            <span style={{marginLeft:"auto",textAlign:"right"}}>{Math.round((Math.min(library.active.answers.length,library.active.target)/library.active.target)*100)}%</span>
+          </strong>
+          <small className="saved-analysis-description">CONTINUE EXATAMENTE DO PONTO EM QUE PAROU</small>
+        </>:<>
+          <strong className="saved-analysis-status" style={{display:"block",marginTop:4}}>NENHUMA ANÁLISE EM ANDAMENTO</strong>
+          <small className="saved-analysis-description">ESCOLHA A MODALIDADE E O NÚMERO DE SPOTS PARA COMEÇAR.</small>
+        </>}
+      </div>
+      {library.active&&<div className={styles.track}><i style={{width:`${(Math.min(library.active.answers.length,library.active.target)/library.active.target)*100}%`}}/></div>}
+      <div style={{display:"flex",gap:8,flexWrap:"wrap"}}><button type="button" className="primary" onClick={continueSaved} disabled={!library.active}>CONTINUAR ANÁLISE</button></div>
+    </div>
+    <div className="history-panel" style={{border:"1px solid rgba(92,187,126,.22)",borderRadius:16,padding:16,background:"rgba(5,20,12,.7)",display:"grid",gap:12}}><div style={{display:"flex",justifyContent:"space-between",gap:12,alignItems:"center",flexWrap:"wrap"}}><div><div className="eyebrow history-eyebrow">RELATÓRIOS E HISTÓRICO</div><strong className="history-count" style={{display:"block",marginTop:4}}>{library.reports.length} {library.reports.length===1?"ANÁLISE CONCLUÍDA":"ANÁLISES CONCLUÍDAS"}</strong><small className="history-description" style={{opacity:.65}}>ACESSE RESULTADOS FINAIS, DATAS E NOMES DAS SUAS ANÁLISES.</small></div><div className="history-actions"><button type="button" aria-expanded={historyOpen} className={`${styles.modeButton} history-action`} onClick={()=>setHistoryOpen(v=>!v)}><strong>{historyOpen?"FECHAR":"ABRIR HISTÓRICO"}</strong></button><button type="button" className={`${styles.modeButton} history-action`} onClick={resetAll}><strong>ZERAR HISTÓRICO</strong></button></div></div>
       {historyOpen&&<div style={{display:"grid",gap:10}}>{library.reports.length===0?<small style={{opacity:.58}}>NENHUM RELATÓRIO CONCLUÍDO AINDA.</small>:library.reports.map(report=><div key={report.id} style={{border:"1px solid rgba(92,187,126,.16)",borderRadius:12,padding:12,display:"grid",gap:10}}>{editingId===report.id?<div style={{display:"flex",gap:8,flexWrap:"wrap"}}><input value={editingName} onChange={e=>setEditingName(e.target.value)} maxLength={60} style={{flex:"1 1 220px",minHeight:42,borderRadius:9,border:"1px solid rgba(92,187,126,.25)",background:"#061009",color:"#e8f5ec",padding:"0 12px"}}/><button type="button" className="primary" onClick={saveRename} disabled={!editingName.trim()}>SALVAR NOME</button><button type="button" className={styles.modeButton} onClick={()=>{setEditingId(null);setEditingName("")}}><strong>CANCELAR</strong></button></div>:<div style={{display:"flex",justifyContent:"space-between",gap:12,alignItems:"center",flexWrap:"wrap"}}><div><strong>{report.name}</strong><small style={{display:"block",opacity:.62,marginTop:4}}>{report.mode} · {report.target} SPOTS · {new Date(report.completedAt).toLocaleDateString("pt-BR")} · {report.result.label}</small></div><div style={{display:"flex",gap:7,flexWrap:"wrap"}}><button type="button" className="primary" onClick={()=>setSelectedReportId(report.id)}>VER RELATÓRIO</button><button type="button" className={styles.modeButton} onClick={()=>beginRename(report)}><strong>EDITAR NOME</strong></button><button type="button" className={styles.modeButton} onClick={()=>deleteReport(report.id)}><strong>EXCLUIR</strong></button></div></div>}</div>)}</div>}
-      <div style={{display:"flex",justifyContent:"flex-end"}}><button type="button" className={`${styles.modeButton} history-action`} style={{minHeight:44}} onClick={resetAll}><strong>ZERAR TUDO</strong></button></div></div>
+    </div>
   </div>;
 
   if(finished&&result)return <div className={styles.result}><div><span className="tag">PLAYER DNA · {mode}</span><h3>{result.label}</h3><p>{answers.length} / {target} SPOTS CONCLUÍDOS · RELATÓRIO SALVO NO HISTÓRICO</p></div><div className={styles.resultGrid}><Metric label="AGRESSÃO" value={`${result.scores.aggression}%`}/><Metric label="DISCIPLINA" value={`${result.scores.discipline}%`}/><Metric label="PRESSÃO" value={`${result.scores.pressure}%`}/><Metric label="PASSIVIDADE" value={`${result.scores.passivity}%`}/></div><button type="button" className="primary" onClick={leave}>VOLTAR AOS RELATÓRIOS</button></div>;
   if(!spot)return <div className={styles.result}><h3>DADOS INSUFICIENTES</h3><button type="button" className="primary" onClick={leave}>VOLTAR</button></div>;
 
-  return <div className={styles.session}><div className={styles.progressHead}><span>SPOT {answers.length+1} / {target}</span><strong>{Math.round((answers.length/target)*100)}%</strong></div><div className={styles.track}><i style={{width:`${(answers.length/target)*100}%`}}/></div><Board spot={spot}/><Pot spot={spot}/><Players spot={spot}/><p className={styles.prompt}>QUAL A SUA AÇÃO?</p><div className={styles.actions}>{spot.actions.map(action=><button type="button" aria-pressed={selectedAction===action} className={selectedAction===action?styles.actionSelected:""} key={action} onClick={()=>chooseAction(action)}>{action}</button>)}</div><Scenario spot={spot}/><div style={{display:"flex",justifyContent:"space-between",gap:8,flexWrap:"wrap",marginTop:12}}><button type="button" className={styles.modeButton} style={{minHeight:44}} onClick={leave}><strong>SALVAR ANÁLISE E SAIR</strong></button><button type="button" className="primary" onClick={nextSpot} disabled={!selectedAction}>PRÓXIMO</button></div></div>;
+  return <div className={`${styles.session} training-session`}><div className={styles.progressHead}><span>SPOT {answers.length+1} / {target}</span><strong>{Math.round((answers.length/target)*100)}%</strong></div><div className={styles.track}><i style={{width:`${(answers.length/target)*100}%`}}/></div><Level spot={spot}/><Board spot={spot}/><Pot spot={spot}/><Players spot={spot}/><p className={styles.prompt}>QUAL A SUA AÇÃO?</p><div className={styles.actions}>{spot.actions.map(action=><button type="button" aria-pressed={selectedAction===action} className={selectedAction===action?styles.actionSelected:""} key={action} onClick={()=>chooseAction(action)}>{action}</button>)}</div><Scenario spot={spot}/><div className="training-footer" style={{display:"flex",justifyContent:"space-between",gap:8,flexWrap:"wrap",marginTop:12}}><button type="button" className={styles.modeButton} onClick={leave}><strong>SALVAR ANÁLISE E SAIR</strong></button><button type="button" className="primary" aria-disabled={!selectedAction} onClick={nextSpot}>PRÓXIMO</button></div></div>;
 }
 
 function ReportView({report,onBack,onRename}:{report:DnaReport;onBack:()=>void;onRename:()=>void}){return <div className={styles.result}><div><span className="tag">RELATÓRIO PLAYER DNA · {report.mode}</span><h3>{report.name}</h3><p>{new Date(report.completedAt).toLocaleString("pt-BR")} · {report.answers.length} / {report.target} SPOTS</p></div><div className={styles.resultGrid}><Metric label="AGRESSÃO" value={`${report.result.scores.aggression}%`}/><Metric label="DISCIPLINA" value={`${report.result.scores.discipline}%`}/><Metric label="PRESSÃO" value={`${report.result.scores.pressure}%`}/><Metric label="PASSIVIDADE" value={`${report.result.scores.passivity}%`}/></div><div style={{border:"1px solid rgba(92,187,126,.2)",borderRadius:14,padding:14}}><small style={{opacity:.62}}>CLASSIFICAÇÃO FINAL</small><strong style={{display:"block",marginTop:5}}>{report.result.label}</strong></div><div style={{display:"flex",gap:8,flexWrap:"wrap"}}><button type="button" className="primary" onClick={onBack}>VOLTAR AO HISTÓRICO</button><button type="button" className={styles.modeButton} style={{minHeight:44}} onClick={onRename}><strong>EDITAR NOME</strong></button></div></div>}
 function Board({spot}:{spot:PlayerDnaSpot}){const cards=spot.board?.split(" ").filter(Boolean)??[];return <section className={styles.block}><h4 className={styles.blockTitle}>BOARD</h4><div className={styles.boardRow}><span className={styles.badge}>{spot.street}</span>{cards.length>0&&<div className={styles.cards}>{cards.map(card=><span className={styles.card} key={card}>{card}</span>)}</div>}</div></section>}
 function Pot({spot}:{spot:PlayerDnaSpot}){return <section className={styles.block}><h4 className={styles.blockTitle}>POT</h4><div className={styles.potRows}><div className={styles.potRow}><span className={styles.badge}>MAIN</span><span className={styles.potValue}>{fmt(spot.pot.main,spot.mode)}</span><span className={styles.participants}>{spot.players.map(p=>p.position).join(" · ")}</span></div>{spot.pot.sides?.map((side,i)=><div className={styles.potRow} key={i}><span className={styles.badge}>SIDE {i+1}</span><span className={styles.potValue}>{fmt(side.value,spot.mode)}</span><span className={styles.participants}>{side.players.join(" · ")}</span></div>)}</div></section>}
-function Players({spot}:{spot:PlayerDnaSpot}){return <section className={styles.block}><h4 className={styles.blockTitle}>JOGADORES</h4><div className={styles.players}>{spot.players.map(player=><div className={`${styles.playerRow} ${player.hero?styles.hero:""}`} key={player.position}><Cell label="POSIÇÃO"><span className={styles.badge}>{player.position}</span></Cell><Cell label="CARTAS">{player.hero?<div className={styles.cards}>{spot.heroCards.split(" ").map(card=><span className={styles.card} key={card}>{card}</span>)}</div>:<div className={styles.closedCards}><span className={styles.closed}/><span className={styles.closed}/></div>}</Cell><Cell label="STACK"><span className={styles.value}>{fmt(player.stack,spot.mode)}</span></Cell><Cell label="AÇÃO"><span className={styles.value}>{player.hero?"---":player.action}</span></Cell><Cell label="VALOR"><span className={styles.value}>{player.hero?"---":player.value===0?"---":fmt(player.value,spot.mode)}</span></Cell></div>)}</div></section>}
+function Level({spot}:{spot:PlayerDnaSpot}){
+  const phase=spot.scenario.find(item=>["EARLY GAME","MID GAME","BOLHA","ITM","FT"].includes(item))??(spot.mode==="CASH"?"CASH":"TORNEIO");
+  const tournamentLevels:Record<string,{sb:string;bb:string;ante:string}>={"EARLY GAME":{sb:"100",bb:"200",ante:"20"},"MID GAME":{sb:"500",bb:"1.000",ante:"100"},BOLHA:{sb:"1.000",bb:"2.000",ante:"200"},ITM:{sb:"1.500",bb:"3.000",ante:"300"},FT:{sb:"2.500",bb:"5.000",ante:"500"}};
+  const level=tournamentLevels[phase]??{sb:"0,5 BB",bb:"1 BB",ante:""};
+  return <section className={`${styles.block} ${styles.levelCard}`}><div className={styles.levelTitle}><h4 className={styles.blockTitle}>NÍVEL</h4><span className={styles.badge}>{phase}</span></div><div className={styles.levelValues}><div><span>SB</span><strong>{level.sb}</strong></div><div><span>BB</span><strong>{level.bb}</strong></div>{spot.mode==="TORNEIO"&&<div><span>ANTE</span><strong>{level.ante}</strong></div>}</div></section>
+}
+
+type ActionLine={id:string;street:PlayerDnaSpot["street"];position:string;action:string;stack:number;fold?:boolean};
+const streetOrder:PlayerDnaSpot["street"][]=["PREFLOP","FLOP","TURN","RIVER"];
+function actionLines(spot:PlayerDnaSpot){
+  const opponents=spot.players.filter(player=>!player.hero);
+  const currentIndex=streetOrder.indexOf(spot.street);
+  const previous:ActionLine[]=[];
+  streetOrder.slice(0,currentIndex).forEach((street,streetIndex)=>{
+    const player=opponents[streetIndex%Math.max(1,opponents.length)];
+    if(player)previous.push({id:`${spot.id}-${street}-history`,street,position:player.position,action:street==="PREFLOP"?"RAISE":"BET",stack:player.stack});
+  });
+  const current=opponents.map((player,index)=>({id:`${spot.id}-${spot.street}-${player.position}-${index}`,street:spot.street,position:player.position,action:player.action,stack:player.stack,fold:player.action==="FOLD"}));
+  return{previous,current};
+}
+
+function Players({spot}:{spot:PlayerDnaSpot}){
+  const flow=useMemo(()=>actionLines(spot),[spot]);
+  const[visible,setVisible]=useState<ActionLine[]>(flow.previous);
+  useEffect(()=>{
+    setVisible(flow.previous);
+    const timers:number[]=[];
+    flow.current.forEach((line,index)=>{
+      timers.push(window.setTimeout(()=>{
+        setVisible(rows=>[...rows,line]);
+        if(line.fold)timers.push(window.setTimeout(()=>setVisible(rows=>rows.filter(row=>row.id!==line.id)),1400));
+      },index*1000));
+    });
+    return()=>timers.forEach(timer=>window.clearTimeout(timer));
+  },[flow]);
+  return <section className={`${styles.block} ${styles.actionsCard}`}><div className={styles.actionsCardTitle}><span className={styles.badge}>{spot.street}</span><h4>JOGADORES COM AÇÃO</h4></div><div className={styles.actionHistory}>{visible.map(line=><div className={`${styles.actionLine} ${line.fold?styles.foldLine:""}`} key={line.id}><span className={styles.badge}>{line.position}</span><span className={styles.actionBadge}>{line.street!==spot.street?`${line.street} · `:""}{line.action}</span><span className={styles.actionStack}>{fmt(line.stack,spot.mode)}</span></div>)}</div></section>
+}
 function Scenario({spot}:{spot:PlayerDnaSpot}){return <section className={styles.block}><h4 className={styles.blockTitle}>CENÁRIO</h4><div className={styles.scenario}>{spot.scenario.map(item=><span className={styles.badge} key={item}>{item}</span>)}</div></section>}
-function Cell({label,children}:{label:string;children:ReactNode}){return <div className={styles.cell}><span className={styles.label}>{label}</span>{children}</div>}
 function Metric({label,value}:{label:string;value:string}){return <div className="metric"><small>{label}</small><strong>{value}</strong></div>}
 function fmt(value:number,mode:GameMode){return mode==="TORNEIO"?`${trim(value)} BB`:`${Math.round(value)}K`}
 function trim(value:number){return Number.isInteger(value)?String(value):value.toFixed(1)}
