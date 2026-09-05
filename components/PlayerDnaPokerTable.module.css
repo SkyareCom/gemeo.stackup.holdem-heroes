@@ -1,1 +1,1 @@
-.stage{display:flex;justify-content:center;width:100%;padding:12px 0 44px}.tableWrap{width:min(96vw,500px);margin:0 auto}.tableWrap svg{display:block;width:100%;height:auto;overflow:visible}.activeSeat{filter:brightness(1.08)}.actionBadge{transition:transform .25s ease}@media(max-width:430px){.stage{padding-top:6px}.tableWrap{width:98vw}}
+.host{display:block;width:100%;padding:8px 0 18px;isolation:isolate}
