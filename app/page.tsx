@@ -1,4 +1,5 @@
 import Link from "next/link";
+import "./home-cards.css";
 
 const modules = [
   {href:"/player-dna",line1:"PLAYER",line2:"DNA",description:"DESCUBRA SEU PERFIL DE DECISÕES EM DIFERENTES CENÁRIOS DE JOGO."},
