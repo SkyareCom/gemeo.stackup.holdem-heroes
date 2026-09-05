@@ -5,40 +5,26 @@
   --pd-accent:#009929;
   --pd-text:#ede6db;
 }
-
-/* Five-color palette for the full Player DNA screen. */
-html body main.player-dna-page{
-  background:var(--pd-bg)!important;
-  color:var(--pd-text)!important;
-}
+html body main.player-dna-page{background:var(--pd-bg)!important;color:var(--pd-text)!important}
 html body main.player-dna-page .profile-panel,
 html body main.player-dna-page .saved-analysis-panel,
 html body main.player-dna-page .history-panel,
 html body main.player-dna-page [class*="levelCard"],
 html body main.player-dna-page [class*="actionsCard"],
 html body main.player-dna-page [class*="heroContent"],
-html body main.player-dna-page [class*="levelSummary"]{
-  background:var(--pd-surface)!important;
-  border-color:var(--pd-border)!important;
-}
+html body main.player-dna-page [class*="levelSummary"]{background:var(--pd-surface)!important;border-color:var(--pd-border)!important}
 html body main.player-dna-page button,
 html body main.player-dna-page a.module-back,
 html body main.player-dna-page .mode-choices>label,
 html body main.player-dna-page .depth-choices>button,
 html body main.player-dna-page [class*="badge"],
-html body main.player-dna-page [class*="Badge"]{
-  background:var(--pd-surface)!important;
-  border-color:var(--pd-border)!important;
-  color:var(--pd-text)!important;
-}
+html body main.player-dna-page [class*="Badge"]{background:var(--pd-surface)!important;border-color:var(--pd-border)!important;color:var(--pd-text)!important}
 html body main.player-dna-page button:hover,
 html body main.player-dna-page button:focus-visible,
 html body main.player-dna-page button[aria-pressed="true"],
 html body main.player-dna-page .mode-choices>label:has(input:checked),
 html body main.player-dna-page a.module-back:hover,
-html body main.player-dna-page a.module-back:focus-visible{
-  border-color:var(--pd-accent)!important;
-}
+html body main.player-dna-page a.module-back:focus-visible{border-color:var(--pd-accent)!important}
 html body main.player-dna-page h1,
 html body main.player-dna-page h2,
 html body main.player-dna-page h3,
@@ -49,10 +35,7 @@ html body main.player-dna-page p,
 html body main.player-dna-page small,
 html body main.player-dna-page span,
 html body main.player-dna-page .eyebrow,
-html body main.player-dna-page .tag{
-  color:var(--pd-text)!important;
-  -webkit-text-fill-color:var(--pd-text)!important;
-}
+html body main.player-dna-page .tag{color:var(--pd-text)!important;-webkit-text-fill-color:var(--pd-text)!important}
 html body main.player-dna-page .setup-intro,
 html body main.player-dna-page .analysis-balance-note,
 html body main.player-dna-page .saved-analysis-status,
@@ -62,114 +45,41 @@ html body main.player-dna-page [class*="levelNumber"],
 html body main.player-dna-page [class*="label"],
 html body main.player-dna-page [class*="badge"],
 html body main.player-dna-page [class*="Badge"],
-html body main.player-dna-page .depth-choices button span{
-  color:var(--pd-accent)!important;
-  -webkit-text-fill-color:var(--pd-accent)!important;
-}
-html body main.player-dna-page [class*="track"]{
-  background:var(--pd-surface)!important;
-}
-html body main.player-dna-page [class*="track"] i{
-  background:var(--pd-accent)!important;
-}
+html body main.player-dna-page .depth-choices button span{color:var(--pd-accent)!important;-webkit-text-fill-color:var(--pd-accent)!important}
+html body main.player-dna-page [class*="track"]{background:var(--pd-surface)!important}
+html body main.player-dna-page [class*="track"] i{background:var(--pd-accent)!important}
+.player-dna-page .mode-choices{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+.player-dna-page .mode-choices label strong{font-size:14px!important}
+.player-dna-page .mode-choices label small{font-size:10px!important}
+.player-dna-page .depth-choices button strong{font-size:28px!important}
+.player-dna-page .depth-choices button span{font-size:10px!important}
+.player-dna-page [class*="blockTitle"]{font-size:10px!important}
+.player-dna-page [class*="levelValues"] span,.player-dna-page [class*="levelNumber"]{font-size:12px!important}
+.player-dna-page [class*="levelValues"] strong,.player-dna-page [class*="levelSummary"] strong{font-size:12px!important}
+.player-dna-page .training-session [class*="actions"] button,.player-dna-page .training-session [class*="sizingActions"] button{font-size:12px!important}
+.player-dna-page [class*="badge"],.player-dna-page [class*="Badge"]{font-size:10px!important}
 
-.player-dna-page .mode-choices{
-  grid-template-columns:repeat(3,minmax(0,1fr))!important;
-}
-.player-dna-page .mode-choices label strong{
-  font-size:14px!important;
-}
-.player-dna-page .mode-choices label small{
-  font-size:10px!important;
-}
-.player-dna-page .depth-choices button strong{
-  font-size:28px!important;
-}
-.player-dna-page .depth-choices button span{
-  font-size:10px!important;
-}
-.player-dna-page [class*="blockTitle"]{
-  font-size:10px!important;
-}
-.player-dna-page [class*="levelValues"] span,
-.player-dna-page [class*="levelNumber"]{
-  font-size:12px!important;
-}
-.player-dna-page [class*="levelValues"] strong,
-.player-dna-page [class*="levelSummary"] strong{
-  font-size:12px!important;
-}
-.player-dna-page .training-session [class*="actions"] button,
-.player-dna-page .training-session [class*="sizingActions"] button{
-  font-size:12px!important;
-}
-.player-dna-page [class*="badge"],
-.player-dna-page [class*="Badge"]{
-  font-size:10px!important;
-}
-
-/* Setup section titles: Configurações, Análises, Histórico, Relatórios. */
-html body main.player-dna-page section.profile-panel h2,
-html body main.player-dna-page section.profile-panel .eyebrow.saved-analysis-title,
-html body main.player-dna-page section.profile-panel .eyebrow.history-eyebrow,
-html body main.player-dna-page section.profile-panel .history-panel::before{
-  color:var(--pd-text)!important;
-  -webkit-text-fill-color:var(--pd-text)!important;
+/* Exact setup headings. */
+html body main.player-dna-page section.panel.profile-panel div.saved-analysis-panel div.eyebrow.saved-analysis-title,
+html body main.player-dna-page section.panel.profile-panel div.history-panel div.eyebrow.history-eyebrow,
+html body main.player-dna-page section.panel.profile-panel div.history-panel::before{
+  color:#ede6db!important;
+  -webkit-text-fill-color:#ede6db!important;
   font-size:16px!important;
-  line-height:1.15!important;
+  line-height:18px!important;
+  font-weight:400!important;
   letter-spacing:.02em!important;
+  text-transform:uppercase!important;
 }
+html body main.player-dna-page section.panel.profile-panel h2{
+  color:#ede6db!important;
+  -webkit-text-fill-color:#ede6db!important;
+  font-size:16px!important;
+  line-height:18px!important;
+}
+html body main.player-dna-page section.panel.profile-panel > div > div:first-child > div.eyebrow{font-size:20px!important;line-height:1.08!important}
+.player-dna-page .history-panel{position:relative!important;display:grid!important}
+html body main.player-dna-page section.panel.profile-panel div.history-panel::before{content:"RELATÓRIOS"!important;display:block!important;margin:4px 0 0!important}
 
-/* Keep PLAYER DNA as the module identifier, separate from the four section titles. */
-html body main.player-dna-page section.profile-panel > div > div:first-child > div.eyebrow{
-  font-size:20px!important;
-  line-height:1.08!important;
-}
-
-.player-dna-page .history-panel{
-  position:relative!important;
-  display:grid!important;
-}
-.player-dna-page .history-panel::before{
-  content:"RELATÓRIOS"!important;
-  display:block!important;
-  margin:4px 0 0!important;
-}
-
-/* Navigation: aligned to the same horizontal margins as the page content. */
-.player-dna-page nav.module-navigation.player-dna-navigation{
-  display:grid!important;
-  grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
-  align-items:stretch!important;
-  align-self:stretch!important;
-  justify-self:stretch!important;
-  width:100%!important;
-  max-width:100%!important;
-  min-width:0!important;
-  gap:8px!important;
-  margin-left:0!important;
-  margin-right:0!important;
-  margin-top:0!important;
-  margin-bottom:18px!important;
-  padding-left:0!important;
-  padding-right:0!important;
-  box-sizing:border-box!important;
-  transform:none!important;
-  left:auto!important;
-  right:auto!important;
-}
-.player-dna-page nav.module-navigation.player-dna-navigation .player-dna-nav-button{
-  display:flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-  width:100%!important;
-  max-width:100%!important;
-  min-width:0!important;
-  height:38px!important;
-  min-height:38px!important;
-  max-height:38px!important;
-  padding:0 8px!important;
-  margin:0!important;
-  box-sizing:border-box!important;
-  text-align:center!important;
-}
+.player-dna-page nav.module-navigation.player-dna-navigation{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;align-items:stretch!important;align-self:stretch!important;justify-self:stretch!important;width:100%!important;max-width:100%!important;min-width:0!important;gap:8px!important;margin-left:0!important;margin-right:0!important;margin-top:0!important;margin-bottom:18px!important;padding-left:0!important;padding-right:0!important;box-sizing:border-box!important;transform:none!important;left:auto!important;right:auto!important}
+.player-dna-page nav.module-navigation.player-dna-navigation .player-dna-nav-button{display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;max-width:100%!important;min-width:0!important;height:38px!important;min-height:38px!important;max-height:38px!important;padding:0 8px!important;margin:0!important;box-sizing:border-box!important;text-align:center!important}
