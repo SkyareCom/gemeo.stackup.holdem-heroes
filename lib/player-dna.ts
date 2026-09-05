@@ -43,14 +43,14 @@ export function evaluatePlayerDna(spots: PlayerDnaSpot[], answers: PlayerDnaAnsw
 
   const strengths: string[] = [];
   const watchouts: string[] = [];
-  if (scores.discipline >= 45) strengths.push("Boa capacidade de abandonar linhas marginais.");
-  if (scores.aggression >= 45) strengths.push("Disposição para disputar iniciativa e construir potes.");
-  if (scores.pressure >= 45) strengths.push("Conforto em decisões de maior variância e pressão.");
-  if (scores.passivity >= 50) watchouts.push("Tendência a ceder iniciativa em spots onde pressão pode capturar EV.");
-  if (scores.aggression >= 65 && scores.discipline < 35) watchouts.push("Agressão pode estar avançando além da seletividade necessária.");
-  if (scores.pressure >= 65 && scores.discipline < 40) watchouts.push("Risco de defender ou escalar potes demais sob pressão.");
-  if (!strengths.length) strengths.push("Perfil ainda em formação; aumente a amostra para estabilizar o diagnóstico.");
-  if (!watchouts.length) watchouts.push("Nenhum desvio dominante apareceu nesta amostra inicial.");
+  if (scores.discipline >= 45) strengths.push("BOA CAPACIDADE DE ABANDONAR LINHAS MARGINAIS.");
+  if (scores.aggression >= 45) strengths.push("DISPOSIÇÃO PARA DISPUTAR INICIATIVA E CONSTRUIR POTES.");
+  if (scores.pressure >= 45) strengths.push("CONFORTO EM DECISÕES DE MAIOR VARIÂNCIA E PRESSÃO.");
+  if (scores.passivity >= 50) watchouts.push("TENDÊNCIA A CEDER INICIATIVA EM SPOTS ONDE PRESSÃO PODE CAPTURAR EV.");
+  if (scores.aggression >= 65 && scores.discipline < 35) watchouts.push("AGRESSÃO PODE ESTAR AVANÇANDO ALÉM DA SELETIVIDADE NECESSÁRIA.");
+  if (scores.pressure >= 65 && scores.discipline < 40) watchouts.push("RISCO DE DEFENDER OU ESCALAR POTES DEMAIS SOB PRESSÃO.");
+  if (!strengths.length) strengths.push("PERFIL AINDA EM FORMAÇÃO; AUMENTE A AMOSTRA PARA ESTABILIZAR O DIAGNÓSTICO.");
+  if (!watchouts.length) watchouts.push("NENHUM DESVIO DOMINANTE APARECEU NESTA AMOSTRA INICIAL.");
 
   const sampleConfidence = Math.min(92, 35 + answers.length * 4.5);
   return { label, confidence: Math.round(sampleConfidence), scores, strengths, watchouts };
