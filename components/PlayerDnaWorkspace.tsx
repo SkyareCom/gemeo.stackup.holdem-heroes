@@ -12,15 +12,33 @@ const LEGACY_STORAGE_KEY="stackup.player-dna.session.v1";
 const betSizings:DecisionSizing[]=["25%","33%","50%","66%","75%","POT","125%","150%"];
 const raiseSizings:DecisionSizing[]=["2X","2.5X","3X","4X","SQUEEZE"];
 
-type SavedDnaSession={mode:GameMode;target:number;index:number;answers:PlayerDnaAnswer[];finished:boolean;sessionSeed:number;updatedAt:number};
+type AnalysisMode=GameMode|"ALEATORIO";
+type SavedDnaSession={mode:AnalysisMode;target:number;index:number;answers:PlayerDnaAnswer[];finished:boolean;sessionSeed:number;updatedAt:number};
 type DnaScores={aggression:number;discipline:number;pressure:number;passivity:number};
 type DnaReport=SavedDnaSession&{id:string;name:string;completedAt:number;result:{label:string;scores:DnaScores}};
 type DnaLibrary={active:SavedDnaSession|null;reports:DnaReport[]};
 
 const emptyLibrary:DnaLibrary={active:null,reports:[]};
 
+function buildSession(mode:AnalysisMode,count:number,seed:number,answers:PlayerDnaAnswer[]){
+  if(mode!=="ALEATORIO")return buildBalancedSpotSession(playerDnaSpots,mode,count,seed,answers);
+  const cashCount=Math.ceil(count/2);
+  const tournamentCount=Math.floor(count/2);
+  const cash=buildBalancedSpotSession(playerDnaSpots,"CASH",cashCount,seed,answers.filter((_,i)=>i%2===0));
+  const tournament=buildBalancedSpotSession(playerDnaSpots,"TORNEIO",tournamentCount,seed^0x9e3779b9,answers.filter((_,i)=>i%2===1));
+  const startCash=(seed&1)===0;
+  const mixed:PlayerDnaSpot[]=[];
+  for(let i=0;i<count;i++){
+    const cashTurn=startCash?i%2===0:i%2===1;
+    const source=cashTurn?cash:tournament;
+    const item=source[Math.floor(i/2)];
+    if(item)mixed.push(item);
+  }
+  return mixed;
+}
+
 export default function PlayerDnaWorkspace(){
-  const[mode,setMode]=useState<GameMode>("CASH");
+  const[mode,setMode]=useState<AnalysisMode>("CASH");
   const[target,setTarget]=useState<number|null>(null);
   const[selectedDepth,setSelectedDepth]=useState<number|null>(null);
   const[index,setIndex]=useState(0);
@@ -38,10 +56,11 @@ export default function PlayerDnaWorkspace(){
   const[editingName,setEditingName]=useState("");
 
   const generatedCount=target?Math.min(target,answers.length+1):0;
-  const session=useMemo(()=>target?buildBalancedSpotSession(playerDnaSpots,mode,generatedCount,sessionSeed,answers):[],[mode,target,generatedCount,sessionSeed,answers]);
+  const session=useMemo(()=>target?buildSession(mode,generatedCount,sessionSeed,answers):[],[mode,target,generatedCount,sessionSeed,answers]);
   const spot=session[index];
   const result=useMemo(()=>finished?evaluatePlayerDna(session,answers):null,[finished,session,answers]);
   const selectedReport=library.reports.find(report=>report.id===selectedReportId)??null;
+  const latestReport=library.reports[0]??null;
 
   useEffect(()=>{
     let next:DnaLibrary=emptyLibrary;
@@ -88,9 +107,10 @@ export default function PlayerDnaWorkspace(){
     return()=>window.removeEventListener("player-dna-previous",previous);
   },[editingId,selectedReportId,historyOpen,target,finished]);
 
-  function start(depth:number){const selectedMode=(document.querySelector<HTMLInputElement>('input[name="player-dna-mode"]:checked')?.value as GameMode|undefined)??mode;const seed=Date.now();setSelectedDepth(depth);setMode(selectedMode);setSelectedReportId(null);setHistoryOpen(false);setSessionSeed(seed);setTarget(depth);setIndex(0);setAnswers([]);setSelectedAction(null);setFinished(false);window.requestAnimationFrame(()=>document.querySelector(".profile-panel")?.scrollIntoView({behavior:"smooth",block:"start"}))}
+  function start(depth:number){const selectedMode=(document.querySelector<HTMLInputElement>('input[name="player-dna-mode"]:checked')?.value as AnalysisMode|undefined)??mode;const seed=Date.now();setSelectedDepth(depth);setMode(selectedMode);setSelectedReportId(null);setHistoryOpen(false);setSessionSeed(seed);setTarget(depth);setIndex(0);setAnswers([]);setSelectedAction(null);setFinished(false);window.requestAnimationFrame(()=>document.querySelector(".profile-panel")?.scrollIntoView({behavior:"smooth",block:"start"}))}
   function leave(){setTarget(null);setIndex(0);setAnswers([]);setSelectedAction(null);setFinished(false);setSelectedReportId(null)}
   function continueSaved(){const saved=library.active;if(!saved)return;setSelectedReportId(null);setHistoryOpen(false);setMode(saved.mode);setTarget(saved.target);setIndex(Math.min(saved.index,Math.max(0,saved.target-1)));setAnswers(saved.answers);setSelectedAction(null);setFinished(false);setSessionSeed(saved.sessionSeed)}
+  function deleteSaved(){setLibrary(prev=>({...prev,active:null}))}
   function resetAll(){try{localStorage.removeItem(STORAGE_KEY);localStorage.removeItem(LEGACY_STORAGE_KEY)}catch{}setLibrary(emptyLibrary);setSelectedReportId(null);setHistoryOpen(false);setEditingId(null);setTarget(null);setIndex(0);setAnswers([]);setSelectedAction(null);setFinished(false);setSessionSeed(1)}
   function chooseAction(action:PlayerAction){if(!actionSequenceReady)return;setSelectedAction(current=>current===action?null:action);setSelectedSizing(null)}
   function nextSpot(){
@@ -109,34 +129,35 @@ export default function PlayerDnaWorkspace(){
   if(selectedReport)return <ReportView report={selectedReport} onBack={()=>setSelectedReportId(null)} onRename={()=>beginRename(selectedReport)}/>;
 
   if(target===null)return <div className={styles.setup}>
-    <div><div className="eyebrow">PLAYER DNA</div><h2>DESCUBRA SEU PERFIL</h2><p className="setup-intro">Escolha a modalidade e a profundidade da análise. Seu progresso e seus relatórios ficam salvos neste dispositivo.</p><p className="analysis-balance-note">PARA EVITAR UM RETRATO VICIADO, O MOTOR DISTRIBUI ALEATORIAMENTE CASH GAMES DE DIFERENTES LIMITES E TORNEIOS ONLINE, MTT, BOUNTY, HIGH ROLLER, TURBO E REGULARES AO LONGO DA ANÁLISE.</p></div>
+    <div><div className="eyebrow">PLAYER DNA</div><h2>CONFIGURAÇÕES DE SPOTS</h2><p className="setup-intro">Escolha a modalidade e a quantidade de spots antes de entrar na mesa de operação.</p><p className="analysis-balance-note">EM ALEATÓRIO, O MOTOR ALTERNA SPOTS DE CASH E TORNEIO PARA FORMAR UMA LEITURA MAIS AMPLA DO SEU PERFIL.</p></div>
     <div className={`${styles.modeGrid} mode-choices`}>
-      {(["CASH","TORNEIO"] as const).map(option=><label key={option} className={styles.modeButton}><input type="radio" name="player-dna-mode" value={option} checked={mode===option} onChange={()=>setMode(option)}/><strong>{option}</strong></label>)}
+      {(["CASH","TORNEIO","ALEATORIO"] as const).map(option=><label key={option} className={styles.modeButton}><input type="radio" name="player-dna-mode" value={option} checked={mode===option} onChange={()=>setMode(option)}/><strong>{option}</strong></label>)}
     </div>
     <div className={`${styles.depthGrid} depth-choices`}>{depths.map(n=><button type="button" key={n} aria-pressed={selectedDepth===n} onPointerDown={()=>setSelectedDepth(n)} onClick={()=>start(n)}><strong>{n}</strong><span>SPOTS</span></button>)}</div>
     <div className="saved-analysis-panel" style={{border:"1px solid rgba(92,187,126,.28)",borderRadius:16,padding:16,background:"rgba(9,31,18,.62)",display:"grid",gap:12}}>
       <div>
-        <div className="eyebrow saved-analysis-title">ANÁLISE SALVA</div>
+        <div className="eyebrow saved-analysis-title">ANÁLISES SALVAS</div>
         {library.active?<>
           <strong className="saved-analysis-status" style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:6,flexWrap:"nowrap",width:"100%",marginTop:4}}>
             <span>{library.active.mode} · {library.active.answers.length} / {library.active.target} SPOTS</span>
             <span style={{marginLeft:"auto",textAlign:"right"}}>{Math.round((Math.min(library.active.answers.length,library.active.target)/library.active.target)*100)}%</span>
           </strong>
-          <small className="saved-analysis-description">CONTINUE EXATAMENTE DO PONTO EM QUE PAROU</small>
+          <small className="saved-analysis-description">ACESSE OU APAGUE A ANÁLISE EM ANDAMENTO.</small>
         </>:<>
-          <strong className="saved-analysis-status" style={{display:"block",marginTop:4}}>NENHUMA ANÁLISE EM ANDAMENTO</strong>
+          <strong className="saved-analysis-status" style={{display:"block",marginTop:4}}>NENHUMA ANÁLISE SALVA</strong>
           <small className="saved-analysis-description">ESCOLHA A MODALIDADE E O NÚMERO DE SPOTS PARA COMEÇAR.</small>
         </>}
       </div>
       {library.active&&<div className={styles.track}><i style={{width:`${(Math.min(library.active.answers.length,library.active.target)/library.active.target)*100}%`}}/></div>}
-      <div style={{display:"flex",gap:8,flexWrap:"wrap"}}><button type="button" className="primary" onClick={continueSaved} disabled={!library.active}>CONTINUAR ANÁLISE</button></div>
+      <div style={{display:"flex",gap:8,flexWrap:"wrap"}}><button type="button" className="primary" onClick={continueSaved} disabled={!library.active}>ACESSAR ANÁLISE</button><button type="button" className={styles.modeButton} onClick={deleteSaved} disabled={!library.active}><strong>APAGAR</strong></button></div>
     </div>
-    <div className="history-panel" style={{border:"1px solid rgba(92,187,126,.22)",borderRadius:16,padding:16,background:"rgba(5,20,12,.7)",display:"grid",gap:12}}><div style={{display:"flex",justifyContent:"space-between",gap:12,alignItems:"center",flexWrap:"wrap"}}><div><div className="eyebrow history-eyebrow">RELATÓRIOS E HISTÓRICO</div><strong className="history-count" style={{display:"block",marginTop:4}}>{library.reports.length} {library.reports.length===1?"ANÁLISE CONCLUÍDA":"ANÁLISES CONCLUÍDAS"}</strong><small className="history-description" style={{opacity:.65}}>ACESSE RESULTADOS FINAIS, DATAS E NOMES DAS SUAS ANÁLISES.</small></div><div className="history-actions"><button type="button" aria-expanded={historyOpen} className={`${styles.modeButton} history-action`} onClick={()=>setHistoryOpen(v=>!v)}><strong>{historyOpen?"FECHAR":"ABRIR HISTÓRICO"}</strong></button><button type="button" className={`${styles.modeButton} history-action`} onClick={resetAll}><strong>ZERAR HISTÓRICO</strong></button></div></div>
-      {historyOpen&&<div style={{display:"grid",gap:10}}>{library.reports.length===0?<small style={{opacity:.58}}>NENHUM RELATÓRIO CONCLUÍDO AINDA.</small>:library.reports.map(report=><div key={report.id} style={{border:"1px solid rgba(92,187,126,.16)",borderRadius:12,padding:12,display:"grid",gap:10}}>{editingId===report.id?<div style={{display:"flex",gap:8,flexWrap:"wrap"}}><input value={editingName} onChange={e=>setEditingName(e.target.value)} maxLength={60} style={{flex:"1 1 220px",minHeight:42,borderRadius:9,border:"1px solid rgba(92,187,126,.25)",background:"#061009",color:"#e8f5ec",padding:"0 12px"}}/><button type="button" className="primary" onClick={saveRename} disabled={!editingName.trim()}>SALVAR NOME</button><button type="button" className={styles.modeButton} onClick={()=>{setEditingId(null);setEditingName("")}}><strong>CANCELAR</strong></button></div>:<div style={{display:"flex",justifyContent:"space-between",gap:12,alignItems:"center",flexWrap:"wrap"}}><div><strong>{report.name}</strong><small style={{display:"block",opacity:.62,marginTop:4}}>{report.mode} · {report.target} SPOTS · {new Date(report.completedAt).toLocaleDateString("pt-BR")} · {report.result.label}</small></div><div style={{display:"flex",gap:7,flexWrap:"wrap"}}><button type="button" className="primary" onClick={()=>setSelectedReportId(report.id)}>VER RELATÓRIO</button><button type="button" className={styles.modeButton} onClick={()=>beginRename(report)}><strong>EDITAR NOME</strong></button><button type="button" className={styles.modeButton} onClick={()=>deleteReport(report.id)}><strong>EXCLUIR</strong></button></div></div>}</div>)}</div>}
+    <div className="history-panel" style={{border:"1px solid rgba(92,187,126,.22)",borderRadius:16,padding:16,background:"rgba(5,20,12,.7)",display:"grid",gap:12}}><div style={{display:"flex",justifyContent:"space-between",gap:12,alignItems:"center",flexWrap:"wrap"}}><div><div className="eyebrow history-eyebrow">HISTÓRICO</div><strong className="history-count" style={{display:"block",marginTop:4}}>{library.reports.length} {library.reports.length===1?"ANÁLISE CONCLUÍDA":"ANÁLISES CONCLUÍDAS"}</strong><small className="history-description" style={{opacity:.65}}>ACESSE O HISTÓRICO E OS RELATÓRIOS FINAIS.</small></div><div className="history-actions"><button type="button" aria-expanded={historyOpen} className={`${styles.modeButton} history-action`} onClick={()=>setHistoryOpen(v=>!v)}><strong>{historyOpen?"FECHAR":"ACESSAR HISTÓRICO"}</strong></button><button type="button" className={`${styles.modeButton} history-action`} onClick={resetAll}><strong>ZERAR HISTÓRICO</strong></button></div></div>
+      {latestReport&&<button type="button" className="primary" onClick={()=>setSelectedReportId(latestReport.id)}>RELATÓRIO FINAL</button>}
+      {historyOpen&&<div style={{display:"grid",gap:10}}>{library.reports.length===0?<small style={{opacity:.58}}>NENHUM RELATÓRIO CONCLUÍDO AINDA.</small>:library.reports.map(report=><div key={report.id} style={{border:"1px solid rgba(92,187,126,.16)",borderRadius:12,padding:12,display:"grid",gap:10}}>{editingId===report.id?<div style={{display:"flex",gap:8,flexWrap:"wrap"}}><input value={editingName} onChange={e=>setEditingName(e.target.value)} maxLength={60} style={{flex:"1 1 220px",minHeight:42,borderRadius:9,border:"1px solid rgba(92,187,126,.25)",background:"#061009",color:"#e8f5ec",padding:"0 12px"}}/><button type="button" className="primary" onClick={saveRename} disabled={!editingName.trim()}>SALVAR NOME</button><button type="button" className={styles.modeButton} onClick={()=>{setEditingId(null);setEditingName("")}}><strong>CANCELAR</strong></button></div>:<div style={{display:"flex",justifyContent:"space-between",gap:12,alignItems:"center",flexWrap:"wrap"}}><div><strong>{report.name}</strong><small style={{display:"block",opacity:.62,marginTop:4}}>{report.mode} · {report.target} SPOTS · {new Date(report.completedAt).toLocaleDateString("pt-BR")} · {report.result.label}</small></div><div style={{display:"flex",gap:7,flexWrap:"wrap"}}><button type="button" className="primary" onClick={()=>setSelectedReportId(report.id)}>ACESSAR</button><button type="button" className={styles.modeButton} onClick={()=>beginRename(report)}><strong>EDITAR NOME</strong></button><button type="button" className={styles.modeButton} onClick={()=>deleteReport(report.id)}><strong>APAGAR</strong></button></div></div>}</div>)}</div>}
     </div>
   </div>;
 
-  if(finished&&result)return <div className={styles.result}><div><span className="tag">PLAYER DNA · {mode}</span><h3>{result.label}</h3><p>{answers.length} / {target} SPOTS CONCLUÍDOS · RELATÓRIO SALVO NO HISTÓRICO</p></div><div className={styles.resultGrid}><Metric label="AGRESSÃO" value={`${result.scores.aggression}%`}/><Metric label="DISCIPLINA" value={`${result.scores.discipline}%`}/><Metric label="PRESSÃO" value={`${result.scores.pressure}%`}/><Metric label="PASSIVIDADE" value={`${result.scores.passivity}%`}/></div><button type="button" className="primary" onClick={leave}>VOLTAR AOS RELATÓRIOS</button></div>;
+  if(finished&&result)return <div className={styles.result}><div><span className="tag">RELATÓRIO FINAL · PLAYER DNA · {mode}</span><h3>{result.label}</h3><p>{answers.length} / {target} SPOTS CONCLUÍDOS · RELATÓRIO SALVO NO HISTÓRICO</p></div><div className={styles.resultGrid}><Metric label="AGRESSÃO" value={`${result.scores.aggression}%`}/><Metric label="DISCIPLINA" value={`${result.scores.discipline}%`}/><Metric label="PRESSÃO" value={`${result.scores.pressure}%`}/><Metric label="PASSIVIDADE" value={`${result.scores.passivity}%`}/></div><button type="button" className="primary" onClick={leave}>VOLTAR AO PLAYER DNA</button></div>;
   if(!spot)return <div className={styles.result}><h3>DADOS INSUFICIENTES</h3><button type="button" className="primary" onClick={leave}>VOLTAR</button></div>;
 
   const automaticAnte=spot.anteMode??"NONE";
@@ -145,7 +166,7 @@ export default function PlayerDnaWorkspace(){
   return <div className={`${styles.session} training-session`}><div className={styles.progressHead}><span>SPOT {answers.length+1} / {target}</span><strong>{Math.round((answers.length/target)*100)}%</strong></div><div className={styles.track}><i style={{width:`${(answers.length/target)*100}%`}}/></div><Level spot={spot}/><Pot spot={spot} anteMode={automaticAnte}/><Board spot={spot}/><Hero spot={spot} anteMode={automaticAnte}/><Players spot={spot} anteMode={automaticAnte} selectedAction={selectedAction} onSequenceReady={setActionSequenceReady}/><p className={styles.prompt}>QUAL É A SUA AÇÃO ?</p><div className={styles.actions} aria-busy={!actionSequenceReady}>{spot.actions.map(action=><button type="button" aria-disabled={!actionSequenceReady} aria-pressed={selectedAction===action} className={selectedAction===action?styles.actionSelected:""} key={action} onClick={()=>chooseAction(action)}>{action}</button>)}</div>{sizingOptions.length>0&&<div className={styles.sizingActions}>{sizingOptions.map(sizing=><button type="button" aria-pressed={selectedSizing===sizing} className={selectedSizing===sizing?styles.actionSelected:""} key={sizing} onClick={()=>setSelectedSizing(current=>current===sizing?null:sizing)}>{sizing}</button>)}</div>}<div className="training-footer" style={{display:"grid",gridTemplateColumns:"repeat(2,minmax(0,1fr))",gap:8}}><button type="button" className={styles.modeButton} onClick={leave}><strong>SALVAR ANÁLISE E SAIR</strong></button><button type="button" className="primary" aria-disabled={!canContinue} onClick={nextSpot}>PRÓXIMO</button></div><Scenario spot={spot}/></div>;
 }
 
-function ReportView({report,onBack,onRename}:{report:DnaReport;onBack:()=>void;onRename:()=>void}){return <div className={styles.result}><div><span className="tag">RELATÓRIO PLAYER DNA · {report.mode}</span><h3>{report.name}</h3><p>{new Date(report.completedAt).toLocaleString("pt-BR")} · {report.answers.length} / {report.target} SPOTS</p></div><div className={styles.resultGrid}><Metric label="AGRESSÃO" value={`${report.result.scores.aggression}%`}/><Metric label="DISCIPLINA" value={`${report.result.scores.discipline}%`}/><Metric label="PRESSÃO" value={`${report.result.scores.pressure}%`}/><Metric label="PASSIVIDADE" value={`${report.result.scores.passivity}%`}/></div><div style={{border:"1px solid rgba(92,187,126,.2)",borderRadius:14,padding:14}}><small style={{opacity:.62}}>CLASSIFICAÇÃO FINAL</small><strong style={{display:"block",marginTop:5}}>{report.result.label}</strong></div><div style={{display:"flex",gap:8,flexWrap:"wrap"}}><button type="button" className="primary" onClick={onBack}>VOLTAR AO HISTÓRICO</button><button type="button" className={styles.modeButton} style={{minHeight:44}} onClick={onRename}><strong>EDITAR NOME</strong></button></div></div>}
+function ReportView({report,onBack,onRename}:{report:DnaReport;onBack:()=>void;onRename:()=>void}){return <div className={styles.result}><div><span className="tag">RELATÓRIO FINAL · PLAYER DNA · {report.mode}</span><h3>{report.name}</h3><p>{new Date(report.completedAt).toLocaleString("pt-BR")} · {report.answers.length} / {report.target} SPOTS</p></div><div className={styles.resultGrid}><Metric label="AGRESSÃO" value={`${report.result.scores.aggression}%`}/><Metric label="DISCIPLINA" value={`${report.result.scores.discipline}%`}/><Metric label="PRESSÃO" value={`${report.result.scores.pressure}%`}/><Metric label="PASSIVIDADE" value={`${report.result.scores.passivity}%`}/></div><div style={{border:"1px solid rgba(92,187,126,.2)",borderRadius:14,padding:14}}><small style={{opacity:.62}}>CLASSIFICAÇÃO FINAL</small><strong style={{display:"block",marginTop:5}}>{report.result.label}</strong></div><div style={{display:"flex",gap:8,flexWrap:"wrap"}}><button type="button" className="primary" onClick={onBack}>VOLTAR AO HISTÓRICO</button><button type="button" className={styles.modeButton} style={{minHeight:44}} onClick={onRename}><strong>EDITAR NOME</strong></button></div></div>}
 function Board({spot}:{spot:PlayerDnaSpot}){const cards=spot.board?.split(" ").filter(Boolean)??[];return <section className={styles.block}><h4 className={styles.blockTitle}>BOARD</h4><div className={styles.boardRow}><span className={styles.badge}>{spot.street}</span>{cards.length>0&&<div className={styles.cards}>{cards.map(card=><span className={styles.card} key={card}>{card}</span>)}</div>}</div></section>}
 function anteCharge(position:string,spot:PlayerDnaSpot,anteMode:AnteFormat){if(spot.mode!=="TORNEIO"||anteMode==="NONE")return 0;if(anteMode==="BB_ANTE")return position==="BB"?1:0;return 1/Math.max(1,spot.players.length)}
 function allInState(spot:PlayerDnaSpot,anteMode:AnteFormat){
