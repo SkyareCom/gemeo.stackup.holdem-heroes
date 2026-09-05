@@ -1,6 +1,6 @@
 /*
  * PADRÃO GLOBAL DE BOTÕES
- * REFERÊNCIA VISUAL: ANTERIOR / MÓDULOS.
+ * REFERÊNCIA VISUAL E DIMENSIONAL: ANTERIOR / MÓDULOS.
  * EXCEÇÕES CONGELADAS POR REGRA DE PRODUTO:
  * - PLAYER DNA: CASH / TORNEIO / ALEATÓRIO
  * - PLAYER DNA: BOTÕES DE SPOTS
@@ -12,8 +12,13 @@ html body a.module-back {
   display:inline-flex!important;
   align-items:center!important;
   justify-content:center!important;
-  min-height:34px!important;
-  padding:7px 10px!important;
+  width:100%!important;
+  min-width:0!important;
+  height:38px!important;
+  min-height:38px!important;
+  max-height:38px!important;
+  padding:0 10px!important;
+  box-sizing:border-box!important;
   border:1px solid #255000!important;
   border-radius:12px!important;
   background-color:rgba(0,100,20,.07)!important;
@@ -22,7 +27,7 @@ html body a.module-back {
   -webkit-text-fill-color:#009929!important;
   font-size:12px!important;
   font-weight:400!important;
-  line-height:1.2!important;
+  line-height:1!important;
   text-align:center!important;
   text-decoration:none!important;
   box-shadow:none!important;
@@ -56,5 +61,5 @@ html body .player-dna-page .mode-choices > label,
 html body .player-dna-page .depth-choices > button,
 html body .player-dna-page .training-session [class*="actions"] button,
 html body .player-dna-page [class*="sizingActions"] button {
-  /* INTENCIONALMENTE SEM NOVAS PROPRIEDADES: PRESERVA O VISUAL EXISTENTE. */
+  /* INTENCIONALMENTE SEM NOVAS PROPRIEDADES: PRESERVA O VISUAL E AS DIMENSÕES EXISTENTES. */
 }
