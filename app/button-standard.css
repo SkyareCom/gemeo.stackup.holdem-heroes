@@ -39,8 +39,8 @@ html body a.module-back {
 }
 
 html body button:not(.player-dna-page .depth-choices > button):not(.player-dna-page .training-session [class*="actions"] button):not(.player-dna-page [class*="sizingActions"] button):hover,
-html body button:not(.player-dna-page .depth-choices > button):not(.player-dna-page .training-session [class*="actions"] button):not(.player-dna-page [class*="sizingActions"] button):focus-visible,
-html body button:not(.player-dna-page .depth-choices > button):not(.player-dna-page .training-session [class*="actions"] button):not(.player-dna-page [class*="sizingActions"] button):active,
+html body button:not(.player-dna-page .depth-choices > button):not(.player-dna-page .training-session [class*="actions"] button):focus-visible,
+html body button:not(.player-dna-page .depth-choices > button):not(.player-dna-page .training-session [class*="actions"] button):active,
 html body a.module-back:hover,
 html body a.module-back:focus-visible,
 html body a.module-back:active {
@@ -57,6 +57,49 @@ html body button:not(.player-dna-page .depth-choices > button):not(.player-dna-p
   cursor:not-allowed!important;
   border-color:#255000!important;
   box-shadow:none!important;
+}
+
+/*
+ * CONSISTÊNCIA DE LAYOUT: ALGUNS MÓDULOS USAVAM GRADES DE 3/4/5 COLUNAS.
+ * ISSO FAZIA 50% SIGNIFICAR METADE DA CÉLULA, NÃO METADE DA LINHA.
+ * TODAS AS ÁREAS DE BOTÕES PADRONIZADAS ABAIXO PASSAM A 2 COLUNAS.
+ */
+html body .module-navigation,
+html body [class*="HandReviewWorkspace_grid"],
+html body [class*="HandReviewWorkspace_positionGrid"],
+html body [class*="HandReviewWorkspace_actionGrid"],
+html body [class*="HandReviewWorkspace_two"],
+html body [class*="HandReviewWorkspace_four"],
+html body [class*="HandReviewWorkspace_five"],
+html body [class*="HandReviewWorkspace_rankGrid"],
+html body [class*="HandReviewWorkspace_suitGrid"],
+html body [class*="PokerAssistantWorkspace_mediaActions"],
+html body [class*="PokerAssistantWorkspace_examples"],
+html body [class*="MathLabWorkspace_tabs"],
+html body [class*="MathLabWorkspace_actions"],
+html body [class*="MathLabWorkspace_conceptLayout"] aside {
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:8px!important;
+}
+
+html body .module-navigation > .module-back,
+html body [class*="HandReviewWorkspace_grid"] > button,
+html body [class*="HandReviewWorkspace_positionGrid"] > button,
+html body [class*="HandReviewWorkspace_actionGrid"] > button,
+html body [class*="HandReviewWorkspace_two"] > button,
+html body [class*="HandReviewWorkspace_four"] > button,
+html body [class*="HandReviewWorkspace_five"] > button,
+html body [class*="HandReviewWorkspace_rankGrid"] > button,
+html body [class*="HandReviewWorkspace_suitGrid"] > button,
+html body [class*="PokerAssistantWorkspace_mediaActions"] > button,
+html body [class*="PokerAssistantWorkspace_examples"] > button,
+html body [class*="MathLabWorkspace_tabs"] > button,
+html body [class*="MathLabWorkspace_actions"] > button,
+html body [class*="MathLabWorkspace_conceptLayout"] aside > button {
+  width:100%!important;
+  max-width:100%!important;
+  flex:none!important;
 }
 
 /* GARANTIA: ESTES CONTROLES DO PLAYER DNA NÃO RECEBEM O PADRÃO GLOBAL ACIMA. */
