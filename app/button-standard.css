@@ -59,11 +59,6 @@ html body button:not(.player-dna-page .depth-choices > button):not(.player-dna-p
   box-shadow:none!important;
 }
 
-/*
- * CONSISTÊNCIA DE LAYOUT: ALGUNS MÓDULOS USAVAM GRADES DE 3/4/5 COLUNAS.
- * ISSO FAZIA 50% SIGNIFICAR METADE DA CÉLULA, NÃO METADE DA LINHA.
- * TODAS AS ÁREAS DE BOTÕES PADRONIZADAS ABAIXO PASSAM A 2 COLUNAS.
- */
 html body .module-navigation,
 html body [class*="HandReviewWorkspace_grid"],
 html body [class*="HandReviewWorkspace_positionGrid"],
@@ -102,10 +97,36 @@ html body [class*="MathLabWorkspace_conceptLayout"] aside > button {
   flex:none!important;
 }
 
-/* GARANTIA: ESTES CONTROLES DO PLAYER DNA NÃO RECEBEM O PADRÃO GLOBAL ACIMA. */
+html body .player-dna-page .history-actions {
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:8px!important;
+  width:100%!important;
+}
+
+html body .player-dna-page .history-actions > .history-action {
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  height:38px!important;
+  min-height:38px!important;
+  max-height:38px!important;
+  padding:0 8px!important;
+  margin:0!important;
+  box-sizing:border-box!important;
+}
+
+html body .player-dna-page .history-actions > .history-action strong {
+  width:100%!important;
+  min-width:0!important;
+  font-size:12px!important;
+  line-height:1!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+}
+
 html body .player-dna-page .mode-choices > label,
 html body .player-dna-page .depth-choices > button,
 html body .player-dna-page .training-session [class*="actions"] button,
 html body .player-dna-page [class*="sizingActions"] button {
-  /* INTENCIONALMENTE SEM NOVAS PROPRIEDADES: PRESERVA O VISUAL E AS DIMENSÕES EXISTENTES. */
 }
