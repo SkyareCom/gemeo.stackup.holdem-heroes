@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { Changa } from "next/font/google";
+import { Doppio_One } from "next/font/google";
 import "./globals.css";
 
-const changa = Changa({ subsets: ["latin"], variable: "--font-changa" });
+const doppioOne = Doppio_One({ subsets: ["latin"], weight: "400", variable: "--font-doppio-one" });
 
 export const metadata: Metadata = {
   title: "STACKUP HOLD'EM HEROES",
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="pt-BR" className={changa.variable}>
+    <html lang="pt-BR" className={doppioOne.variable}>
       <body>{children}</body>
     </html>
   );
