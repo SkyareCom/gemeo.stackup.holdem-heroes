@@ -1,3 +1,14 @@
+/* Home typography + module cards. */
+.topbar .brand{
+  font-size:30px!important;
+}
+.hero>.system-gradient{
+  font-size:28px!important;
+}
+.hero h1 .hero-evolve{
+  font-size:28px!important;
+}
+
 /* Home module cards: fixed title area + four-line description area. */
 .modules a{
   height:168px!important;
