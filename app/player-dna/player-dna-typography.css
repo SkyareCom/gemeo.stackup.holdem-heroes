@@ -56,6 +56,17 @@
   margin:4px 0 0!important;
 }
 
+/* Stronger override than legacy global Player DNA rules. */
+html body main.player-dna-page section.profile-panel > div > div:first-child > div.eyebrow,
+html body main.player-dna-page section.profile-panel .eyebrow.saved-analysis-title{
+  font-size:22px!important;
+  line-height:1.08!important;
+}
+html body main.player-dna-page section.profile-panel .history-panel::before{
+  font-size:22px!important;
+  line-height:1.08!important;
+}
+
 /* Navigation: aligned to the same horizontal margins as the page content. */
 .player-dna-page nav.module-navigation.player-dna-navigation{
   display:grid!important;
