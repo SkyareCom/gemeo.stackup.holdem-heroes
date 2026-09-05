@@ -1,0 +1,34 @@
+.player-dna-page .mode-choices{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+}
+.player-dna-page .mode-choices label strong{
+  font-size:14px!important;
+}
+.player-dna-page .mode-choices label small{
+  font-size:10px!important;
+}
+.player-dna-page .depth-choices button strong{
+  font-size:28px!important;
+}
+.player-dna-page .depth-choices button span{
+  font-size:10px!important;
+}
+.player-dna-page [class*="blockTitle"]{
+  font-size:10px!important;
+}
+.player-dna-page [class*="levelValues"] span,
+.player-dna-page [class*="levelNumber"]{
+  font-size:12px!important;
+}
+.player-dna-page [class*="levelValues"] strong,
+.player-dna-page [class*="levelSummary"] strong{
+  font-size:12px!important;
+}
+.player-dna-page .training-session [class*="actions"] button,
+.player-dna-page .training-session [class*="sizingActions"] button{
+  font-size:12px!important;
+}
+.player-dna-page [class*="badge"],
+.player-dna-page [class*="Badge"]{
+  font-size:10px!important;
+}
