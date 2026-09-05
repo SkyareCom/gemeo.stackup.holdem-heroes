@@ -1,4 +1,4 @@
-/* Global text-case policy: preserve the casing written in the interface copy. */
+/* GLOBAL TEXT-CASE POLICY: ALL VISIBLE INTERFACE TEXT MUST RENDER IN UPPERCASE. */
 *,*::before,*::after{
-  text-transform:none!important;
+  text-transform:uppercase!important;
 }
