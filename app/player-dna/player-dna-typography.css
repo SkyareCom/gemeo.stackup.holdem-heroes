@@ -37,7 +37,7 @@
 .player-dna-page .profile-panel > div > div:first-child > .eyebrow,
 .player-dna-page .saved-analysis-title,
 .player-dna-page .history-eyebrow{
-  font-size:32px!important;
+  font-size:22px!important;
   line-height:1.08!important;
   letter-spacing:.02em!important;
 }
@@ -50,7 +50,7 @@
   content:"RELATÓRIOS"!important;
   display:block!important;
   color:#67d992!important;
-  font-size:32px!important;
+  font-size:22px!important;
   line-height:1.08!important;
   letter-spacing:.02em!important;
   margin:4px 0 0!important;
