@@ -59,23 +59,22 @@ html body main.player-dna-page [class*="track"] i{background:var(--pd-accent)!im
 .player-dna-page .training-session [class*="actions"] button,.player-dna-page .training-session [class*="sizingActions"] button{font-size:12px!important}
 .player-dna-page [class*="badge"],.player-dna-page [class*="Badge"]{font-size:10px!important}
 
-/* Exact setup headings. */
+/* One exact typographic standard for all four setup section headings. */
+html body main.player-dna-page section.panel.profile-panel h2,
 html body main.player-dna-page section.panel.profile-panel div.saved-analysis-panel div.eyebrow.saved-analysis-title,
 html body main.player-dna-page section.panel.profile-panel div.history-panel div.eyebrow.history-eyebrow,
 html body main.player-dna-page section.panel.profile-panel div.history-panel::before{
   color:#ede6db!important;
   -webkit-text-fill-color:#ede6db!important;
+  font-family:var(--font-doppio-one),"Doppio One",sans-serif!important;
   font-size:16px!important;
-  line-height:18px!important;
+  font-style:normal!important;
   font-weight:400!important;
+  font-variation-settings:normal!important;
+  line-height:18px!important;
   letter-spacing:.02em!important;
   text-transform:uppercase!important;
-}
-html body main.player-dna-page section.panel.profile-panel h2{
-  color:#ede6db!important;
-  -webkit-text-fill-color:#ede6db!important;
-  font-size:16px!important;
-  line-height:18px!important;
+  text-shadow:none!important;
 }
 html body main.player-dna-page section.panel.profile-panel > div > div:first-child > div.eyebrow{font-size:20px!important;line-height:1.08!important}
 .player-dna-page .history-panel{position:relative!important;display:grid!important}
