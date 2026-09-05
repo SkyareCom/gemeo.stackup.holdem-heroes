@@ -4,8 +4,8 @@ import "./home-cards.css";
 const modules = [
   {href:"/player-dna",line1:"PLAYER",line2:"DNA",description:"DESCUBRA SEU PERFIL DE DECISÕES EM DIFERENTES CENÁRIOS DE JOGO."},
   {href:"/ai-hand-review",line1:"AI HAND",line2:"REVIEW",description:"IMPORTE, RECONSTRUA E ANALISE SUAS MÃOS COM IA."},
-  {href:"/poker-assistant",line1:"POKER",line2:"ASSISTANT",description:"TIRE DÚVIDAS SOBRE REGRAS, ESTRATÉGIAS, RANGES E SITUAÇÕES DE MESA."},
-  {href:"/poker-math-lab",line1:"POKER",line2:"MATH LAB",description:"APRENDA E PRATIQUE ODDS, OUTS, SPR, EQUITY E MATEMÁTICA DO POKER."},
+  {href:"/poker-assistant",line1:"POKER",line2:"ASSISTANT",description:"TIRE DÚVIDAS SOBRE REGRAS, ESTRATÉGIAS, RANGES ETC..."},
+  {href:"/poker-math-lab",line1:"POKER",line2:"MATH LAB",description:"APRENDA E PRATIQUE ODDS, OUTS, SPR, EQUITY E MUITO MAIS..."},
 ];
 
 export default function Home(){
