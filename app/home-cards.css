@@ -1,6 +1,6 @@
 /* Home typography + module cards. */
 .topbar .brand{
-  font-size:22px!important;
+  font-size:20px!important;
 }
 .hero>.system-gradient{
   font-size:28px!important;
@@ -38,6 +38,7 @@
   -webkit-box-orient:vertical!important;
   -webkit-line-clamp:4!important;
   line-clamp:4!important;
-  font-size:11px!important;
+  font-size:10px!important;
   line-height:17px!important;
+  text-transform:none!important;
 }
