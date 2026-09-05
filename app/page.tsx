@@ -2,10 +2,10 @@ import Link from "next/link";
 import "./home-cards.css";
 
 const modules = [
-  {href:"/player-dna",line1:"PLAYER",line2:"DNA",description:"DESCUBRA SEU PERFIL DE DECISÕES EM DIFERENTES CENÁRIOS DE JOGO."},
-  {href:"/ai-hand-review",line1:"AI HAND",line2:"REVIEW",description:"IMPORTE, RECONSTRUA E ANALISE SUAS MÃOS COM IA."},
-  {href:"/poker-assistant",line1:"POKER",line2:"ASSISTANT",description:"TIRE DÚVIDAS SOBRE REGRAS, ESTRATÉGIAS, RANGES ETC..."},
-  {href:"/poker-math-lab",line1:"POKER",line2:"MATH LAB",description:"APRENDA E PRATIQUE ODDS, OUTS, SPR, EQUITY E MUITO MAIS..."},
+  {href:"/player-dna",line1:"PLAYER",line2:"DNA",description:"Descubra seu perfil de decisões em diferentes cenários de jogo."},
+  {href:"/ai-hand-review",line1:"AI HAND",line2:"REVIEW",description:"Importe, reconstrua e analise suas mãos com IA."},
+  {href:"/poker-assistant",line1:"POKER",line2:"ASSISTANT",description:"Tire dúvidas sobre regras, estratégias, ranges etc..."},
+  {href:"/poker-math-lab",line1:"POKER",line2:"MATH LAB",description:"Aprenda e pratique odds, outs, SPR, equity e muito mais..."},
 ];
 
 export default function Home(){
