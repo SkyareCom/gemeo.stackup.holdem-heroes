@@ -56,19 +56,27 @@
   margin:4px 0 0!important;
 }
 
-/* Navigation: one full row, 50% each, fixed 38px height. */
+/* Navigation: aligned to the same horizontal margins as the page content. */
 .player-dna-page .player-dna-navigation{
   display:grid!important;
   grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
-  width:100%!important;
-  max-width:none!important;
+  align-items:stretch!important;
+  align-self:stretch!important;
+  justify-self:stretch!important;
+  width:auto!important;
+  max-width:100%!important;
+  min-width:0!important;
   gap:8px!important;
+  margin:0!important;
+  padding:0!important;
+  box-sizing:border-box!important;
 }
 .player-dna-page .player-dna-navigation .player-dna-nav-button{
   display:flex!important;
   align-items:center!important;
   justify-content:center!important;
   width:100%!important;
+  max-width:100%!important;
   min-width:0!important;
   height:38px!important;
   min-height:38px!important;
@@ -76,4 +84,5 @@
   padding:0 8px!important;
   margin:0!important;
   box-sizing:border-box!important;
+  text-align:center!important;
 }
