@@ -1,15 +1,12 @@
 /*
  * PADRÃO ÚNICO E OBRIGATÓRIO DE BOTÕES
  * 2 POR LINHA · 38PX · GAP 8PX · RADIUS 12PX · TEXTO 12PX
- * EXCEÇÕES SOMENTE:
- * - PLAYER DNA: CASH / TORNEIO / ALEATÓRIO
- * - PLAYER DNA: SPOTS
- * - PLAYER DNA: AÇÕES E SIZINGS DE POKER
- * - AI HAND REVIEW: CASH / TORNEIO
- * - AI HAND REVIEW: AÇÕES DE POKER
+ *
+ * IMPORTANTE: REGRA GLOBAL SIMPLES PRIMEIRO; EXCEÇÕES SÃO RESTAURADAS DEPOIS.
+ * ISSO EVITA SELETORES :NOT() COMPLEXOS QUE PODIAM SER DESCARTADOS/IGNORADOS.
  */
 
-html body button:not(.player-dna-page .depth-choices > button):not(.player-dna-page .training-session [class*="actions"] button):not(.player-dna-page [class*="sizingActions"] button):not([class*="HandReviewWorkspace_two"] > button):not([class*="HandReviewWorkspace_actionGrid"] > button),
+html body button,
 html body a.module-back {
   display:inline-flex!important;
   align-items:center!important;
@@ -28,6 +25,7 @@ html body a.module-back {
   border:1px solid #255000!important;
   border-radius:12px!important;
   background:rgba(0,100,20,.07)!important;
+  background-image:none!important;
   color:#009929!important;
   -webkit-text-fill-color:#009929!important;
   font-size:12px!important;
@@ -42,7 +40,7 @@ html body a.module-back {
   text-transform:uppercase!important;
 }
 
-html body button:not(.player-dna-page .depth-choices > button):not(.player-dna-page .training-session [class*="actions"] button):not(.player-dna-page [class*="sizingActions"] button):not([class*="HandReviewWorkspace_two"] > button):not([class*="HandReviewWorkspace_actionGrid"] > button) > *,
+html body button > *,
 html body a.module-back > * {
   min-width:0!important;
   max-width:100%!important;
@@ -59,9 +57,9 @@ html body a.module-back > * {
   text-overflow:ellipsis!important;
 }
 
-html body button:not(.player-dna-page .depth-choices > button):not(.player-dna-page .training-session [class*="actions"] button):not(.player-dna-page [class*="sizingActions"] button):not([class*="HandReviewWorkspace_two"] > button):not([class*="HandReviewWorkspace_actionGrid"] > button):hover,
-html body button:not(.player-dna-page .depth-choices > button):not(.player-dna-page .training-session [class*="actions"] button):not(.player-dna-page [class*="sizingActions"] button):not([class*="HandReviewWorkspace_two"] > button):not([class*="HandReviewWorkspace_actionGrid"] > button):focus-visible,
-html body button:not(.player-dna-page .depth-choices > button):not(.player-dna-page .training-session [class*="actions"] button):not(.player-dna-page [class*="sizingActions"] button):not([class*="HandReviewWorkspace_two"] > button):not([class*="HandReviewWorkspace_actionGrid"] > button):active,
+html body button:hover,
+html body button:focus-visible,
+html body button:active,
 html body a.module-back:hover,
 html body a.module-back:focus-visible,
 html body a.module-back:active {
@@ -73,14 +71,14 @@ html body a.module-back:active {
   transform:none!important;
 }
 
-html body button:not(.player-dna-page .depth-choices > button):not(.player-dna-page .training-session [class*="actions"] button):not(.player-dna-page [class*="sizingActions"] button):not([class*="HandReviewWorkspace_two"] > button):not([class*="HandReviewWorkspace_actionGrid"] > button):disabled {
+html body button:disabled {
   opacity:.42!important;
   cursor:not-allowed!important;
   border-color:#255000!important;
   box-shadow:none!important;
 }
 
-/* TODOS OS GRUPOS NORMAIS: EXATAMENTE 2 COLUNAS. */
+/* GRUPOS NORMAIS: 2 COLUNAS. */
 html body .module-navigation,
 html body [class*="HandReviewWorkspace_grid"],
 html body [class*="HandReviewWorkspace_positionGrid"],
@@ -123,18 +121,131 @@ html body .player-dna-page .saved-analysis-panel > div:last-child > button {
   min-width:0!important;
   max-width:100%!important;
   flex:none!important;
-  height:38px!important;
-  min-height:38px!important;
-  max-height:38px!important;
-  margin:0!important;
 }
 
-/* EXCEÇÕES CONGELADAS — NÃO ALTERAR. */
-html body .player-dna-page .mode-choices > label,
-html body .player-dna-page .depth-choices > button,
-html body .player-dna-page .training-session [class*="actions"] button,
-html body .player-dna-page [class*="sizingActions"] button,
-html body [class*="HandReviewWorkspace_two"] > button,
+/* ================================================================
+   EXCEÇÕES EXATAS DEFINIDAS PELO PRODUTO
+   ================================================================ */
+
+/* PLAYER DNA — SPOTS */
+html body .player-dna-page .depth-choices > button {
+  display:block!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  flex:none!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  padding:22px 8px!important;
+  border:1px solid #183426!important;
+  border-radius:0!important;
+  background:#0b1710!important;
+  color:#edf7f0!important;
+  -webkit-text-fill-color:#edf7f0!important;
+  overflow:visible!important;
+  white-space:normal!important;
+}
+html body .player-dna-page .depth-choices > button > strong {
+  display:block!important;
+  color:#8cf0b2!important;
+  -webkit-text-fill-color:#8cf0b2!important;
+  font-size:28px!important;
+  font-weight:700!important;
+  line-height:1!important;
+  overflow:visible!important;
+}
+html body .player-dna-page .depth-choices > button > span {
+  display:block!important;
+  color:#edf7f0!important;
+  -webkit-text-fill-color:#edf7f0!important;
+  font-size:9px!important;
+  letter-spacing:2px!important;
+  overflow:visible!important;
+}
+
+/* PLAYER DNA — FOLD/CALL/CHECK/BET/RAISE/ALL-IN */
+html body .player-dna-page .training-session [class*="actions"] > button {
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  flex:none!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  padding:15px 5px!important;
+  border:1px solid #24543a!important;
+  border-radius:0!important;
+  background:#0a1a11!important;
+  color:#edf7f0!important;
+  -webkit-text-fill-color:#edf7f0!important;
+  font-size:10px!important;
+  font-weight:700!important;
+  overflow:visible!important;
+}
+
+/* PLAYER DNA — SIZINGS */
+html body .player-dna-page [class*="sizingActions"] > button {
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  flex:none!important;
+  height:auto!important;
+  min-height:30px!important;
+  max-height:none!important;
+  padding:5px 8px!important;
+  border:1px solid #255000!important;
+  border-radius:12px!important;
+  background:rgba(31,54,31,.2)!important;
+  color:#009929!important;
+  -webkit-text-fill-color:#009929!important;
+  font-size:12px!important;
+  font-weight:500!important;
+  overflow:visible!important;
+}
+
+/* AI HAND REVIEW — CASH / TORNEIO */
+html body [class*="HandReviewWorkspace_two"] > button {
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  flex:none!important;
+  height:auto!important;
+  min-height:44px!important;
+  max-height:none!important;
+  padding:7px 8px!important;
+  border:1px solid rgba(120,187,140,.24)!important;
+  border-radius:9px!important;
+  background:#07120b!important;
+  color:#e7f6eb!important;
+  -webkit-text-fill-color:#e7f6eb!important;
+  font-size:.7rem!important;
+  font-weight:700!important;
+  overflow:visible!important;
+}
+
+/* AI HAND REVIEW — AÇÕES DE POKER */
 html body [class*="HandReviewWorkspace_actionGrid"] > button {
-  /* MANTÊM O PADRÃO ESPECÍFICO DO POKER. */
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  flex:none!important;
+  height:auto!important;
+  min-height:44px!important;
+  max-height:none!important;
+  padding:7px 8px!important;
+  border:1px solid rgba(120,187,140,.24)!important;
+  border-radius:9px!important;
+  background:#07120b!important;
+  color:#e7f6eb!important;
+  -webkit-text-fill-color:#e7f6eb!important;
+  font-size:.7rem!important;
+  font-weight:700!important;
+  overflow:visible!important;
+}
+
+@media(max-width:800px){
+  html body .player-dna-page .depth-choices > button{padding:22px 8px!important}
+  html body .player-dna-page .training-session [class*="actions"] > button{padding:12px 2px!important;font-size:8px!important}
+  html body .player-dna-page [class*="sizingActions"] > button{padding:5px 4px!important;font-size:12px!important}
 }
