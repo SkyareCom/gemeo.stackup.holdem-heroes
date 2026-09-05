@@ -93,7 +93,7 @@ html body main.player-dna-page section.panel.profile-panel div.history-panel::be
 .player-dna-page .history-panel>button{order:3!important}
 .player-dna-page .history-panel>div:not(:first-child){order:4!important}
 
-/* Saved-analysis and history counters. */
+/* Saved-analysis progress and history counter: same green and typography. */
 html body main.player-dna-page section.panel.profile-panel .saved-analysis-status,
 html body main.player-dna-page section.panel.profile-panel .saved-analysis-status span,
 html body main.player-dna-page section.panel.profile-panel .history-count{
