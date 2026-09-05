@@ -37,7 +37,7 @@
 .player-dna-page .profile-panel > div > div:first-child > .eyebrow,
 .player-dna-page .saved-analysis-title,
 .player-dna-page .history-eyebrow{
-  font-size:22px!important;
+  font-size:20px!important;
   line-height:1.08!important;
   letter-spacing:.02em!important;
 }
@@ -50,7 +50,7 @@
   content:"RELATÓRIOS"!important;
   display:block!important;
   color:#67d992!important;
-  font-size:22px!important;
+  font-size:20px!important;
   line-height:1.08!important;
   letter-spacing:.02em!important;
   margin:4px 0 0!important;
@@ -58,12 +58,13 @@
 
 /* Stronger override than legacy global Player DNA rules. */
 html body main.player-dna-page section.profile-panel > div > div:first-child > div.eyebrow,
-html body main.player-dna-page section.profile-panel .eyebrow.saved-analysis-title{
-  font-size:22px!important;
+html body main.player-dna-page section.profile-panel .eyebrow.saved-analysis-title,
+html body main.player-dna-page section.profile-panel .eyebrow.history-eyebrow{
+  font-size:20px!important;
   line-height:1.08!important;
 }
 html body main.player-dna-page section.profile-panel .history-panel::before{
-  font-size:22px!important;
+  font-size:20px!important;
   line-height:1.08!important;
 }
 
