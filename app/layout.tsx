@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Doppio_One } from "next/font/google";
 import UppercaseGuard from "@/components/UppercaseGuard";
 import "./globals.css";
+import "./button-standard.css";
 
 const doppioOne = Doppio_One({ subsets: ["latin"], weight: "400", variable: "--font-doppio-one" });
 
