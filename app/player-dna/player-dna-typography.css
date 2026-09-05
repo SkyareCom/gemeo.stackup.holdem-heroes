@@ -57,21 +57,28 @@
 }
 
 /* Navigation: aligned to the same horizontal margins as the page content. */
-.player-dna-page .player-dna-navigation{
+.player-dna-page nav.module-navigation.player-dna-navigation{
   display:grid!important;
   grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
   align-items:stretch!important;
   align-self:stretch!important;
   justify-self:stretch!important;
-  width:auto!important;
+  width:100%!important;
   max-width:100%!important;
   min-width:0!important;
   gap:8px!important;
-  margin:0!important;
-  padding:0!important;
+  margin-left:0!important;
+  margin-right:0!important;
+  margin-top:0!important;
+  margin-bottom:18px!important;
+  padding-left:0!important;
+  padding-right:0!important;
   box-sizing:border-box!important;
+  transform:none!important;
+  left:auto!important;
+  right:auto!important;
 }
-.player-dna-page .player-dna-navigation .player-dna-nav-button{
+.player-dna-page nav.module-navigation.player-dna-navigation .player-dna-nav-button{
   display:flex!important;
   align-items:center!important;
   justify-content:center!important;
