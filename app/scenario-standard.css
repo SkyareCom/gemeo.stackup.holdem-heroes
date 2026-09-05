@@ -1,10 +1,8 @@
 /*
- * PADRÃO ÚNICO E OBRIGATÓRIO DE CARDS SECUNDÁRIOS
- * 2 POR LINHA · 38PX · GAP 8PX · RADIUS 12PX · TEXTO 12PX
- * EXCEÇÕES: CARDS PRINCIPAIS, MODALIDADE/SPOTS E CONTROLES DE AÇÃO.
+ * PADRÃO ÚNICO E OBRIGATÓRIO DE CARDS SECUNDÁRIOS.
+ * O PLAYER DNA / CENÁRIO É EXCEÇÃO: DEVE SER RESUMO EM LISTA, SEM CARDS.
  */
 
-html body [class*="PlayerDnaWorkspace_scenario"],
 html body [class*="HandReviewWorkspace_metrics"],
 html body [class*="HandReviewWorkspace_summary"],
 html body [class*="MathLabWorkspace_metrics"],
@@ -16,7 +14,6 @@ html body [class*="MathLabWorkspace_context"] {
   min-width:0!important;
 }
 
-html body [class*="PlayerDnaWorkspace_scenario"] > [class*="PlayerDnaWorkspace_badge"],
 html body [class*="HandReviewWorkspace_badge"],
 html body [class*="HandReviewWorkspace_metric"],
 html body [class*="HandReviewWorkspace_summary"] > div,
@@ -50,7 +47,6 @@ html body .player-dna-page [class*="actionBadge"] {
   box-shadow:none!important;
 }
 
-html body [class*="PlayerDnaWorkspace_scenario"] > [class*="PlayerDnaWorkspace_badge"] *,
 html body [class*="HandReviewWorkspace_badge"] *,
 html body [class*="HandReviewWorkspace_metric"] *,
 html body [class*="HandReviewWorkspace_summary"] > div *,
@@ -68,7 +64,59 @@ html body .player-dna-page [class*="actionBadge"] * {
   text-align:center!important;
 }
 
-/* CARDS PRINCIPAIS — EXCEÇÃO EXPLÍCITA. */
+/* PLAYER DNA — CENÁRIO EM LISTA NA PRÓPRIA TELA, SEM BADGES/CARDS. */
+html body .player-dna-page .training-session [class*="PlayerDnaWorkspace_scenario"] {
+  display:block!important;
+  width:100%!important;
+  margin:0!important;
+  padding:0!important;
+}
+
+html body .player-dna-page .training-session [class*="PlayerDnaWorkspace_scenario"] > [class*="PlayerDnaWorkspace_badge"] {
+  position:relative!important;
+  display:block!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:none!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:7px 6px 7px 22px!important;
+  box-sizing:border-box!important;
+  overflow:visible!important;
+  border:0!important;
+  border-bottom:1px solid rgba(37,80,0,.45)!important;
+  border-radius:0!important;
+  background:transparent!important;
+  background-image:none!important;
+  box-shadow:none!important;
+  color:#ede6db!important;
+  -webkit-text-fill-color:#ede6db!important;
+  font-size:12px!important;
+  font-weight:400!important;
+  line-height:1.4!important;
+  text-align:left!important;
+  white-space:normal!important;
+}
+
+html body .player-dna-page .training-session [class*="PlayerDnaWorkspace_scenario"] > [class*="PlayerDnaWorkspace_badge"]:last-child {
+  border-bottom:0!important;
+}
+
+html body .player-dna-page .training-session [class*="PlayerDnaWorkspace_scenario"] > [class*="PlayerDnaWorkspace_badge"]::before {
+  content:"•"!important;
+  position:absolute!important;
+  left:6px!important;
+  top:6px!important;
+  color:#009929!important;
+  -webkit-text-fill-color:#009929!important;
+  font-size:14px!important;
+  line-height:1.4!important;
+  background:transparent!important;
+}
+
+/* CARDS PRINCIPAIS — MANTÊM ESTRUTURA E ALTURA PRÓPRIAS. */
 html body .modules > a,
 html body .saved-analysis-panel,
 html body .history-panel,
