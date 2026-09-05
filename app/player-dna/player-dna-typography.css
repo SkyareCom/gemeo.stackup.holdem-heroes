@@ -16,16 +16,20 @@ html body main.player-dna-page *{
   font-weight:400!important;
   color:var(--pd-silver)!important;
   -webkit-text-fill-color:var(--pd-silver)!important;
-  text-transform:lowercase!important;
+  text-transform:uppercase!important;
 }
 html body main.player-dna-page{background:var(--pd-bg)!important}
 
-/* Ordinary reading copy uses mixed casing. */
-html body main.player-dna-page p::first-letter,
-html body main.player-dna-page small::first-letter,
-html body main.player-dna-page label::first-letter,
-html body main.player-dna-page strong::first-letter,
-html body main.player-dna-page span::first-letter{
+/* ALL VISIBLE PLAYER DNA COPY IS UPPERCASE. */
+html body main.player-dna-page p,
+html body main.player-dna-page small,
+html body main.player-dna-page label,
+html body main.player-dna-page strong,
+html body main.player-dna-page span,
+html body main.player-dna-page input,
+html body main.player-dna-page textarea,
+html body main.player-dna-page select,
+html body main.player-dna-page option{
   text-transform:uppercase!important;
 }
 
@@ -80,9 +84,6 @@ html body main.player-dna-page .training-session [class*="progressHead"] strong{
   color:var(--pd-green)!important;
   -webkit-text-fill-color:var(--pd-green)!important;
   font-size:12px!important;
-}
-html body main.player-dna-page .saved-analysis-status>span:first-child::first-letter,
-html body main.player-dna-page .history-count::first-letter{
   text-transform:uppercase!important;
 }
 
@@ -103,7 +104,7 @@ html body main.player-dna-page section.panel.profile-panel .depth-choices>button
   -webkit-text-fill-color:var(--pd-white)!important;
   font-size:16px!important;
   line-height:18px!important;
-  text-transform:none!important;
+  text-transform:uppercase!important;
 }
 html body main.player-dna-page section.panel.profile-panel .depth-choices>button>span{
   color:var(--pd-green)!important;
@@ -123,6 +124,7 @@ html body main.player-dna-page [class*="Badge"]{
   color:var(--pd-silver)!important;
   -webkit-text-fill-color:var(--pd-silver)!important;
   font-size:12px!important;
+  text-transform:uppercase!important;
 }
 
 /* Preserve the existing green surface/border system. */
@@ -138,4 +140,4 @@ html body main.player-dna-page [class*="track"] i{background:var(--pd-green)!imp
 
 .player-dna-page .mode-choices{grid-template-columns:repeat(3,minmax(0,1fr))!important}
 .player-dna-page nav.module-navigation.player-dna-navigation{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;align-items:stretch!important;align-self:stretch!important;justify-self:stretch!important;width:100%!important;max-width:100%!important;min-width:0!important;gap:8px!important;margin:0 0 18px!important;padding:0!important;box-sizing:border-box!important;transform:none!important}
-.player-dna-page nav.module-navigation.player-dna-navigation .player-dna-nav-button{display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;max-width:100%!important;min-width:0!important;height:38px!important;min-height:38px!important;max-height:38px!important;padding:0 8px!important;margin:0!important;box-sizing:border-box!important;text-align:center!important}
+.player-dna-page nav.module-navigation.player-dna-navigation .player-dna-nav-button{display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;max-width:100%!important;min-width:0!important;height:38px!important;min-height:38px!important;max-height:38px!important;padding:0 8px!important;margin:0!important;box-sizing:border-box!important;text-align:center!important;text-transform:uppercase!important}
