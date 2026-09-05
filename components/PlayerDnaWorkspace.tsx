@@ -1,14 +1,16 @@
 "use client";
 
-import {useEffect,useMemo,useState} from "react";
-import {evaluatePlayerDna,type PlayerDnaAnswer} from "@/lib/player-dna";
+import {useEffect,useMemo,useRef,useState} from "react";
+import {evaluatePlayerDna,type DecisionSizing,type PlayerDnaAnswer} from "@/lib/player-dna";
 import {buildBalancedSpotSession} from "@/lib/player-dna-sampler";
-import {playerDnaSpots,type GameMode,type PlayerAction,type PlayerDnaSpot} from "@/data/player-dna-spots";
+import {playerDnaSpots,type AnteFormat,type GameMode,type PlayerAction,type PlayerDnaSpot} from "@/data/player-dna-spots";
 import styles from "./PlayerDnaWorkspace.module.css";
 
 const depths=[100,250,500,1000,1500,3000] as const;
 const STORAGE_KEY="stackup.player-dna.library.v2";
 const LEGACY_STORAGE_KEY="stackup.player-dna.session.v1";
+const betSizings:DecisionSizing[]=["25%","33%","50%","66%","75%","POT","125%","150%"];
+const raiseSizings:DecisionSizing[]=["2X","2.5X","3X","4X","SQUEEZE"];
 
 type SavedDnaSession={mode:GameMode;target:number;index:number;answers:PlayerDnaAnswer[];finished:boolean;sessionSeed:number;updatedAt:number};
 type DnaScores={aggression:number;discipline:number;pressure:number;passivity:number};
@@ -24,6 +26,8 @@ export default function PlayerDnaWorkspace(){
   const[index,setIndex]=useState(0);
   const[answers,setAnswers]=useState<PlayerDnaAnswer[]>([]);
   const[selectedAction,setSelectedAction]=useState<PlayerAction|null>(null);
+  const[selectedSizing,setSelectedSizing]=useState<DecisionSizing|null>(null);
+  const[actionSequenceReady,setActionSequenceReady]=useState(false);
   const[finished,setFinished]=useState(false);
   const[sessionSeed,setSessionSeed]=useState(1);
   const[library,setLibrary]=useState<DnaLibrary>(emptyLibrary);
@@ -33,7 +37,8 @@ export default function PlayerDnaWorkspace(){
   const[editingId,setEditingId]=useState<string|null>(null);
   const[editingName,setEditingName]=useState("");
 
-  const session=useMemo(()=>target?buildBalancedSpotSession(playerDnaSpots,mode,target,sessionSeed):[],[mode,target,sessionSeed]);
+  const generatedCount=target?Math.min(target,answers.length+1):0;
+  const session=useMemo(()=>target?buildBalancedSpotSession(playerDnaSpots,mode,generatedCount,sessionSeed,answers):[],[mode,target,generatedCount,sessionSeed,answers]);
   const spot=session[index];
   const result=useMemo(()=>finished?evaluatePlayerDna(session,answers):null,[finished,session,answers]);
   const selectedReport=library.reports.find(report=>report.id===selectedReportId)??null;
@@ -87,12 +92,13 @@ export default function PlayerDnaWorkspace(){
   function leave(){setTarget(null);setIndex(0);setAnswers([]);setSelectedAction(null);setFinished(false);setSelectedReportId(null)}
   function continueSaved(){const saved=library.active;if(!saved)return;setSelectedReportId(null);setHistoryOpen(false);setMode(saved.mode);setTarget(saved.target);setIndex(Math.min(saved.index,Math.max(0,saved.target-1)));setAnswers(saved.answers);setSelectedAction(null);setFinished(false);setSessionSeed(saved.sessionSeed)}
   function resetAll(){try{localStorage.removeItem(STORAGE_KEY);localStorage.removeItem(LEGACY_STORAGE_KEY)}catch{}setLibrary(emptyLibrary);setSelectedReportId(null);setHistoryOpen(false);setEditingId(null);setTarget(null);setIndex(0);setAnswers([]);setSelectedAction(null);setFinished(false);setSessionSeed(1)}
-  function chooseAction(action:PlayerAction){setSelectedAction(current=>current===action?null:action)}
+  function chooseAction(action:PlayerAction){if(!actionSequenceReady)return;setSelectedAction(current=>current===action?null:action);setSelectedSizing(null)}
   function nextSpot(){
-    if(!spot||!target||!selectedAction)return;
-    const answer:PlayerDnaAnswer={spotId:spot.id,action:selectedAction};
+    const sizingRequired=selectedAction==="BET"||selectedAction==="RAISE";
+    if(!spot||!target||!selectedAction||(sizingRequired&&!selectedSizing))return;
+    const answer:PlayerDnaAnswer={spotId:spot.id,action:selectedAction,...(selectedSizing?{sizing:selectedSizing}:{})};
     const next=[...answers,answer];
-    setAnswers(next);setSelectedAction(null);
+    setAnswers(next);setSelectedAction(null);setSelectedSizing(null);setActionSequenceReady(false);
     if(next.length>=target){setFinished(true);return}
     setIndex(v=>Math.min(v+1,target-1));
   }
@@ -103,9 +109,9 @@ export default function PlayerDnaWorkspace(){
   if(selectedReport)return <ReportView report={selectedReport} onBack={()=>setSelectedReportId(null)} onRename={()=>beginRename(selectedReport)}/>;
 
   if(target===null)return <div className={styles.setup}>
-    <div><div className="eyebrow">PLAYER DNA</div><h2>DESCUBRA SEU PERFIL</h2><p className="setup-intro">Escolha a modalidade e a profundidade da análise. Seu progresso e seus relatórios ficam salvos neste dispositivo.</p></div>
+    <div><div className="eyebrow">PLAYER DNA</div><h2>DESCUBRA SEU PERFIL</h2><p className="setup-intro">Escolha a modalidade e a profundidade da análise. Seu progresso e seus relatórios ficam salvos neste dispositivo.</p><p className="analysis-balance-note">PARA EVITAR UM RETRATO VICIADO, O MOTOR DISTRIBUI ALEATORIAMENTE CASH GAMES DE DIFERENTES LIMITES E TORNEIOS ONLINE, MTT, BOUNTY, HIGH ROLLER, TURBO E REGULARES AO LONGO DA ANÁLISE.</p></div>
     <div className={`${styles.modeGrid} mode-choices`}>
-      {(["CASH","TORNEIO"] as const).map(option=><label key={option} className={styles.modeButton}><input type="radio" name="player-dna-mode" value={option} defaultChecked={mode===option}/><strong>{option}</strong></label>)}
+      {(["CASH","TORNEIO"] as const).map(option=><label key={option} className={styles.modeButton}><input type="radio" name="player-dna-mode" value={option} checked={mode===option} onChange={()=>setMode(option)}/><strong>{option}</strong></label>)}
     </div>
     <div className={`${styles.depthGrid} depth-choices`}>{depths.map(n=><button type="button" key={n} aria-pressed={selectedDepth===n} onPointerDown={()=>setSelectedDepth(n)} onClick={()=>start(n)}><strong>{n}</strong><span>SPOTS</span></button>)}</div>
     <div className="saved-analysis-panel" style={{border:"1px solid rgba(92,187,126,.28)",borderRadius:16,padding:16,background:"rgba(9,31,18,.62)",display:"grid",gap:12}}>
@@ -133,48 +139,81 @@ export default function PlayerDnaWorkspace(){
   if(finished&&result)return <div className={styles.result}><div><span className="tag">PLAYER DNA · {mode}</span><h3>{result.label}</h3><p>{answers.length} / {target} SPOTS CONCLUÍDOS · RELATÓRIO SALVO NO HISTÓRICO</p></div><div className={styles.resultGrid}><Metric label="AGRESSÃO" value={`${result.scores.aggression}%`}/><Metric label="DISCIPLINA" value={`${result.scores.discipline}%`}/><Metric label="PRESSÃO" value={`${result.scores.pressure}%`}/><Metric label="PASSIVIDADE" value={`${result.scores.passivity}%`}/></div><button type="button" className="primary" onClick={leave}>VOLTAR AOS RELATÓRIOS</button></div>;
   if(!spot)return <div className={styles.result}><h3>DADOS INSUFICIENTES</h3><button type="button" className="primary" onClick={leave}>VOLTAR</button></div>;
 
-  return <div className={`${styles.session} training-session`}><div className={styles.progressHead}><span>SPOT {answers.length+1} / {target}</span><strong>{Math.round((answers.length/target)*100)}%</strong></div><div className={styles.track}><i style={{width:`${(answers.length/target)*100}%`}}/></div><Level spot={spot}/><Board spot={spot}/><Pot spot={spot}/><Players spot={spot}/><p className={styles.prompt}>QUAL A SUA AÇÃO?</p><div className={styles.actions}>{spot.actions.map(action=><button type="button" aria-pressed={selectedAction===action} className={selectedAction===action?styles.actionSelected:""} key={action} onClick={()=>chooseAction(action)}>{action}</button>)}</div><Scenario spot={spot}/><div className="training-footer" style={{display:"flex",justifyContent:"space-between",gap:8,flexWrap:"wrap",marginTop:12}}><button type="button" className={styles.modeButton} onClick={leave}><strong>SALVAR ANÁLISE E SAIR</strong></button><button type="button" className="primary" aria-disabled={!selectedAction} onClick={nextSpot}>PRÓXIMO</button></div></div>;
+  const automaticAnte=spot.anteMode??"NONE";
+  const sizingOptions=selectedAction==="BET"?betSizings:selectedAction==="RAISE"?raiseSizings:[];
+  const canContinue=Boolean(actionSequenceReady&&selectedAction&&(!(selectedAction==="BET"||selectedAction==="RAISE")||selectedSizing));
+  return <div className={`${styles.session} training-session`}><div className={styles.progressHead}><span>SPOT {answers.length+1} / {target}</span><strong>{Math.round((answers.length/target)*100)}%</strong></div><div className={styles.track}><i style={{width:`${(answers.length/target)*100}%`}}/></div><Level spot={spot}/><Pot spot={spot} anteMode={automaticAnte}/><Board spot={spot}/><Hero spot={spot} anteMode={automaticAnte}/><Players spot={spot} anteMode={automaticAnte} selectedAction={selectedAction} onSequenceReady={setActionSequenceReady}/><p className={styles.prompt}>QUAL É A SUA AÇÃO ?</p><div className={styles.actions} aria-busy={!actionSequenceReady}>{spot.actions.map(action=><button type="button" aria-disabled={!actionSequenceReady} aria-pressed={selectedAction===action} className={selectedAction===action?styles.actionSelected:""} key={action} onClick={()=>chooseAction(action)}>{action}</button>)}</div>{sizingOptions.length>0&&<div className={styles.sizingActions}>{sizingOptions.map(sizing=><button type="button" aria-pressed={selectedSizing===sizing} className={selectedSizing===sizing?styles.actionSelected:""} key={sizing} onClick={()=>setSelectedSizing(current=>current===sizing?null:sizing)}>{sizing}</button>)}</div>}<div className="training-footer" style={{display:"grid",gridTemplateColumns:"repeat(2,minmax(0,1fr))",gap:8}}><button type="button" className={styles.modeButton} onClick={leave}><strong>SALVAR ANÁLISE E SAIR</strong></button><button type="button" className="primary" aria-disabled={!canContinue} onClick={nextSpot}>PRÓXIMO</button></div><Scenario spot={spot}/></div>;
 }
 
 function ReportView({report,onBack,onRename}:{report:DnaReport;onBack:()=>void;onRename:()=>void}){return <div className={styles.result}><div><span className="tag">RELATÓRIO PLAYER DNA · {report.mode}</span><h3>{report.name}</h3><p>{new Date(report.completedAt).toLocaleString("pt-BR")} · {report.answers.length} / {report.target} SPOTS</p></div><div className={styles.resultGrid}><Metric label="AGRESSÃO" value={`${report.result.scores.aggression}%`}/><Metric label="DISCIPLINA" value={`${report.result.scores.discipline}%`}/><Metric label="PRESSÃO" value={`${report.result.scores.pressure}%`}/><Metric label="PASSIVIDADE" value={`${report.result.scores.passivity}%`}/></div><div style={{border:"1px solid rgba(92,187,126,.2)",borderRadius:14,padding:14}}><small style={{opacity:.62}}>CLASSIFICAÇÃO FINAL</small><strong style={{display:"block",marginTop:5}}>{report.result.label}</strong></div><div style={{display:"flex",gap:8,flexWrap:"wrap"}}><button type="button" className="primary" onClick={onBack}>VOLTAR AO HISTÓRICO</button><button type="button" className={styles.modeButton} style={{minHeight:44}} onClick={onRename}><strong>EDITAR NOME</strong></button></div></div>}
 function Board({spot}:{spot:PlayerDnaSpot}){const cards=spot.board?.split(" ").filter(Boolean)??[];return <section className={styles.block}><h4 className={styles.blockTitle}>BOARD</h4><div className={styles.boardRow}><span className={styles.badge}>{spot.street}</span>{cards.length>0&&<div className={styles.cards}>{cards.map(card=><span className={styles.card} key={card}>{card}</span>)}</div>}</div></section>}
-function Pot({spot}:{spot:PlayerDnaSpot}){return <section className={styles.block}><h4 className={styles.blockTitle}>POT</h4><div className={styles.potRows}><div className={styles.potRow}><span className={styles.badge}>MAIN</span><span className={styles.potValue}>{fmt(spot.pot.main,spot.mode)}</span><span className={styles.participants}>{spot.players.map(p=>p.position).join(" · ")}</span></div>{spot.pot.sides?.map((side,i)=><div className={styles.potRow} key={i}><span className={styles.badge}>SIDE {i+1}</span><span className={styles.potValue}>{fmt(side.value,spot.mode)}</span><span className={styles.participants}>{side.players.join(" · ")}</span></div>)}</div></section>}
+function anteCharge(position:string,spot:PlayerDnaSpot,anteMode:AnteFormat){if(spot.mode!=="TORNEIO"||anteMode==="NONE")return 0;if(anteMode==="BB_ANTE")return position==="BB"?1:0;return 1/Math.max(1,spot.players.length)}
+function allInState(spot:PlayerDnaSpot,anteMode:AnteFormat){
+  const hero=spot.players.find(player=>player.hero)??spot.players[0];
+  const opponents=spot.players.filter(player=>!player.hero);
+  const active=opponents.filter(player=>player.action!=="FOLD");
+  const hasAllIn=active.some(player=>player.action==="ALL-IN");
+  const toCall=Math.min(hero.stack,Math.max(0,...active.map(player=>player.value)));
+  const committed=spot.players.reduce((sum,player)=>sum+player.value,0);
+  const potBeforeActions=Math.max(0,spot.pot.main-committed);
+  const anteTotal=spot.mode==="TORNEIO"&&anteMode!=="NONE"?1:0;
+  const heroPot=potBeforeActions+anteTotal+toCall+opponents.reduce((sum,player)=>sum+Math.min(player.value,toCall),0);
+  return{hero,hasAllIn,toCall,totalPot:spot.pot.main+anteTotal,heroPot};
+}
+function Pot({spot,anteMode}:{spot:PlayerDnaSpot;anteMode:AnteFormat}){
+  const state=allInState(spot,anteMode);
+  return <section className={styles.block}><h4 className={styles.blockTitle}>POT</h4><div className={styles.potRows}><div className={styles.potRow}><span className={styles.badge}>POT</span><span className={styles.potValue}>{fmt(state.totalPot,spot.mode)}</span><span/></div><div className={styles.potRow}><span className={styles.badge}>POT HERÓI</span><span className={styles.potValue}>{fmt(state.heroPot,spot.mode)}</span><span/></div></div></section>;
+}
+function Hero({spot,anteMode}:{spot:PlayerDnaSpot;anteMode:AnteFormat}){const state=allInState(spot,anteMode);return <section className={`${styles.block} ${styles.heroCard}`}><h4 className={styles.blockTitle}>HERÓI</h4><div className={styles.heroContent}><span className={`${styles.badge} ${styles.heroMarker}`}>{state.hero.position}</span><div className={styles.cards}>{spot.heroCards.split(" ").map(card=><span className={styles.card} key={card}>{card}</span>)}</div><strong>{`TO CALL ${fmt(state.toCall,spot.mode)}`}</strong></div></section>}
 function Level({spot}:{spot:PlayerDnaSpot}){
   const phase=spot.scenario.find(item=>["EARLY GAME","MID GAME","BOLHA","ITM","FT"].includes(item))??(spot.mode==="CASH"?"CASH":"TORNEIO");
-  const tournamentLevels:Record<string,{sb:string;bb:string;ante:string}>={"EARLY GAME":{sb:"100",bb:"200",ante:"20"},"MID GAME":{sb:"500",bb:"1.000",ante:"100"},BOLHA:{sb:"1.000",bb:"2.000",ante:"200"},ITM:{sb:"1.500",bb:"3.000",ante:"300"},FT:{sb:"2.500",bb:"5.000",ante:"500"}};
-  const level=tournamentLevels[phase]??{sb:"0,5 BB",bb:"1 BB",ante:""};
-  return <section className={`${styles.block} ${styles.levelCard}`}><div className={styles.levelTitle}><h4 className={styles.blockTitle}>NÍVEL</h4><span className={styles.badge}>{phase}</span></div><div className={styles.levelValues}><div><span>SB</span><strong>{level.sb}</strong></div><div><span>BB</span><strong>{level.bb}</strong></div>{spot.mode==="TORNEIO"&&<div><span>ANTE</span><strong>{level.ante}</strong></div>}</div></section>
+  const tournamentLevels:Record<string,{sb:number;bb:number}>={"EARLY GAME":{sb:100,bb:200},"MID GAME":{sb:500,bb:1000},BOLHA:{sb:1000,bb:2000},ITM:{sb:1500,bb:3000},FT:{sb:2500,bb:5000}};
+  const tournamentLevelNumbers:Record<string,string>={"EARLY GAME":"01","MID GAME":"02",BOLHA:"03",ITM:"04",FT:"05"};
+  const cashLevels:Record<string,{sb:string;bb:string;label:string}>={"MICRO STAKES":{sb:"$ 0,50",bb:"$ 1",label:"MICRO STAKES"},"MID STAKES":{sb:"$ 2,50",bb:"$ 5",label:"MID STAKES"},"HIGH STAKES":{sb:"$ 25",bb:"$ 50",label:"HIGH STAKES"}};
+  const cashLevelNumbers:Record<string,string>={"MICRO STAKES":"01","MID STAKES":"02","HIGH STAKES":"03"};
+  const tournament=tournamentLevels[phase]??tournamentLevels["EARLY GAME"];
+  const profile=spot.gameProfile??"MICRO STAKES";
+  const cash=cashLevels[profile]??cashLevels["MICRO STAKES"];
+  const anteMode=spot.anteMode??"NONE";
+  const playerCount=Math.max(1,spot.players.length);
+  const anteValue=anteMode==="BB_ANTE"?tournament.bb:anteMode==="BB_PL"?tournament.bb/playerCount:0;
+  const formatChips=(value:number)=>Math.round(value).toLocaleString("pt-BR");
+  const levelNumber=spot.mode==="CASH"?(cashLevelNumbers[profile]??"01"):(tournamentLevelNumbers[phase]??"01");
+  const values=spot.mode==="CASH"?`SB ${cash.sb} / BB ${cash.bb}`:`SB ${formatChips(tournament.sb)} / BB ${formatChips(tournament.bb)}${anteMode!=="NONE"?` (${formatChips(anteValue)})`:""}`;
+  return <section className={`${styles.block} ${styles.levelSection}`}><h4 className={styles.blockTitle}>NÍVEL</h4><div className={styles.levelSummary}><span className={styles.levelNumber}>{levelNumber}</span><strong>{values}</strong></div></section>
 }
 
-type ActionLine={id:string;street:PlayerDnaSpot["street"];position:string;action:string;stack:number;fold?:boolean};
-const streetOrder:PlayerDnaSpot["street"][]=["PREFLOP","FLOP","TURN","RIVER"];
-function actionLines(spot:PlayerDnaSpot){
+type ActionLine={id:string;position:string;action:string;stack:number;amount:number;fold?:boolean;hero?:boolean};
+function actionLines(spot:PlayerDnaSpot):ActionLine[]{
   const opponents=spot.players.filter(player=>!player.hero);
-  const currentIndex=streetOrder.indexOf(spot.street);
-  const previous:ActionLine[]=[];
-  streetOrder.slice(0,currentIndex).forEach((street,streetIndex)=>{
-    const player=opponents[streetIndex%Math.max(1,opponents.length)];
-    if(player)previous.push({id:`${spot.id}-${street}-history`,street,position:player.position,action:street==="PREFLOP"?"RAISE":"BET",stack:player.stack});
-  });
-  const current=opponents.map((player,index)=>({id:`${spot.id}-${spot.street}-${player.position}-${index}`,street:spot.street,position:player.position,action:player.action,stack:player.stack,fold:player.action==="FOLD"}));
-  return{previous,current};
+  return opponents.map((player,index)=>({id:`${spot.id}-${spot.street}-${player.position}-${index}`,position:player.position,action:player.action,stack:player.stack,amount:player.value,fold:player.action==="FOLD"}));
 }
 
-function Players({spot}:{spot:PlayerDnaSpot}){
+function Players({spot,anteMode,selectedAction,onSequenceReady}:{spot:PlayerDnaSpot;anteMode:AnteFormat;selectedAction:PlayerAction|null;onSequenceReady:(ready:boolean)=>void}){
   const flow=useMemo(()=>actionLines(spot),[spot]);
-  const[visible,setVisible]=useState<ActionLine[]>(flow.previous);
+  const hero=spot.players.find(player=>player.hero)??spot.players[0];
+  const[actionStep,setActionStep]=useState(-1);
+  const[sequenceReady,setSequenceReady]=useState(false);
+  const historyRef=useRef<HTMLDivElement>(null);
   useEffect(()=>{
-    setVisible(flow.previous);
-    const timers:number[]=[];
-    flow.current.forEach((line,index)=>{
-      timers.push(window.setTimeout(()=>{
-        setVisible(rows=>[...rows,line]);
-        if(line.fold)timers.push(window.setTimeout(()=>setVisible(rows=>rows.filter(row=>row.id!==line.id)),1400));
-      },index*1000));
-    });
-    return()=>timers.forEach(timer=>window.clearTimeout(timer));
-  },[flow]);
-  return <section className={`${styles.block} ${styles.actionsCard}`}><div className={styles.actionsCardTitle}><span className={styles.badge}>{spot.street}</span><h4>JOGADORES COM AÇÃO</h4></div><div className={styles.actionHistory}>{visible.map(line=><div className={`${styles.actionLine} ${line.fold?styles.foldLine:""}`} key={line.id}><span className={styles.badge}>{line.position}</span><span className={styles.actionBadge}>{line.street!==spot.street?`${line.street} · `:""}{line.action}</span><span className={styles.actionStack}>{fmt(line.stack,spot.mode)}</span></div>)}</div></section>
+    setActionStep(-1);setSequenceReady(false);onSequenceReady(false);
+    const start=window.setTimeout(()=>setActionStep(0),120);
+    return()=>window.clearTimeout(start);
+  },[flow,onSequenceReady]);
+  useEffect(()=>{
+    if(actionStep<0)return;
+    if(actionStep>=flow.length){setSequenceReady(true);onSequenceReady(true);return}
+    const delay=1000+(flow[actionStep].fold?400:0);
+    const timer=window.setTimeout(()=>setActionStep(step=>step+1),delay);
+    return()=>window.clearTimeout(timer);
+  },[actionStep,flow,onSequenceReady]);
+  const fixed=flow.filter((line,index)=>index<actionStep&&!line.fold);
+  const active=!sequenceReady&&actionStep>=0&&actionStep<flow.length?flow[actionStep]:null;
+  const pending:ActionLine={id:`${spot.id}-${spot.street}-${hero.position}-hero`,position:hero.position,action:selectedAction??"AGUARDA",stack:hero.stack,amount:0,hero:true};
+  const visible=sequenceReady?[...fixed,pending]:active?[...fixed,active]:fixed;
+  const lastKey=visible.at(-1)?.id??"empty";
+  useEffect(()=>{const node=historyRef.current;if(node)node.scrollTop=node.scrollHeight},[lastKey,visible.length]);
+  return <section className={`${styles.block} ${styles.actionsSection}`}><h4 className={styles.blockTitle}>JOGADORES COM AÇÃO</h4><div className={styles.actionsCard}><div className={styles.actionHistory} ref={historyRef}>{visible.length===0?<div>—</div>:visible.map(line=><div className={`${styles.actionLine} ${line.fold?styles.foldLine:""}`} key={line.id}><span className={`${styles.badge} ${line.hero&&!selectedAction?`${styles.heroMarker} ${styles.heroListMarker}`:""}`}>{line.position}</span><span className={styles.actionBadge}>{line.action}</span><span className={styles.actionStack}>{fmt(Math.max(0,line.stack-line.amount-anteCharge(line.position,spot,anteMode)),spot.mode)}</span></div>)}</div></div></section>
 }
 function Scenario({spot}:{spot:PlayerDnaSpot}){return <section className={styles.block}><h4 className={styles.blockTitle}>CENÁRIO</h4><div className={styles.scenario}>{spot.scenario.map(item=><span className={styles.badge} key={item}>{item}</span>)}</div></section>}
 function Metric({label,value}:{label:string;value:string}){return <div className="metric"><small>{label}</small><strong>{value}</strong></div>}

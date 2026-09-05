@@ -1,9 +1,14 @@
 export type GameMode="CASH"|"TORNEIO";
+export type CashProfile="MICRO STAKES"|"MID STAKES"|"HIGH STAKES";
+export type TournamentProfile="MTT REGULAR"|"BOUNTY"|"HIGH ROLLER"|"TURBO";
+export type AnteFormat="NONE"|"BB_ANTE"|"BB_PL";
 export type PlayerAction="FOLD"|"CHECK"|"CALL"|"BET"|"RAISE"|"ALL-IN";
 export type Score={aggression:number;discipline:number;pressure:number;passivity:number};
 export type PlayerDnaSpot={
   id:string;
   mode:GameMode;
+  gameProfile?:CashProfile|TournamentProfile;
+  anteMode?:AnteFormat;
   street:"PREFLOP"|"FLOP"|"TURN"|"RIVER";
   heroCards:string;
   board?:string;

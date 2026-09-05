@@ -37,10 +37,10 @@ export default function HandVisionImport(){
 
   function clear(){if(preview)URL.revokeObjectURL(preview);setFile(null);setPreview("");setResult("");setError("")}
 
-  return <section style={{border:"1px solid rgba(92,187,126,.22)",borderRadius:18,padding:18,marginBottom:18,background:"linear-gradient(180deg,rgba(8,24,15,.92),rgba(3,10,6,.96))"}}>
+  return <section style={{marginBottom:18}}>
     <div className="eyebrow">STACKUP AI VISION</div>
-    <h3 style={{margin:"8px 0 6px"}}>IMPORTAR MÃO POR FOTO</h3>
-    <p style={{opacity:.72,lineHeight:1.5,marginTop:0}}>Fotografe a mesa ou selecione um print. A IA extrai os dados visíveis para você conferir antes de preencher e analisar a mão.</p>
+    <h3 className="ai-hand-review-feature-title" style={{margin:"8px 0 6px"}}>IMPORTAR MÃO POR FOTO</h3>
+    <p className="ai-hand-review-feature-copy" style={{opacity:.72,lineHeight:1.5,marginTop:0}}>Fotografe a mesa ou selecione um print. A IA extrai os dados visíveis para você conferir antes de preencher e analisar a mão.</p>
     <input ref={cameraRef} type="file" accept="image/*" capture="environment" hidden onChange={e=>choose(e.target.files?.[0])}/>
     <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" hidden onChange={e=>choose(e.target.files?.[0])}/>
     <div style={{display:"flex",gap:8,flexWrap:"wrap"}}><button className="primary" type="button" onClick={()=>cameraRef.current?.click()}>📷 CÂMERA</button><button className="primary" type="button" onClick={()=>fileRef.current?.click()}>🖼 ANEXAR IMAGEM</button></div>

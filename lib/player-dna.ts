@@ -1,6 +1,7 @@
 import type { PlayerAction, PlayerDnaSpot } from "@/data/player-dna-spots";
 
-export type PlayerDnaAnswer = { spotId: string; action: PlayerAction };
+export type DecisionSizing = "25%" | "33%" | "50%" | "66%" | "75%" | "POT" | "125%" | "150%" | "2X" | "2.5X" | "3X" | "4X" | "SQUEEZE";
+export type PlayerDnaAnswer = { spotId: string; action: PlayerAction; sizing?: DecisionSizing };
 
 export type PlayerDnaResult = {
   label: string;
