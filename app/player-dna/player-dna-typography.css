@@ -33,39 +33,38 @@
   font-size:10px!important;
 }
 
-/* Setup section hierarchy. */
-.player-dna-page .setup-intro~*{}
+/* Main Player DNA setup headings. */
+.player-dna-page .profile-panel > div > div:first-child > .eyebrow,
 .player-dna-page .saved-analysis-title,
-.player-dna-page .history-eyebrow,
-.player-dna-page .saved-analysis-panel~* .history-eyebrow,
-.player-dna-page .profile-panel [class="eyebrow"]{
+.player-dna-page .history-eyebrow{
   font-size:32px!important;
   line-height:1.08!important;
+  letter-spacing:.02em!important;
 }
+
 .player-dna-page .history-panel{
-  position:relative;
+  position:relative!important;
+  display:grid!important;
 }
 .player-dna-page .history-panel::before{
-  content:"RELATÓRIOS";
-  display:block;
-  order:2;
-  color:#67d992;
+  content:"RELATÓRIOS"!important;
+  display:block!important;
+  color:#67d992!important;
   font-size:32px!important;
-  line-height:1.08;
-  letter-spacing:.02em;
+  line-height:1.08!important;
+  letter-spacing:.02em!important;
+  margin:4px 0 0!important;
 }
-.player-dna-page .history-panel>div:first-child{order:1}
-.player-dna-page .history-panel>.primary{order:3}
-.player-dna-page .history-panel>div:not(:first-child){order:4}
 
-/* Navigation: one full row, half width for each control. */
-.player-dna-page .module-navigation{
+/* Navigation: one full row, 50% each, fixed 38px height. */
+.player-dna-page .player-dna-navigation{
   display:grid!important;
-  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
   width:100%!important;
+  max-width:none!important;
   gap:8px!important;
 }
-.player-dna-page .module-navigation .module-back{
+.player-dna-page .player-dna-navigation .player-dna-nav-button{
   display:flex!important;
   align-items:center!important;
   justify-content:center!important;
@@ -75,5 +74,6 @@
   min-height:38px!important;
   max-height:38px!important;
   padding:0 8px!important;
+  margin:0!important;
   box-sizing:border-box!important;
 }
