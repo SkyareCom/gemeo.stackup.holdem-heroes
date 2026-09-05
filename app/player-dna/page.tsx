@@ -1,14 +1,9 @@
-"use client";
-
-import { useState } from "react";
 import Link from "next/link";
 import BackButton from "@/components/BackButton";
 import PlayerDnaPokerTable from "@/components/PlayerDnaPokerTable";
 import PlayerDnaWorkspace from "@/components/PlayerDnaWorkspace";
 
 export default function PlayerDnaPage(){
-  const [analysisStarted,setAnalysisStarted]=useState(false);
-
   return <main className="module-page player-dna-page">
     <nav className="module-navigation" aria-label="Navegação do módulo">
       <BackButton eventName="player-dna-previous"/>
@@ -16,12 +11,19 @@ export default function PlayerDnaPage(){
     </nav>
 
     <section className="panel profile-panel">
-      {!analysisStarted ? <>
-        <div className="eyebrow">PLAYER DNA</div>
-        <h2>DESCUBRA SEU PERFIL</h2>
+      <style>{`
+        .player-dna-operation-table{display:none}
+        .profile-panel:has(.training-session) .player-dna-operation-table{display:block}
+        .profile-panel:has(.training-session) .player-dna-operation-table + .player-dna-workspace-shell{margin-top:18px}
+      `}</style>
+      <div className="player-dna-operation-table">
+        <div className="eyebrow">PLAYER DNA · OPERAÇÃO</div>
+        <h2>MESA DE ANÁLISE</h2>
         <PlayerDnaPokerTable/>
-        <button type="button" className="primary player-dna-start" onClick={()=>setAnalysisStarted(true)}>INICIAR ANÁLISE</button>
-      </> : <PlayerDnaWorkspace/>}
+      </div>
+      <div className="player-dna-workspace-shell">
+        <PlayerDnaWorkspace/>
+      </div>
     </section>
   </main>;
 }
