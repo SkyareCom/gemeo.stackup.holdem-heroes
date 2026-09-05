@@ -39,7 +39,7 @@ export default function PlayerDnaPokerTable({spot,selectedAction,onSequenceReady
       <style>
         :host{display:block;width:100%;contain:content}
         *{box-sizing:border-box}
-        .scene{position:relative;width:min(100%,448px);aspect-ratio:.67/1;margin:0 auto 58px;font-family:Arial,Helvetica,sans-serif;color:#fff;overflow:visible;filter:drop-shadow(0 16px 24px rgba(0,0,0,.46))}
+        .scene{position:relative;width:min(100%,448px);aspect-ratio:.67/1;margin:0 auto;font-family:Arial,Helvetica,sans-serif;color:#fff;overflow:visible;filter:drop-shadow(0 16px 24px rgba(0,0,0,.46))}
         .table{position:absolute;inset:5.5% 2.5% 2%;border-radius:49%/16%;background:linear-gradient(180deg,#313437 0%,#111315 12%,#050607 34%,#17191b 69%,#050606 100%);box-shadow:0 22px 38px rgba(0,0,0,.75),inset 0 0 0 2px #44484b,inset 0 0 0 7px #080909}
         .table:after{content:"";position:absolute;inset:2.2%;border-radius:49%/16%;box-shadow:inset 0 10px 18px rgba(255,255,255,.04),inset 0 -16px 26px rgba(0,0,0,.65);pointer-events:none}
         .table:before{content:"";position:absolute;inset:5.1%;border-radius:48%/16%;background:linear-gradient(90deg,#2c1409,#71401f 23%,#3b1e0f 40%,#7a492a 55%,#3b1f11 72%,#71401f 88%,#281208);box-shadow:inset 0 0 0 2px #160a05,inset 0 3px 9px rgba(255,255,255,.07),inset 0 -8px 16px rgba(0,0,0,.5)}
