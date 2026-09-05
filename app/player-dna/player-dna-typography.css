@@ -108,13 +108,22 @@ html body main.player-dna-page [class*="track"] i{
   font-size:10px!important;
 }
 
-/* Main Player DNA setup headings. */
-.player-dna-page .profile-panel > div > div:first-child > .eyebrow,
-.player-dna-page .saved-analysis-title,
-.player-dna-page .history-eyebrow{
+/* Setup section titles: Configurações, Análises, Histórico, Relatórios. */
+html body main.player-dna-page section.profile-panel h2,
+html body main.player-dna-page section.profile-panel .eyebrow.saved-analysis-title,
+html body main.player-dna-page section.profile-panel .eyebrow.history-eyebrow,
+html body main.player-dna-page section.profile-panel .history-panel::before{
+  color:var(--pd-text)!important;
+  -webkit-text-fill-color:var(--pd-text)!important;
+  font-size:16px!important;
+  line-height:1.15!important;
+  letter-spacing:.02em!important;
+}
+
+/* Keep PLAYER DNA as the module identifier, separate from the four section titles. */
+html body main.player-dna-page section.profile-panel > div > div:first-child > div.eyebrow{
   font-size:20px!important;
   line-height:1.08!important;
-  letter-spacing:.02em!important;
 }
 
 .player-dna-page .history-panel{
@@ -124,23 +133,7 @@ html body main.player-dna-page [class*="track"] i{
 .player-dna-page .history-panel::before{
   content:"RELATÓRIOS"!important;
   display:block!important;
-  color:var(--pd-accent)!important;
-  font-size:20px!important;
-  line-height:1.08!important;
-  letter-spacing:.02em!important;
   margin:4px 0 0!important;
-}
-
-/* Stronger override than legacy global Player DNA rules. */
-html body main.player-dna-page section.profile-panel > div > div:first-child > div.eyebrow,
-html body main.player-dna-page section.profile-panel .eyebrow.saved-analysis-title,
-html body main.player-dna-page section.profile-panel .eyebrow.history-eyebrow{
-  font-size:20px!important;
-  line-height:1.08!important;
-}
-html body main.player-dna-page section.profile-panel .history-panel::before{
-  font-size:20px!important;
-  line-height:1.08!important;
 }
 
 /* Navigation: aligned to the same horizontal margins as the page content. */
