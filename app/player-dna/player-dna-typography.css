@@ -23,8 +23,6 @@ html body main.player-dna-page{background:var(--pd-bg)!important}
 /* Sentence-style casing for ordinary UI copy. */
 html body main.player-dna-page p::first-letter,
 html body main.player-dna-page small::first-letter,
-html body main.player-dna-page button::first-letter,
-html body main.player-dna-page a::first-letter,
 html body main.player-dna-page label::first-letter,
 html body main.player-dna-page strong::first-letter,
 html body main.player-dna-page span::first-letter{
@@ -65,6 +63,9 @@ html body main.player-dna-page section.panel.profile-panel .history-panel::befor
 .player-dna-page .history-panel>button{order:3!important}
 .player-dna-page .history-panel>div:not(:first-child){order:4!important}
 
+/* Remove the random-mode explanatory note from the setup screen. */
+html body main.player-dna-page .analysis-balance-note{display:none!important}
+
 /* Progress/counters — #009929 / 12px. */
 html body main.player-dna-page .saved-analysis-status,
 html body main.player-dna-page .saved-analysis-status span,
@@ -80,32 +81,41 @@ html body main.player-dna-page .history-count::first-letter{
   text-transform:uppercase!important;
 }
 
-/* Spot numerals — white / 16px. */
-html body main.player-dna-page .depth-choices button strong{
+/* Button rule: always uppercase and #009929. */
+html body main.player-dna-page button,
+html body main.player-dna-page button *,
+html body main.player-dna-page a.module-back,
+html body main.player-dna-page a.module-back *{
+  color:var(--pd-green)!important;
+  -webkit-text-fill-color:var(--pd-green)!important;
+  font-size:12px!important;
+  text-transform:uppercase!important;
+}
+
+/* Spot numerals are the explicit button exception: white / 16px. */
+html body main.player-dna-page section.panel.profile-panel .depth-choices>button>strong{
   color:var(--pd-white)!important;
   -webkit-text-fill-color:var(--pd-white)!important;
   font-size:16px!important;
   line-height:18px!important;
   text-transform:none!important;
 }
-html body main.player-dna-page .depth-choices button span{
-  color:var(--pd-silver)!important;
-  -webkit-text-fill-color:var(--pd-silver)!important;
+html body main.player-dna-page section.panel.profile-panel .depth-choices>button>span{
+  color:var(--pd-green)!important;
+  -webkit-text-fill-color:var(--pd-green)!important;
   font-size:12px!important;
+  text-transform:uppercase!important;
 }
 
 /* All remaining reading text is silver / 12px. */
 html body main.player-dna-page .setup-intro,
-html body main.player-dna-page .analysis-balance-note,
 html body main.player-dna-page .saved-analysis-description,
 html body main.player-dna-page .history-description,
 html body main.player-dna-page [class*="blockTitle"],
 html body main.player-dna-page [class*="levelNumber"],
 html body main.player-dna-page [class*="levelSummary"],
 html body main.player-dna-page [class*="badge"],
-html body main.player-dna-page [class*="Badge"],
-html body main.player-dna-page button,
-html body main.player-dna-page a.module-back{
+html body main.player-dna-page [class*="Badge"]{
   color:var(--pd-silver)!important;
   -webkit-text-fill-color:var(--pd-silver)!important;
   font-size:12px!important;
