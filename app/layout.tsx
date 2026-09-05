@@ -6,12 +6,15 @@ const doppioOne = Doppio_One({ subsets: ["latin"], weight: "400", variable: "--f
 
 export const metadata: Metadata = {
   title: "STACKUP HOLD'EM HEROES",
-  description: "AI Poker Performance System.",
+  description: "AI POKER PERFORMANCE SYSTEM.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="pt-BR" className={doppioOne.variable}>
+      <head>
+        <style>{`html body, html body *, html body *::before, html body *::after { text-transform: uppercase !important; }`}</style>
+      </head>
       <body>{children}</body>
     </html>
   );
