@@ -32,3 +32,48 @@
 .player-dna-page [class*="Badge"]{
   font-size:10px!important;
 }
+
+/* Setup section hierarchy. */
+.player-dna-page .setup-intro~*{}
+.player-dna-page .saved-analysis-title,
+.player-dna-page .history-eyebrow,
+.player-dna-page .saved-analysis-panel~* .history-eyebrow,
+.player-dna-page .profile-panel [class="eyebrow"]{
+  font-size:32px!important;
+  line-height:1.08!important;
+}
+.player-dna-page .history-panel{
+  position:relative;
+}
+.player-dna-page .history-panel::before{
+  content:"RELATÓRIOS";
+  display:block;
+  order:2;
+  color:#67d992;
+  font-size:32px!important;
+  line-height:1.08;
+  letter-spacing:.02em;
+}
+.player-dna-page .history-panel>div:first-child{order:1}
+.player-dna-page .history-panel>.primary{order:3}
+.player-dna-page .history-panel>div:not(:first-child){order:4}
+
+/* Navigation: one full row, half width for each control. */
+.player-dna-page .module-navigation{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  width:100%!important;
+  gap:8px!important;
+}
+.player-dna-page .module-navigation .module-back{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:100%!important;
+  min-width:0!important;
+  height:38px!important;
+  min-height:38px!important;
+  max-height:38px!important;
+  padding:0 8px!important;
+  box-sizing:border-box!important;
+}
