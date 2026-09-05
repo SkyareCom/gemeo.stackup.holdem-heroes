@@ -1,11 +1,21 @@
-/* PADRÃO ÚNICO DOS CARDS DE CENÁRIO: 2 POR LINHA, MESMA MÉTRICA DOS BOTÕES. */
+/*
+ * PADRÃO ÚNICO — CARDS SECUNDÁRIOS DO APP
+ * REFERÊNCIA: MESMA LINGUAGEM VISUAL E DIMENSIONAL DOS BOTÕES PADRÃO.
+ * REGRA: 2 POR LINHA, 38PX, GAP 8PX, BORDA/RADIUS/FUNDO/TEXTO IDÊNTICOS.
+ * EXCEÇÕES: CARDS PRINCIPAIS, CASH/TORNEIO/ALEATÓRIO, SPOTS E CONTROLES DE AÇÃO.
+ */
+
 html body [class*="PlayerDnaWorkspace_scenario"]{
   display:grid!important;
   grid-template-columns:repeat(2,minmax(0,1fr))!important;
   gap:8px!important;
 }
 
-html body [class*="PlayerDnaWorkspace_scenario"] > [class*="PlayerDnaWorkspace_badge"]{
+html body [class*="PlayerDnaWorkspace_scenario"] > [class*="PlayerDnaWorkspace_badge"],
+html body [class*="HandReviewWorkspace_badge"],
+html body [class*="HandReviewWorkspace_metric"],
+html body [class*="MathLabWorkspace_metric"],
+html body [class*="MathLabWorkspace_context"] > span {
   display:flex!important;
   align-items:center!important;
   justify-content:center!important;
@@ -29,4 +39,26 @@ html body [class*="PlayerDnaWorkspace_scenario"] > [class*="PlayerDnaWorkspace_b
   text-align:center!important;
   white-space:normal!important;
   box-shadow:none!important;
+}
+
+html body [class*="HandReviewWorkspace_metrics"],
+html body [class*="MathLabWorkspace_metrics"],
+html body [class*="MathLabWorkspace_context"] {
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:8px!important;
+}
+
+/* GARANTIA EXPLÍCITA: CARDS PRINCIPAIS MANTÊM SUA ESTRUTURA ORIGINAL. */
+html body .module-card,
+html body [class*="HandReviewWorkspace_step"],
+html body [class*="HandReviewWorkspace_section"],
+html body [class*="HandReviewWorkspace_analysisCard"],
+html body [class*="MathLabWorkspace_explanation"],
+html body [class*="MathLabWorkspace_problem"],
+html body [class*="MathLabWorkspace_trainingInfo"],
+html body [class*="MathLabWorkspace_card"],
+html body [class*="PokerAssistantWorkspace_composer"],
+html body [class*="PokerAssistantWorkspace_answer"] {
+  /* INTENCIONALMENTE NÃO PADRONIZADOS: CARDS PRINCIPAIS. */
 }
