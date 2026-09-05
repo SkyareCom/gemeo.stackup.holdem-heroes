@@ -1,6 +1,7 @@
 /*
  * PADRÃO GLOBAL DE BOTÕES
  * REFERÊNCIA VISUAL E DIMENSIONAL: ANTERIOR / MÓDULOS.
+ * REGRA DE LARGURA: CADA BOTÃO OCUPA MEIA LINHA.
  * EXCEÇÕES CONGELADAS POR REGRA DE PRODUTO:
  * - PLAYER DNA: CASH / TORNEIO / ALEATÓRIO
  * - PLAYER DNA: BOTÕES DE SPOTS
@@ -12,8 +13,10 @@ html body a.module-back {
   display:inline-flex!important;
   align-items:center!important;
   justify-content:center!important;
-  width:100%!important;
+  width:calc(50% - 4px)!important;
+  flex:0 0 calc(50% - 4px)!important;
   min-width:0!important;
+  max-width:calc(50% - 4px)!important;
   height:38px!important;
   min-height:38px!important;
   max-height:38px!important;
