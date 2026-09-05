@@ -66,10 +66,10 @@ export default function AnimatedPlayerDnaTable({spot,selectedAction,onSequenceRe
       <div className={styles.table}>
         <div className={styles.felt}>
           <div className={styles.innerLine}/>
-          <div className={styles.tableMark topMark}/>
-          <div className={styles.tableMark leftMark}/>
-          <div className={styles.tableMark rightMark}/>
-          <div className={styles.tableMark bottomMark}/>
+          <div className={`${styles.tableMark} ${styles.topMark}`}/>
+          <div className={`${styles.tableMark} ${styles.leftMark}`}/>
+          <div className={`${styles.tableMark} ${styles.rightMark}`}/>
+          <div className={`${styles.tableMark} ${styles.bottomMark}`}/>
 
           {ringSeats.map((seat,index)=>{
             const flowItem=flow.find(item=>item.position===seat.position);
@@ -84,10 +84,8 @@ export default function AnimatedPlayerDnaTable({spot,selectedAction,onSequenceRe
           })}
 
           <div className={styles.pot}><strong>{potLabel}</strong><small>POT</small>{spot.pot.sides?.map((side,index)=><span key={index}>SIDE {index+1} · {fmt(side.value,spot.mode)}</span>)}</div>
-
           <div className={styles.board}>{[0,1,2,3,4].map(index=>{const card=boardCards[index];const visible=index<visibleBoard&&card;return <span key={index} className={visible?styles.faceCard:styles.emptyCard}>{visible?card:""}</span>})}</div>
           <div className={styles.street}>{spot.street}</div>
-
           <div className={styles.deck} aria-hidden="true"><i/><i/><i/></div>
           <div className={styles.dealerButton}>D</div>
 
