@@ -4,6 +4,7 @@ import UppercaseGuard from "@/components/UppercaseGuard";
 import "./globals.css";
 import "./button-standard.css";
 import "./scenario-standard.css";
+import "./unified-background.css";
 
 const doppioOne = Doppio_One({ subsets: ["latin"], weight: "400", variable: "--font-doppio-one" });
 
@@ -18,7 +19,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <head>
         <style>{`html body, html body *, html body *::before, html body *::after { text-transform: uppercase !important; }`}</style>
       </head>
-      <body>
+      <body className="unified-background">
         <UppercaseGuard />
         {children}
       </body>
