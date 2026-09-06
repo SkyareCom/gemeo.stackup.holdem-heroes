@@ -69,7 +69,40 @@ export default function PlayerDnaAnalysisField(){
     };
     const style=document.createElement("style");
     style.dataset.playerDnaAnalysisStyle="true";
-    style.textContent=`.player-dna-page .training-session section:has(>h4){overflow:hidden}.player-dna-analysis-field{display:grid;gap:8px;width:100%;padding:0;margin:0;color:#ede6db}.analysis-awaiting{min-height:64px;place-items:center;border:1px solid #009929!important;border-radius:12px!important;background:rgba(0,153,41,.07)!important;animation:heroAnalysisBlink 1.05s ease-in-out infinite}.analysis-wait{padding:12px;font-size:12px;color:#ede6db;text-align:center;font-weight:400;letter-spacing:.04em}@keyframes heroAnalysisBlink{0%,100%{opacity:1;box-shadow:0 0 0 rgba(0,153,41,0)}50%{opacity:.38;box-shadow:0 0 16px rgba(0,153,41,.38)}}.analysis-top{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.analysis-top>div{display:grid;align-content:center;gap:3px;min-width:0;min-height:64px;padding:7px 6px;border:0!important;background:transparent!important;text-align:center}.analysis-top strong{font-size:10px;color:#009929;line-height:1.1}.analysis-top span{font-size:12px;color:#ede6db;line-height:1.15;white-space:normal}.analysis-top small{font-size:8px;color:#82a08e;line-height:1.1}.analysis-percentages{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-start;gap:5px 12px;padding:6px 0 2px;border-top:1px solid rgba(37,80,0,.35)}.analysis-percentages span{font-size:11px;color:#ede6db;white-space:nowrap}.analysis-percentages b{color:#009929;font-weight:400}.analysis-comment{display:grid;gap:4px;padding:8px 0 2px;border-top:1px solid rgba(37,80,0,.35)}.analysis-comment strong{font-size:10px;color:#009929}.analysis-comment span{font-size:11px;color:#ede6db;line-height:1.4}@media(max-width:520px){.analysis-top{grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}.analysis-top>div{padding:6px 3px;min-height:70px}.analysis-top strong{font-size:8px}.analysis-top span{font-size:10px}.analysis-top small{font-size:7px}.analysis-percentages{gap:4px 9px}.analysis-percentages span{font-size:10px}.analysis-comment span{font-size:10px}}`;
+    style.textContent=`
+      .player-dna-page .training-session>section,
+      .player-dna-page .training-session [class*="boardRow"],
+      .player-dna-page .training-session [class*="potRow"],
+      .player-dna-page .training-session [class*="playerRow"],
+      .player-dna-page .training-session [class*="levelCard"],
+      .player-dna-page .training-session [class*="actionsCard"],
+      .player-dna-page .training-session [class*="heroContent"],
+      .player-dna-page .training-session [class*="levelSummary"],
+      .player-dna-page .training-session .players-header{
+        background:transparent!important;
+        background-color:transparent!important;
+        background-image:none!important;
+        backdrop-filter:none!important;
+        -webkit-backdrop-filter:none!important;
+      }
+      .player-dna-page .training-session section:has(>h4){overflow:hidden}
+      .player-dna-analysis-field{display:grid;gap:8px;width:100%;padding:0;margin:0;color:#ede6db}
+      .analysis-awaiting{min-height:64px;place-items:center;border:1px solid #009929!important;border-radius:12px!important;background:transparent!important;animation:heroAnalysisBlink 1.05s ease-in-out infinite}
+      .analysis-wait{padding:12px;font-size:12px;color:#ede6db;text-align:center;font-weight:400;letter-spacing:.04em}
+      @keyframes heroAnalysisBlink{0%,100%{opacity:1;box-shadow:0 0 0 rgba(0,153,41,0)}50%{opacity:.38;box-shadow:0 0 16px rgba(0,153,41,.38)}}
+      .analysis-top{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+      .analysis-top>div{display:grid;align-content:center;gap:3px;min-width:0;min-height:64px;padding:7px 6px;border:0!important;background:transparent!important;text-align:center}
+      .analysis-top strong{font-size:10px;color:#009929;line-height:1.1}
+      .analysis-top span{font-size:12px;color:#ede6db;line-height:1.15;white-space:normal}
+      .analysis-top small{font-size:8px;color:#82a08e;line-height:1.1}
+      .analysis-percentages{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-start;gap:5px 12px;padding:6px 0 2px;border-top:1px solid rgba(37,80,0,.35)}
+      .analysis-percentages span{font-size:11px;color:#ede6db;white-space:nowrap}
+      .analysis-percentages b{color:#009929;font-weight:400}
+      .analysis-comment{display:grid;gap:4px;padding:8px 0 2px;border-top:1px solid rgba(37,80,0,.35)}
+      .analysis-comment strong{font-size:10px;color:#009929}
+      .analysis-comment span{font-size:11px;color:#ede6db;line-height:1.4}
+      @media(max-width:520px){.analysis-top{grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}.analysis-top>div{padding:6px 3px;min-height:70px}.analysis-top strong{font-size:8px}.analysis-top span{font-size:10px}.analysis-top small{font-size:7px}.analysis-percentages{gap:4px 9px}.analysis-percentages span{font-size:10px}.analysis-comment span{font-size:10px}}
+    `;
     document.head.appendChild(style);apply();const timer=window.setInterval(apply,250);return()=>{window.clearInterval(timer);style.remove()};
   },[]);
   return null;
