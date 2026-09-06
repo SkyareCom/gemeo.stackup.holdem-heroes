@@ -1,2 +1,2 @@
-.host{display:block;width:100%;padding:0;transform:none;margin-bottom:4px;isolation:isolate}
-@media(max-width:800px){.host{transform:none;margin-bottom:4px}}
+.host{display:block;width:100%;padding:0;transform:none;margin-top:4px!important;margin-bottom:4px!important;isolation:isolate}
+@media(max-width:800px){.host{transform:none;margin-top:4px!important;margin-bottom:4px!important}}
