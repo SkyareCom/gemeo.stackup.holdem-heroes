@@ -23,6 +23,10 @@ const MIXES:{match:string;mix:Mix}[]=[
   {match:"MID GAME / ANTE 0.1 BB / BTN VS BB / IP",mix:{correct:"CHECK",adjustable:"BET",incorrect:"RAISE / ALL-IN",percentages:{CHECK:57,BET:38,RAISE:4,"ALL-IN":1}}},
 ];
 
+const RAISE_SIZES=["2X","2.5X","3X","4X","SQUEEZE"];
+const BET_SIZES=["25%","33%","50%","66%","75%"];
+const ACTION_NAMES=["FOLD","CHECK","CALL","BET","RAISE","ALL-IN"];
+
 function fallback(actions:string[]):Mix{
   const pct:Record<string,number>={};
   const base=Math.floor(100/Math.max(actions.length,1));
@@ -30,80 +34,147 @@ function fallback(actions:string[]):Mix{
   return{correct:actions[0]??"---",adjustable:actions[1]??"---",incorrect:actions.slice(2).join(" / ")||"---",percentages:pct};
 }
 
-function commentFor(selected:string,mix:Mix){
-  const correct=mix.correct.split(" / ").includes(selected);
-  const adjustable=mix.adjustable.split(" / ").includes(selected);
-  if(correct)return `SUA AÇÃO ${selected} ESTÁ NA FAIXA DE MAIOR EV PARA ESTE SPOT.`;
-  if(adjustable)return `SUA AÇÃO ${selected} É AJUSTÁVEL E FICA PRÓXIMA DO EV NEUTRO NESTE SPOT.`;
-  return `SUA AÇÃO ${selected} TEM EV NEGATIVO NESTE SPOT E DEVE SER EVITADA NA MAIOR PARTE DAS VEZES.`;
+function commentFor(selected:string,mix:Mix,sizing:string|null){
+  const label=sizing?`${selected} ${sizing}`:selected;
+  if(mix.correct.split(" / ").includes(selected))return `${label}: AÇÃO NA FAIXA DE MAIOR EV.`;
+  if(mix.adjustable.split(" / ").includes(selected))return `${label}: AÇÃO AJUSTÁVEL, PRÓXIMA DO EV NEUTRO.`;
+  return `${label}: AÇÃO DE EV NEGATIVO NESTE SPOT.`;
 }
 
 export default function PlayerDnaAnalysisField(){
   useEffect(()=>{
     let lastSignature="";
+
     const apply=()=>{
       const session=document.querySelector<HTMLElement>(".training-session");
       if(!session){lastSignature="";return}
+
+      const nativeActionButtons=[...session.querySelectorAll<HTMLButtonElement>('button[aria-pressed]')]
+        .filter(btn=>ACTION_NAMES.includes((btn.textContent??"").trim()));
+      if(!nativeActionButtons.length)return;
+
+      const actions=[...new Set(nativeActionButtons.map(btn=>(btn.textContent??"").trim()))];
+      const selected=nativeActionButtons.find(btn=>btn.getAttribute("aria-pressed")==="true")?.textContent?.trim()??null;
+      const nativeActionContainer=nativeActionButtons[0]?.parentElement as HTMLElement|null;
+      if(nativeActionContainer)nativeActionContainer.style.setProperty("display","none","important");
+
+      const sizingBase=actions.includes("RAISE")?"RAISE":actions.includes("BET")?"BET":"RAISE";
+      const sizingChoices=sizingBase==="BET"?BET_SIZES:RAISE_SIZES;
+      const nativeSizingButtons=[...session.querySelectorAll<HTMLButtonElement>('button[aria-pressed]')]
+        .filter(btn=>sizingChoices.includes((btn.textContent??"").trim()));
+      const selectedSizing=nativeSizingButtons.find(btn=>btn.getAttribute("aria-pressed")==="true")?.textContent?.trim()??null;
+      const nativeSizingContainer=nativeSizingButtons[0]?.parentElement as HTMLElement|null;
+      if(nativeSizingContainer)nativeSizingContainer.style.setProperty("display","none","important");
+
+      const footer=session.querySelector<HTMLElement>(".training-footer");
+      if(footer)footer.style.setProperty("display","none","important");
+      const saveNative=[...session.querySelectorAll<HTMLButtonElement>("button")].find(btn=>(btn.textContent??"").includes("SALVAR ANÁLISE E SAIR"));
+      const nextNative=[...session.querySelectorAll<HTMLButtonElement>("button")].find(btn=>(btn.textContent??"").trim()==="PRÓXIMO");
+
       const headings=[...session.querySelectorAll<HTMLElement>("h4")];
-      const section=headings.find(h=>h.textContent?.trim()==="CENÁRIO")?.parentElement as HTMLElement|null ?? headings.find(h=>h.textContent?.trim()==="ANÁLISE")?.parentElement as HTMLElement|null;
-      if(!section)return;
-      const heading=section.querySelector<HTMLElement>("h4");
-      if(heading&&heading.textContent!=="ANÁLISE")heading.textContent="ANÁLISE";
-      let scenarioText=section.dataset.scenarioSource??"";
-      const scenario=section.querySelector<HTMLElement>("div:not([data-player-dna-analysis])");
-      if(scenario){if(!scenarioText){scenarioText=[...scenario.querySelectorAll<HTMLElement>("span")].map(el=>el.textContent?.trim()).filter(Boolean).join(" / ");section.dataset.scenarioSource=scenarioText}scenario.remove()}
-      const actionButtons=[...session.querySelectorAll<HTMLButtonElement>('button[aria-pressed]')].filter(btn=>["FOLD","CHECK","CALL","BET","RAISE","ALL-IN"].includes((btn.textContent??"").trim()));
-      const actions=[...new Set(actionButtons.map(btn=>(btn.textContent??"").trim()))];
-      const selected=actionButtons.find(btn=>btn.getAttribute("aria-pressed")==="true")?.textContent?.trim()??null;
+      const scenarioSection=(headings.find(h=>h.textContent?.trim()==="CENÁRIO")?.parentElement??headings.find(h=>h.textContent?.trim()==="ANÁLISE")?.parentElement) as HTMLElement|null;
+      let scenarioText=scenarioSection?.dataset.scenarioSource??"";
+      if(scenarioSection){
+        if(!scenarioText){scenarioText=[...scenarioSection.querySelectorAll<HTMLElement>("span")].map(el=>el.textContent?.trim()).filter(Boolean).join(" / ");scenarioSection.dataset.scenarioSource=scenarioText}
+        scenarioSection.style.setProperty("display","none","important");
+      }
       const mix=MIXES.find(item=>scenarioText.includes(item.match))?.mix??fallback(actions);
-      let field=section.querySelector<HTMLElement>("[data-player-dna-analysis]");
-      if(!field){field=document.createElement("div");field.dataset.playerDnaAnalysis="true";field.className="player-dna-analysis-field";section.appendChild(field)}
-      const signature=`${scenarioText}|${actions.join(",")}|${selected??""}`;
+
+      const table=session.querySelector<HTMLElement>('[aria-label="MESA DE POKER ANIMADA PLAYER DNA"]');
+      if(!table)return;
+
+      let fixed=session.querySelector<HTMLElement>("[data-fixed-player-actions]");
+      if(!fixed){
+        fixed=document.createElement("div");
+        fixed.dataset.fixedPlayerActions="true";
+        fixed.className="fixed-player-actions";
+        table.insertAdjacentElement("afterend",fixed);
+        fixed.addEventListener("click",event=>{
+          const target=(event.target as HTMLElement).closest<HTMLButtonElement>("button[data-base]");
+          if(!target||target.disabled)return;
+          const base=target.dataset.base??"";
+          const size=target.dataset.size??"";
+          const liveActions=[...session.querySelectorAll<HTMLButtonElement>('button[aria-pressed]')].filter(btn=>ACTION_NAMES.includes((btn.textContent??"").trim()));
+          const baseButton=liveActions.find(btn=>(btn.textContent??"").trim()===base);
+          if(!baseButton)return;
+          const alreadySelected=baseButton.getAttribute("aria-pressed")==="true";
+          if(!alreadySelected)baseButton.click();
+          if(size){window.setTimeout(()=>{
+            const sizeButton=[...session.querySelectorAll<HTMLButtonElement>('button[aria-pressed]')].find(btn=>(btn.textContent??"").trim()===size);
+            sizeButton?.click();
+          },80)}
+        });
+      }
+
+      let comment=session.querySelector<HTMLElement>("[data-player-comment-card]");
+      if(!comment){comment=document.createElement("div");comment.dataset.playerCommentCard="true";comment.className="player-comment-card";fixed.insertAdjacentElement("afterend",comment)}
+
+      let controls=session.querySelector<HTMLElement>("[data-player-footer-controls]");
+      if(!controls){
+        controls=document.createElement("div");controls.dataset.playerFooterControls="true";controls.className="player-footer-controls";
+        controls.innerHTML=`<button type="button" data-footer="save">SALVAR ANÁLISE E SAIR</button><button type="button" data-footer="next">PRÓXIMO SPOT</button>`;
+        comment.insertAdjacentElement("afterend",controls);
+        controls.querySelector<HTMLButtonElement>('[data-footer="save"]')?.addEventListener("click",()=>saveNative?.click());
+        controls.querySelector<HTMLButtonElement>('[data-footer="next"]')?.addEventListener("click",()=>nextNative?.click());
+      }
+
+      const signature=`${scenarioText}|${actions.join(",")}|${selected??""}|${selectedSizing??""}|${Boolean(nextNative?.disabled)}`;
       if(signature===lastSignature)return;
       lastSignature=signature;
-      if(!selected){field.className="player-dna-analysis-field analysis-awaiting";field.innerHTML=`<div class="analysis-wait">AGUARDANDO AÇÃO DO HERÓI</div>`;return}
-      field.className="player-dna-analysis-field";
-      const pct=actions.map(action=>`<span><b>${action}</b> ${mix.percentages[action]??0}%</span>`).join("");
-      const comment=commentFor(selected,mix);
-      field.innerHTML=`<div class="analysis-top"><div><strong>AÇÃO CORRETA</strong><span>${mix.correct}</span><small>EV POSITIVO MÁXIMO</small></div><div><strong>AÇÃO AJUSTÁVEL</strong><span>${mix.adjustable}</span><small>EV ZERO OU NEUTRO</small></div><div><strong>AÇÃO INCORRETA</strong><span>${mix.incorrect}</span><small>EV NEGATIVO</small></div></div><div class="analysis-percentages">${pct}</div><div class="analysis-comment"><strong>COMENTÁRIO</strong><span>${comment}</span></div>`;
+
+      const topActions=["CHECK","CALL","FOLD"];
+      const raiseLabels=sizingChoices.map((size,index)=>({label:`${sizingBase} ${size}`,base:sizingBase,size,index}));
+      const rows=[
+        ...topActions.map(label=>({label,base:label,size:""})),
+        ...raiseLabels.slice(0,3),
+        ...raiseLabels.slice(3,5),
+        {label:"ALL-IN",base:"ALL-IN",size:""},
+      ];
+      fixed.innerHTML=rows.map(item=>{
+        const available=item.base===sizingBase?actions.includes(sizingBase):actions.includes(item.base);
+        const active=item.base===selected&&(!item.size||item.size===selectedSizing);
+        return `<button type="button" data-base="${item.base}" data-size="${item.size}" ${available?"":"disabled"} aria-pressed="${active?"true":"false"}">${item.label}</button>`;
+      }).join("");
+
+      if(!selected){
+        comment.className="player-comment-card awaiting-comment";
+        comment.innerHTML=`<div class="comment-line comment-wait">AGUARDANDO A AÇÃO DO HERÓI</div><div class="gto-line"></div>`;
+      }else{
+        comment.className="player-comment-card";
+        const pctOrder=["CHECK","CALL","FOLD",sizingBase,"ALL-IN"].filter((value,index,array)=>array.indexOf(value)===index);
+        const percentages=pctOrder.map(action=>`<span>${action} ${mix.percentages[action]??0}%</span>`).join("");
+        comment.innerHTML=`<div class="comment-line">${commentFor(selected,mix,selectedSizing)}</div><div class="gto-line">${percentages}</div>`;
+      }
+
+      const saveProxy=controls.querySelector<HTMLButtonElement>('[data-footer="save"]');
+      const nextProxy=controls.querySelector<HTMLButtonElement>('[data-footer="next"]');
+      if(saveProxy)saveProxy.disabled=Boolean(saveNative?.disabled);
+      if(nextProxy)nextProxy.disabled=Boolean(nextNative?.disabled);
     };
+
     const style=document.createElement("style");
     style.dataset.playerDnaAnalysisStyle="true";
     style.textContent=`
-      .player-dna-page .training-session>section,
-      .player-dna-page .training-session [class*="boardRow"],
-      .player-dna-page .training-session [class*="potRow"],
-      .player-dna-page .training-session [class*="playerRow"],
-      .player-dna-page .training-session [class*="levelCard"],
-      .player-dna-page .training-session [class*="actionsCard"],
-      .player-dna-page .training-session [class*="heroContent"],
-      .player-dna-page .training-session [class*="levelSummary"],
-      .player-dna-page .training-session .players-header{
-        background:transparent!important;
-        background-color:transparent!important;
-        background-image:none!important;
-        backdrop-filter:none!important;
-        -webkit-backdrop-filter:none!important;
-      }
-      .player-dna-page .training-session section:has(>h4){overflow:hidden}
-      .player-dna-analysis-field{display:grid;gap:8px;width:100%;padding:0;margin:0;color:#ede6db}
-      .analysis-awaiting{min-height:64px;place-items:center;border:1px solid #009929!important;border-radius:12px!important;background:transparent!important;animation:heroAnalysisBlink 1.05s ease-in-out infinite}
-      .analysis-wait{padding:12px;font-size:12px;color:#ede6db;text-align:center;font-weight:400;letter-spacing:.04em}
-      @keyframes heroAnalysisBlink{0%,100%{opacity:1;box-shadow:0 0 0 rgba(0,153,41,0)}50%{opacity:.38;box-shadow:0 0 16px rgba(0,153,41,.38)}}
-      .analysis-top{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-      .analysis-top>div{display:grid;align-content:center;gap:3px;min-width:0;min-height:64px;padding:7px 6px;border:0!important;background:transparent!important;text-align:center}
-      .analysis-top strong{font-size:10px;color:#009929;line-height:1.1}
-      .analysis-top span{font-size:12px;color:#ede6db;line-height:1.15;white-space:normal}
-      .analysis-top small{font-size:8px;color:#82a08e;line-height:1.1}
-      .analysis-percentages{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-start;gap:5px 12px;padding:6px 0 2px;border-top:1px solid rgba(37,80,0,.35)}
-      .analysis-percentages span{font-size:11px;color:#ede6db;white-space:nowrap}
-      .analysis-percentages b{color:#009929;font-weight:400}
-      .analysis-comment{display:grid;gap:4px;padding:8px 0 2px;border-top:1px solid rgba(37,80,0,.35)}
-      .analysis-comment strong{font-size:10px;color:#009929}
-      .analysis-comment span{font-size:11px;color:#ede6db;line-height:1.4}
-      @media(max-width:520px){.analysis-top{grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}.analysis-top>div{padding:6px 3px;min-height:70px}.analysis-top strong{font-size:8px}.analysis-top span{font-size:10px}.analysis-top small{font-size:7px}.analysis-percentages{gap:4px 9px}.analysis-percentages span{font-size:10px}.analysis-comment span{font-size:10px}}
+      .fixed-player-actions{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:5px!important;margin-top:4px!important}
+      .fixed-player-actions button{height:40px!important;min-height:40px!important;max-height:40px!important;border:1px solid #255000!important;border-radius:12px!important;background:transparent!important;color:#ede6db!important;font-size:11px!important;padding:4px!important;text-align:center!important}
+      .fixed-player-actions button[aria-pressed="true"]{border-color:#ede6db!important;box-shadow:inset 0 0 0 1px #ede6db!important;color:#009929!important}
+      .fixed-player-actions button:disabled{opacity:.28!important}
+      .player-comment-card{height:40px!important;min-height:40px!important;max-height:40px!important;display:grid!important;grid-template-rows:20px 20px!important;margin-top:5px!important;border:1px solid #255000!important;border-radius:12px!important;background:transparent!important;overflow:hidden!important}
+      .comment-line,.gto-line{display:flex!important;align-items:center!important;justify-content:center!important;min-width:0!important;padding:0 7px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+      .comment-line{font-size:9px!important;color:#ede6db!important;border-bottom:1px solid rgba(37,80,0,.55)!important}
+      .gto-line{gap:8px!important;font-size:8px!important;color:#009929!important}
+      .gto-line span{font-size:8px!important;color:#009929!important;white-space:nowrap!important}
+      .awaiting-comment{animation:heroCommentBlink 1.05s ease-in-out infinite!important}
+      .awaiting-comment .comment-line{grid-row:1/3!important;border-bottom:0!important;font-size:10px!important}
+      @keyframes heroCommentBlink{0%,100%{opacity:1}50%{opacity:.38}}
+      .player-footer-controls{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;margin-top:5px!important}
+      .player-footer-controls button{width:100%!important;height:38px!important;min-height:38px!important;max-height:38px!important;border:1px solid #255000!important;border-radius:12px!important;background:transparent!important;color:#009929!important;font-size:11px!important;padding:4px 8px!important;text-align:center!important}
+      .player-footer-controls button:disabled{opacity:.35!important}
     `;
-    document.head.appendChild(style);apply();const timer=window.setInterval(apply,250);return()=>{window.clearInterval(timer);style.remove()};
+    document.head.appendChild(style);
+    apply();
+    const timer=window.setInterval(apply,180);
+    return()=>{window.clearInterval(timer);style.remove()};
   },[]);
   return null;
 }
