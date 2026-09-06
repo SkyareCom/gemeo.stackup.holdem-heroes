@@ -30,6 +30,14 @@ function fallback(actions:string[]):Mix{
   return{correct:actions[0]??"---",adjustable:actions[1]??"---",incorrect:actions.slice(2).join(" / ")||"---",percentages:pct};
 }
 
+function commentFor(selected:string,mix:Mix){
+  const correct=mix.correct.split(" / ").includes(selected);
+  const adjustable=mix.adjustable.split(" / ").includes(selected);
+  if(correct)return `SUA AÇÃO ${selected} ESTÁ NA FAIXA DE MAIOR EV PARA ESTE SPOT.`;
+  if(adjustable)return `SUA AÇÃO ${selected} É AJUSTÁVEL E FICA PRÓXIMA DO EV NEUTRO NESTE SPOT.`;
+  return `SUA AÇÃO ${selected} TEM EV NEGATIVO NESTE SPOT E DEVE SER EVITADA NA MAIOR PARTE DAS VEZES.`;
+}
+
 export default function PlayerDnaAnalysisField(){
   useEffect(()=>{
     let lastSignature="";
@@ -46,10 +54,15 @@ export default function PlayerDnaAnalysisField(){
       const heading=section.querySelector<HTMLElement>("h4");
       if(heading&&heading.textContent!=="ANÁLISE")heading.textContent="ANÁLISE";
 
+      let scenarioText=section.dataset.scenarioSource??"";
       const scenario=section.querySelector<HTMLElement>("div:not([data-player-dna-analysis])");
-      if(!scenario)return;
-      const scenarioText=[...scenario.querySelectorAll<HTMLElement>("span")].map(el=>el.textContent?.trim()).filter(Boolean).join(" / ");
-      if(scenario.style.display!=="none")scenario.style.display="none";
+      if(scenario){
+        if(!scenarioText){
+          scenarioText=[...scenario.querySelectorAll<HTMLElement>("span")].map(el=>el.textContent?.trim()).filter(Boolean).join(" / ");
+          section.dataset.scenarioSource=scenarioText;
+        }
+        scenario.remove();
+      }
 
       const actionButtons=[...session.querySelectorAll<HTMLButtonElement>('button[aria-pressed]')].filter(btn=>["FOLD","CHECK","CALL","BET","RAISE","ALL-IN"].includes((btn.textContent??"").trim()));
       const actions=[...new Set(actionButtons.map(btn=>(btn.textContent??"").trim()))];
@@ -69,18 +82,20 @@ export default function PlayerDnaAnalysisField(){
       lastSignature=signature;
 
       if(!selected){
-        field.innerHTML=`<div class="analysis-wait">SELECIONE SUA AÇÃO PARA EXIBIR A ANÁLISE</div>`;
+        field.innerHTML=`<div class="analysis-wait">SELECIONE SUA AÇÃO PARA EXIBIR A ANÁLISE E OS COMENTÁRIOS</div>`;
         return;
       }
 
       const pct=actions.map(action=>`<span><b>${action}</b> ${mix.percentages[action]??0}%</span>`).join("");
+      const comment=commentFor(selected,mix);
       field.innerHTML=`
         <div class="analysis-top">
           <div><strong>AÇÃO CORRETA</strong><span>${mix.correct}</span><small>EV POSITIVO MÁXIMO</small></div>
           <div><strong>AÇÃO AJUSTÁVEL</strong><span>${mix.adjustable}</span><small>EV ZERO OU NEUTRO</small></div>
           <div><strong>AÇÃO INCORRETA</strong><span>${mix.incorrect}</span><small>EV NEGATIVO</small></div>
         </div>
-        <div class="analysis-percentages">${pct}</div>`;
+        <div class="analysis-percentages">${pct}</div>
+        <div class="analysis-comment"><strong>COMENTÁRIO</strong><span>${comment}</span></div>`;
     };
 
     const style=document.createElement("style");
@@ -96,8 +111,11 @@ export default function PlayerDnaAnalysisField(){
       .analysis-percentages{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-start;gap:5px 12px;padding:6px 0 2px;border-top:1px solid rgba(37,80,0,.35)}
       .analysis-percentages span{font-size:11px;color:#ede6db;white-space:nowrap}
       .analysis-percentages b{color:#009929;font-weight:400}
+      .analysis-comment{display:grid;gap:4px;padding:8px 0 2px;border-top:1px solid rgba(37,80,0,.35)}
+      .analysis-comment strong{font-size:10px;color:#009929}
+      .analysis-comment span{font-size:11px;color:#ede6db;line-height:1.4}
       .analysis-wait{padding:10px 0;font-size:11px;color:#82a08e;text-align:left}
-      @media(max-width:520px){.analysis-top{grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}.analysis-top>div{padding:6px 3px;min-height:70px}.analysis-top strong{font-size:8px}.analysis-top span{font-size:10px}.analysis-top small{font-size:7px}.analysis-percentages{gap:4px 9px}.analysis-percentages span{font-size:10px}}
+      @media(max-width:520px){.analysis-top{grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}.analysis-top>div{padding:6px 3px;min-height:70px}.analysis-top strong{font-size:8px}.analysis-top span{font-size:10px}.analysis-top small{font-size:7px}.analysis-percentages{gap:4px 9px}.analysis-percentages span{font-size:10px}.analysis-comment span{font-size:10px}}
     `;
     document.head.appendChild(style);
 
