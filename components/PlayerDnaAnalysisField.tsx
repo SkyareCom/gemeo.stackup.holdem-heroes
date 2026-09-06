@@ -41,87 +41,36 @@ function commentFor(selected:string,mix:Mix){
 export default function PlayerDnaAnalysisField(){
   useEffect(()=>{
     let lastSignature="";
-
     const apply=()=>{
       const session=document.querySelector<HTMLElement>(".training-session");
       if(!session){lastSignature="";return}
-
       const headings=[...session.querySelectorAll<HTMLElement>("h4")];
-      const section=headings.find(h=>h.textContent?.trim()==="CENÁRIO")?.parentElement as HTMLElement|null
-        ?? headings.find(h=>h.textContent?.trim()==="ANÁLISE")?.parentElement as HTMLElement|null;
+      const section=headings.find(h=>h.textContent?.trim()==="CENÁRIO")?.parentElement as HTMLElement|null ?? headings.find(h=>h.textContent?.trim()==="ANÁLISE")?.parentElement as HTMLElement|null;
       if(!section)return;
-
       const heading=section.querySelector<HTMLElement>("h4");
       if(heading&&heading.textContent!=="ANÁLISE")heading.textContent="ANÁLISE";
-
       let scenarioText=section.dataset.scenarioSource??"";
       const scenario=section.querySelector<HTMLElement>("div:not([data-player-dna-analysis])");
-      if(scenario){
-        if(!scenarioText){
-          scenarioText=[...scenario.querySelectorAll<HTMLElement>("span")].map(el=>el.textContent?.trim()).filter(Boolean).join(" / ");
-          section.dataset.scenarioSource=scenarioText;
-        }
-        scenario.remove();
-      }
-
+      if(scenario){if(!scenarioText){scenarioText=[...scenario.querySelectorAll<HTMLElement>("span")].map(el=>el.textContent?.trim()).filter(Boolean).join(" / ");section.dataset.scenarioSource=scenarioText}scenario.remove()}
       const actionButtons=[...session.querySelectorAll<HTMLButtonElement>('button[aria-pressed]')].filter(btn=>["FOLD","CHECK","CALL","BET","RAISE","ALL-IN"].includes((btn.textContent??"").trim()));
       const actions=[...new Set(actionButtons.map(btn=>(btn.textContent??"").trim()))];
       const selected=actionButtons.find(btn=>btn.getAttribute("aria-pressed")==="true")?.textContent?.trim()??null;
       const mix=MIXES.find(item=>scenarioText.includes(item.match))?.mix??fallback(actions);
-
       let field=section.querySelector<HTMLElement>("[data-player-dna-analysis]");
-      if(!field){
-        field=document.createElement("div");
-        field.dataset.playerDnaAnalysis="true";
-        field.className="player-dna-analysis-field";
-        section.appendChild(field);
-      }
-
+      if(!field){field=document.createElement("div");field.dataset.playerDnaAnalysis="true";field.className="player-dna-analysis-field";section.appendChild(field)}
       const signature=`${scenarioText}|${actions.join(",")}|${selected??""}`;
       if(signature===lastSignature)return;
       lastSignature=signature;
-
-      if(!selected){
-        field.innerHTML=`<div class="analysis-wait">SELECIONE SUA AÇÃO PARA EXIBIR A ANÁLISE E OS COMENTÁRIOS</div>`;
-        return;
-      }
-
+      if(!selected){field.className="player-dna-analysis-field analysis-awaiting";field.innerHTML=`<div class="analysis-wait">AGUARDANDO AÇÃO DO HERÓI</div>`;return}
+      field.className="player-dna-analysis-field";
       const pct=actions.map(action=>`<span><b>${action}</b> ${mix.percentages[action]??0}%</span>`).join("");
       const comment=commentFor(selected,mix);
-      field.innerHTML=`
-        <div class="analysis-top">
-          <div><strong>AÇÃO CORRETA</strong><span>${mix.correct}</span><small>EV POSITIVO MÁXIMO</small></div>
-          <div><strong>AÇÃO AJUSTÁVEL</strong><span>${mix.adjustable}</span><small>EV ZERO OU NEUTRO</small></div>
-          <div><strong>AÇÃO INCORRETA</strong><span>${mix.incorrect}</span><small>EV NEGATIVO</small></div>
-        </div>
-        <div class="analysis-percentages">${pct}</div>
-        <div class="analysis-comment"><strong>COMENTÁRIO</strong><span>${comment}</span></div>`;
+      field.innerHTML=`<div class="analysis-top"><div><strong>AÇÃO CORRETA</strong><span>${mix.correct}</span><small>EV POSITIVO MÁXIMO</small></div><div><strong>AÇÃO AJUSTÁVEL</strong><span>${mix.adjustable}</span><small>EV ZERO OU NEUTRO</small></div><div><strong>AÇÃO INCORRETA</strong><span>${mix.incorrect}</span><small>EV NEGATIVO</small></div></div><div class="analysis-percentages">${pct}</div><div class="analysis-comment"><strong>COMENTÁRIO</strong><span>${comment}</span></div>`;
     };
-
     const style=document.createElement("style");
     style.dataset.playerDnaAnalysisStyle="true";
-    style.textContent=`
-      .player-dna-page .training-session section:has(>h4){overflow:hidden}
-      .player-dna-analysis-field{display:grid;gap:8px;width:100%;padding:0;margin:0;color:#ede6db}
-      .analysis-top{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-      .analysis-top>div{display:grid;align-content:center;gap:3px;min-width:0;min-height:64px;padding:7px 6px;border:0!important;background:transparent!important;text-align:center}
-      .analysis-top strong{font-size:10px;color:#009929;line-height:1.1}
-      .analysis-top span{font-size:12px;color:#ede6db;line-height:1.15;white-space:normal}
-      .analysis-top small{font-size:8px;color:#82a08e;line-height:1.1}
-      .analysis-percentages{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-start;gap:5px 12px;padding:6px 0 2px;border-top:1px solid rgba(37,80,0,.35)}
-      .analysis-percentages span{font-size:11px;color:#ede6db;white-space:nowrap}
-      .analysis-percentages b{color:#009929;font-weight:400}
-      .analysis-comment{display:grid;gap:4px;padding:8px 0 2px;border-top:1px solid rgba(37,80,0,.35)}
-      .analysis-comment strong{font-size:10px;color:#009929}
-      .analysis-comment span{font-size:11px;color:#ede6db;line-height:1.4}
-      .analysis-wait{padding:10px 0;font-size:11px;color:#82a08e;text-align:left}
-      @media(max-width:520px){.analysis-top{grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}.analysis-top>div{padding:6px 3px;min-height:70px}.analysis-top strong{font-size:8px}.analysis-top span{font-size:10px}.analysis-top small{font-size:7px}.analysis-percentages{gap:4px 9px}.analysis-percentages span{font-size:10px}.analysis-comment span{font-size:10px}}
-    `;
-    document.head.appendChild(style);
-
-    apply();
-    const timer=window.setInterval(apply,250);
-    return()=>{window.clearInterval(timer);style.remove()};
+    style.textContent=`.player-dna-page .training-session section:has(>h4){overflow:hidden}.player-dna-analysis-field{display:grid;gap:8px;width:100%;padding:0;margin:0;color:#ede6db}.analysis-awaiting{min-height:64px;place-items:center;border:1px solid #009929!important;border-radius:12px!important;background:rgba(0,153,41,.07)!important;animation:heroAnalysisBlink 1.05s ease-in-out infinite}.analysis-wait{padding:12px;font-size:12px;color:#ede6db;text-align:center;font-weight:400;letter-spacing:.04em}@keyframes heroAnalysisBlink{0%,100%{opacity:1;box-shadow:0 0 0 rgba(0,153,41,0)}50%{opacity:.38;box-shadow:0 0 16px rgba(0,153,41,.38)}}.analysis-top{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.analysis-top>div{display:grid;align-content:center;gap:3px;min-width:0;min-height:64px;padding:7px 6px;border:0!important;background:transparent!important;text-align:center}.analysis-top strong{font-size:10px;color:#009929;line-height:1.1}.analysis-top span{font-size:12px;color:#ede6db;line-height:1.15;white-space:normal}.analysis-top small{font-size:8px;color:#82a08e;line-height:1.1}.analysis-percentages{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-start;gap:5px 12px;padding:6px 0 2px;border-top:1px solid rgba(37,80,0,.35)}.analysis-percentages span{font-size:11px;color:#ede6db;white-space:nowrap}.analysis-percentages b{color:#009929;font-weight:400}.analysis-comment{display:grid;gap:4px;padding:8px 0 2px;border-top:1px solid rgba(37,80,0,.35)}.analysis-comment strong{font-size:10px;color:#009929}.analysis-comment span{font-size:11px;color:#ede6db;line-height:1.4}@media(max-width:520px){.analysis-top{grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}.analysis-top>div{padding:6px 3px;min-height:70px}.analysis-top strong{font-size:8px}.analysis-top span{font-size:10px}.analysis-top small{font-size:7px}.analysis-percentages{gap:4px 9px}.analysis-percentages span{font-size:10px}.analysis-comment span{font-size:10px}}`;
+    document.head.appendChild(style);apply();const timer=window.setInterval(apply,250);return()=>{window.clearInterval(timer);style.remove()};
   },[]);
   return null;
 }
