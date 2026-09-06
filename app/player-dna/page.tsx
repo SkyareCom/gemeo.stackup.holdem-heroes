@@ -1,6 +1,7 @@
 import Link from "next/link";
 import PlayerDnaWorkspace from "@/components/PlayerDnaWorkspace";
 import "./player-dna-typography.css";
+import "./scenario-compact.css";
 
 export default function PlayerDnaPage(){
   return <main className="module-page player-dna-page">
