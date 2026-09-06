@@ -50,7 +50,7 @@ export default function PlayerDnaAnalysisField(){
       if(!session){lastSignature="";return}
 
       const nativeActionButtons=[...session.querySelectorAll<HTMLButtonElement>('button[aria-pressed]')]
-        .filter(btn=>ACTION_NAMES.includes((btn.textContent??"").trim()));
+        .filter(btn=>ACTION_NAMES.includes((btn.textContent??"").trim())&&!btn.closest("[data-fixed-player-actions]"));
       if(!nativeActionButtons.length)return;
 
       const actions=[...new Set(nativeActionButtons.map(btn=>(btn.textContent??"").trim()))];
@@ -58,18 +58,18 @@ export default function PlayerDnaAnalysisField(){
       const nativeActionContainer=nativeActionButtons[0]?.parentElement as HTMLElement|null;
       if(nativeActionContainer)nativeActionContainer.style.setProperty("display","none","important");
 
-      const sizingBase=actions.includes("RAISE")?"RAISE":actions.includes("BET")?"BET":"RAISE";
+      const sizingBase=actions.includes("BET")?"BET":"RAISE";
       const sizingChoices=sizingBase==="BET"?BET_SIZES:RAISE_SIZES;
       const nativeSizingButtons=[...session.querySelectorAll<HTMLButtonElement>('button[aria-pressed]')]
-        .filter(btn=>sizingChoices.includes((btn.textContent??"").trim()));
+        .filter(btn=>sizingChoices.includes((btn.textContent??"").trim())&&!btn.closest("[data-fixed-player-actions]"));
       const selectedSizing=nativeSizingButtons.find(btn=>btn.getAttribute("aria-pressed")==="true")?.textContent?.trim()??null;
       const nativeSizingContainer=nativeSizingButtons[0]?.parentElement as HTMLElement|null;
       if(nativeSizingContainer)nativeSizingContainer.style.setProperty("display","none","important");
 
       const footer=session.querySelector<HTMLElement>(".training-footer");
       if(footer)footer.style.setProperty("display","none","important");
-      const saveNative=[...session.querySelectorAll<HTMLButtonElement>("button")].find(btn=>(btn.textContent??"").includes("SALVAR ANÁLISE E SAIR"));
-      const nextNative=[...session.querySelectorAll<HTMLButtonElement>("button")].find(btn=>(btn.textContent??"").trim()==="PRÓXIMO");
+      const saveNative=[...session.querySelectorAll<HTMLButtonElement>("button")].find(btn=>(btn.textContent??"").includes("SALVAR ANÁLISE E SAIR")&&!btn.closest("[data-player-footer-controls]"));
+      const nextNative=[...session.querySelectorAll<HTMLButtonElement>("button")].find(btn=>(btn.textContent??"").trim()==="PRÓXIMO"&&!btn.closest("[data-player-footer-controls]"));
 
       const headings=[...session.querySelectorAll<HTMLElement>("h4")];
       const scenarioSection=(headings.find(h=>h.textContent?.trim()==="CENÁRIO")?.parentElement??headings.find(h=>h.textContent?.trim()==="ANÁLISE")?.parentElement) as HTMLElement|null;
@@ -83,8 +83,10 @@ export default function PlayerDnaAnalysisField(){
       const table=session.querySelector<HTMLElement>('[aria-label="MESA DE POKER ANIMADA PLAYER DNA"]');
       if(!table)return;
 
+      let structureChanged=false;
       let fixed=session.querySelector<HTMLElement>("[data-fixed-player-actions]");
       if(!fixed){
+        structureChanged=true;
         fixed=document.createElement("div");
         fixed.dataset.fixedPlayerActions="true";
         fixed.className="fixed-player-actions";
@@ -94,23 +96,24 @@ export default function PlayerDnaAnalysisField(){
           if(!target||target.disabled)return;
           const base=target.dataset.base??"";
           const size=target.dataset.size??"";
-          const liveActions=[...session.querySelectorAll<HTMLButtonElement>('button[aria-pressed]')].filter(btn=>ACTION_NAMES.includes((btn.textContent??"").trim()));
+          const liveActions=[...session.querySelectorAll<HTMLButtonElement>('button[aria-pressed]')].filter(btn=>ACTION_NAMES.includes((btn.textContent??"").trim())&&!btn.closest("[data-fixed-player-actions]"));
           const baseButton=liveActions.find(btn=>(btn.textContent??"").trim()===base);
           if(!baseButton)return;
           const alreadySelected=baseButton.getAttribute("aria-pressed")==="true";
           if(!alreadySelected)baseButton.click();
           if(size){window.setTimeout(()=>{
-            const sizeButton=[...session.querySelectorAll<HTMLButtonElement>('button[aria-pressed]')].find(btn=>(btn.textContent??"").trim()===size);
+            const sizeButton=[...session.querySelectorAll<HTMLButtonElement>('button[aria-pressed]')].find(btn=>(btn.textContent??"").trim()===size&&!btn.closest("[data-fixed-player-actions]"));
             sizeButton?.click();
-          },80)}
+          },100)}
         });
       }
 
       let comment=session.querySelector<HTMLElement>("[data-player-comment-card]");
-      if(!comment){comment=document.createElement("div");comment.dataset.playerCommentCard="true";comment.className="player-comment-card";fixed.insertAdjacentElement("afterend",comment)}
+      if(!comment){structureChanged=true;comment=document.createElement("div");comment.dataset.playerCommentCard="true";comment.className="player-comment-card";fixed.insertAdjacentElement("afterend",comment)}
 
       let controls=session.querySelector<HTMLElement>("[data-player-footer-controls]");
       if(!controls){
+        structureChanged=true;
         controls=document.createElement("div");controls.dataset.playerFooterControls="true";controls.className="player-footer-controls";
         controls.innerHTML=`<button type="button" data-footer="save">SALVAR ANÁLISE E SAIR</button><button type="button" data-footer="next">PRÓXIMO SPOT</button>`;
         comment.insertAdjacentElement("afterend",controls);
@@ -119,11 +122,11 @@ export default function PlayerDnaAnalysisField(){
       }
 
       const signature=`${scenarioText}|${actions.join(",")}|${selected??""}|${selectedSizing??""}|${Boolean(nextNative?.disabled)}`;
-      if(signature===lastSignature)return;
+      if(signature===lastSignature&&!structureChanged)return;
       lastSignature=signature;
 
       const topActions=["CHECK","CALL","FOLD"];
-      const raiseLabels=sizingChoices.map((size,index)=>({label:`${sizingBase} ${size}`,base:sizingBase,size,index}));
+      const raiseLabels=sizingChoices.map(size=>({label:`${sizingBase} ${size}`,base:sizingBase,size}));
       const rows=[
         ...topActions.map(label=>({label,base:label,size:""})),
         ...raiseLabels.slice(0,3),
@@ -155,8 +158,8 @@ export default function PlayerDnaAnalysisField(){
     const style=document.createElement("style");
     style.dataset.playerDnaAnalysisStyle="true";
     style.textContent=`
-      .fixed-player-actions{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:5px!important;margin-top:4px!important}
-      .fixed-player-actions button{height:40px!important;min-height:40px!important;max-height:40px!important;border:1px solid #255000!important;border-radius:12px!important;background:transparent!important;color:#ede6db!important;font-size:11px!important;padding:4px!important;text-align:center!important}
+      .fixed-player-actions{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:5px!important;margin:4px 0 0!important;width:100%!important;position:relative!important;z-index:30!important;visibility:visible!important;opacity:1!important}
+      .fixed-player-actions button{display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;height:40px!important;min-height:40px!important;max-height:40px!important;border:1px solid #255000!important;border-radius:12px!important;background:transparent!important;color:#ede6db!important;font-size:11px!important;padding:4px!important;text-align:center!important;visibility:visible!important}
       .fixed-player-actions button[aria-pressed="true"]{border-color:#ede6db!important;box-shadow:inset 0 0 0 1px #ede6db!important;color:#009929!important}
       .fixed-player-actions button:disabled{opacity:.28!important}
       .player-comment-card{height:40px!important;min-height:40px!important;max-height:40px!important;display:grid!important;grid-template-rows:20px 20px!important;margin-top:5px!important;border:1px solid #255000!important;border-radius:12px!important;background:transparent!important;overflow:hidden!important}
@@ -173,7 +176,7 @@ export default function PlayerDnaAnalysisField(){
     `;
     document.head.appendChild(style);
     apply();
-    const timer=window.setInterval(apply,180);
+    const timer=window.setInterval(apply,120);
     return()=>{window.clearInterval(timer);style.remove()};
   },[]);
   return null;
