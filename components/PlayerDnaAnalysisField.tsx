@@ -32,20 +32,24 @@ function fallback(actions:string[]):Mix{
 
 export default function PlayerDnaAnalysisField(){
   useEffect(()=>{
+    let lastSignature="";
+
     const apply=()=>{
       const session=document.querySelector<HTMLElement>(".training-session");
-      if(!session)return;
+      if(!session){lastSignature="";return}
+
       const headings=[...session.querySelectorAll<HTMLElement>("h4")];
       const section=headings.find(h=>h.textContent?.trim()==="CENÁRIO")?.parentElement as HTMLElement|null
         ?? headings.find(h=>h.textContent?.trim()==="ANÁLISE")?.parentElement as HTMLElement|null;
       if(!section)return;
 
       const heading=section.querySelector<HTMLElement>("h4");
-      if(heading)heading.textContent="ANÁLISE";
-      const scenario=section.querySelector<HTMLElement>("div");
+      if(heading&&heading.textContent!=="ANÁLISE")heading.textContent="ANÁLISE";
+
+      const scenario=section.querySelector<HTMLElement>("div:not([data-player-dna-analysis])");
       if(!scenario)return;
       const scenarioText=[...scenario.querySelectorAll<HTMLElement>("span")].map(el=>el.textContent?.trim()).filter(Boolean).join(" / ");
-      scenario.style.display="none";
+      if(scenario.style.display!=="none")scenario.style.display="none";
 
       const actionButtons=[...session.querySelectorAll<HTMLButtonElement>('button[aria-pressed]')].filter(btn=>["FOLD","CHECK","CALL","BET","RAISE","ALL-IN"].includes((btn.textContent??"").trim()));
       const actions=[...new Set(actionButtons.map(btn=>(btn.textContent??"").trim()))];
@@ -53,8 +57,16 @@ export default function PlayerDnaAnalysisField(){
       const mix=MIXES.find(item=>scenarioText.includes(item.match))?.mix??fallback(actions);
 
       let field=section.querySelector<HTMLElement>("[data-player-dna-analysis]");
-      if(!field){field=document.createElement("div");field.dataset.playerDnaAnalysis="true";section.appendChild(field)}
-      field.className="player-dna-analysis-field";
+      if(!field){
+        field=document.createElement("div");
+        field.dataset.playerDnaAnalysis="true";
+        field.className="player-dna-analysis-field";
+        section.appendChild(field);
+      }
+
+      const signature=`${scenarioText}|${actions.join(",")}|${selected??""}`;
+      if(signature===lastSignature)return;
+      lastSignature=signature;
 
       if(!selected){
         field.innerHTML=`<div class="analysis-wait">SELECIONE SUA AÇÃO PARA EXIBIR A ANÁLISE</div>`;
@@ -88,11 +100,10 @@ export default function PlayerDnaAnalysisField(){
       @media(max-width:520px){.analysis-top{grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}.analysis-top>div{padding:6px 3px;min-height:70px}.analysis-top strong{font-size:8px}.analysis-top span{font-size:10px}.analysis-top small{font-size:7px}.analysis-percentages{gap:4px 9px}.analysis-percentages span{font-size:10px}}
     `;
     document.head.appendChild(style);
+
     apply();
-    const observer=new MutationObserver(apply);
-    observer.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:["aria-pressed"]});
-    const timer=window.setInterval(apply,400);
-    return()=>{observer.disconnect();window.clearInterval(timer);style.remove()};
+    const timer=window.setInterval(apply,250);
+    return()=>{window.clearInterval(timer);style.remove()};
   },[]);
   return null;
 }
