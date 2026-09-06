@@ -43,7 +43,7 @@ export default function PlayerDnaPokerTable({spot,selectedAction,onSequenceReady
         .table{position:absolute;inset:5.5% 2.5% 2%;border-radius:49%/16%;background:linear-gradient(180deg,#313437 0%,#111315 12%,#050607 34%,#17191b 69%,#050606 100%);box-shadow:0 22px 38px rgba(0,0,0,.75),inset 0 0 0 2px #44484b,inset 0 0 0 7px #080909}
         .table:after{content:"";position:absolute;inset:2.2%;border-radius:49%/16%;box-shadow:inset 0 10px 18px rgba(255,255,255,.04),inset 0 -16px 26px rgba(0,0,0,.65);pointer-events:none}
         .table:before{content:"";position:absolute;inset:5.1%;border-radius:48%/16%;background:linear-gradient(90deg,#2c1409,#71401f 23%,#3b1e0f 40%,#7a492a 55%,#3b1f11 72%,#71401f 88%,#281208);box-shadow:inset 0 0 0 2px #160a05,inset 0 3px 9px rgba(255,255,255,.07),inset 0 -8px 16px rgba(0,0,0,.5)}
-        .felt{position:absolute;inset:10.1%;border-radius:47%/16%;background:radial-gradient(ellipse at 50% 35%,#2b6247 0%,#20533b 42%,#17442f 70%,#102f21 100%);box-shadow:inset 0 0 66px rgba(0,0,0,.4),inset 0 0 0 1px rgba(255,255,255,.04);overflow:visible}
+        .felt{position:absolute;inset:10.1%;border-radius:47%/16%;background:radial-gradient(ellipse at 50% 35%,#25282b 0%,#171a1d 42%,#0f1113 70%,#08090a 100%);box-shadow:inset 0 0 66px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.05);overflow:visible}
         .betline{position:absolute;inset:11% 14%;border:1px solid rgba(220,235,226,.23);border-radius:48%/16%}
         .seat{position:absolute;width:60px;text-align:center;z-index:8;transform:translate(-50%,-50%);transition:filter .2s,transform .2s,opacity .25s}.seat.active{filter:brightness(1.16);transform:translate(-50%,-50%) scale(1.04)}.seat.folded{opacity:.34}
         .s-mp{left:50%;top:6.5%}.s-mp2{left:82%;top:13%}.s-hj{left:98%;top:30%}.s-co{left:98.5%;top:59%}.s-btn{left:84%;top:87%}.s-sb{left:16%;top:87%}.s-bb{left:1.5%;top:59%}.s-utg{left:2%;top:30%}.s-utg1{left:18%;top:13%}
@@ -87,5 +87,5 @@ export default function PlayerDnaPokerTable({spot,selectedAction,onSequenceReady
     return()=>timers.forEach(timer=>window.clearTimeout(timer));
   },[spot,selectedAction,onSequenceReady]);
 
-  return <div ref={hostRef} className={styles.host} aria-label="Mesa de poker animada Player DNA"/>;
+  return <div ref={hostRef} className={styles.host} aria-label="MESA DE POKER ANIMADA PLAYER DNA"/>;
 }
