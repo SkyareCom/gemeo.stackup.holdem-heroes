@@ -4,6 +4,7 @@ import PlayerDnaAnalysisField from "@/components/PlayerDnaAnalysisField";
 import PlayerDnaVisualFixes from "@/components/PlayerDnaVisualFixes";
 import "./player-dna-typography.css";
 import "./scenario-compact.css";
+import "./player-dna-runtime-restore.css";
 
 export default function PlayerDnaPage(){
   return <main className="module-page player-dna-page">
