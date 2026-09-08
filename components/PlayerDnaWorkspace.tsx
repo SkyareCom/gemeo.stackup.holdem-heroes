@@ -23,11 +23,13 @@ const emptyLibrary:DnaLibrary={active:null,reports:[]};
 
 function buildSession(mode:AnalysisMode,count:number,seed:number,answers:PlayerDnaAnswer[]){
   if(mode!=="ALEATORIO")return buildBalancedSpotSession(playerDnaSpots,mode,count,seed,answers);
-  const cashCount=Math.ceil(count/2);
-  const tournamentCount=Math.floor(count/2);
-  const cash=buildBalancedSpotSession(playerDnaSpots,"CASH",cashCount,seed,answers.filter((_,i)=>i%2===0));
-  const tournament=buildBalancedSpotSession(playerDnaSpots,"TORNEIO",tournamentCount,seed^0x9e3779b9,answers.filter((_,i)=>i%2===1));
   const startCash=(seed&1)===0;
+  const cashCount=startCash?Math.ceil(count/2):Math.floor(count/2);
+  const tournamentCount=count-cashCount;
+  const cashAnswers=answers.filter((_,i)=>startCash?i%2===0:i%2===1);
+  const tournamentAnswers=answers.filter((_,i)=>startCash?i%2===1:i%2===0);
+  const cash=buildBalancedSpotSession(playerDnaSpots,"CASH",cashCount,seed,cashAnswers);
+  const tournament=buildBalancedSpotSession(playerDnaSpots,"TORNEIO",tournamentCount,seed^0x9e3779b9,tournamentAnswers);
   const mixed:PlayerDnaSpot[]=[];
   for(let i=0;i<count;i++){
     const cashTurn=startCash?i%2===0:i%2===1;
