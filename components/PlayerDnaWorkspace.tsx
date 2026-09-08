@@ -110,9 +110,9 @@ export default function PlayerDnaWorkspace(){
     return()=>window.removeEventListener("player-dna-previous",previous);
   },[editingId,selectedReportId,historyOpen,target,finished]);
 
-  function start(depth:number){const selectedMode=(document.querySelector<HTMLInputElement>('input[name="player-dna-mode"]:checked')?.value as AnalysisMode|undefined)??mode;const seed=Date.now();setSelectedDepth(depth);setMode(selectedMode);setSelectedReportId(null);setHistoryOpen(false);setSessionSeed(seed);setTarget(depth);setIndex(0);setAnswers([]);setSelectedAction(null);setSelectedSizing(null);setActionSequenceReady(false);setFinished(false);window.requestAnimationFrame(()=>document.querySelector(".profile-panel")?.scrollIntoView({behavior:"smooth",block:"start"}))}
+  function start(depth:number){const selectedMode=(document.querySelector<HTMLInputElement>('input[name="player-dna-mode"]:checked')?.value as AnalysisMode|undefined)??mode;const seed=Date.now();setSelectedDepth(depth);setMode(selectedMode);setSelectedReportId(null);setHistoryOpen(false);setSessionSeed(seed);setTarget(depth);setIndex(0);setAnswers([]);setSelectedAction(null);setSelectedSizing(null);setActionSequenceReady(true);setFinished(false);window.requestAnimationFrame(()=>document.querySelector(".profile-panel")?.scrollIntoView({behavior:"smooth",block:"start"}))}
   function leave(){setTarget(null);setIndex(0);setAnswers([]);setSelectedAction(null);setSelectedSizing(null);setActionSequenceReady(false);setFinished(false);setSelectedReportId(null)}
-  function continueSaved(){const saved=library.active;if(!saved)return;setSelectedReportId(null);setHistoryOpen(false);setMode(saved.mode);setTarget(saved.target);setIndex(Math.min(saved.index,Math.max(0,saved.target-1)));setAnswers(saved.answers);setSelectedAction(null);setSelectedSizing(null);setActionSequenceReady(false);setFinished(false);setSessionSeed(saved.sessionSeed)}
+  function continueSaved(){const saved=library.active;if(!saved)return;setSelectedReportId(null);setHistoryOpen(false);setMode(saved.mode);setTarget(saved.target);setIndex(Math.min(saved.index,Math.max(0,saved.target-1)));setAnswers(saved.answers);setSelectedAction(null);setSelectedSizing(null);setActionSequenceReady(true);setFinished(false);setSessionSeed(saved.sessionSeed)}
   function deleteSaved(){setLibrary(prev=>({...prev,active:null}))}
   function resetAll(){try{localStorage.removeItem(STORAGE_KEY);localStorage.removeItem(LEGACY_STORAGE_KEY)}catch{}setLibrary(emptyLibrary);setSelectedReportId(null);setHistoryOpen(false);setEditingId(null);setTarget(null);setIndex(0);setAnswers([]);setSelectedAction(null);setSelectedSizing(null);setActionSequenceReady(false);setFinished(false);setSessionSeed(1)}
   function chooseAction(action:PlayerAction){if(!actionSequenceReady)return;setSelectedAction(current=>current===action?null:action);setSelectedSizing(null)}
@@ -121,7 +121,7 @@ export default function PlayerDnaWorkspace(){
     if(!spot||!target||!selectedAction||(sizingRequired&&!selectedSizing))return;
     const answer:PlayerDnaAnswer={spotId:spot.id,action:selectedAction,...(selectedSizing?{sizing:selectedSizing}:{})};
     const next=[...answers,answer];
-    setAnswers(next);setSelectedAction(null);setSelectedSizing(null);setActionSequenceReady(false);
+    setAnswers(next);setSelectedAction(null);setSelectedSizing(null);setActionSequenceReady(true);
     if(next.length>=target){setFinished(true);return}
     setIndex(v=>Math.min(v+1,target-1));
   }
@@ -136,7 +136,7 @@ export default function PlayerDnaWorkspace(){
     <div className={`${styles.modeGrid} mode-choices`}>
       {(["CASH","TORNEIO","ALEATORIO"] as const).map(option=><label key={option} className={styles.modeButton}><input type="radio" name="player-dna-mode" value={option} checked={mode===option} onChange={()=>setMode(option)}/><strong>{option}</strong></label>)}
     </div>
-    <div className={`${styles.depthGrid} depth-choices`}>{depths.map(n=><button type="button" key={n} aria-pressed={selectedDepth===n} onPointerDown={()=>setSelectedDepth(n)} onClick={()=>start(n)}><strong>{n}</strong><span>SPOTS</span></button>)}</div>
+    <div className={`${styles.depthGrid} depth-choices`}>{depths.map(n=><button type="button" key={n} aria-pressed={selectedDepth===n} onClick={()=>start(n)}><strong>{n}</strong><span>SPOTS</span></button>)}</div>
     <div className="saved-analysis-panel" style={{border:"1px solid rgba(92,187,126,.28)",borderRadius:16,padding:16,background:"rgba(9,31,18,.62)",display:"grid",gap:12}}>
       <div><div className="eyebrow saved-analysis-title">ANÁLISES SALVAS</div>{library.active?<><strong className="saved-analysis-status" style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:6,flexWrap:"nowrap",width:"100%",marginTop:4}}><span>{library.active.mode} · {library.active.answers.length} / {library.active.target} SPOTS</span><span style={{marginLeft:"auto",textAlign:"right"}}>{Math.round((Math.min(library.active.answers.length,library.active.target)/library.active.target)*100)}%</span></strong><small className="saved-analysis-description">ACESSE OU APAGUE A ANÁLISE EM ANDAMENTO.</small></>:<><strong className="saved-analysis-status" style={{display:"block",marginTop:4}}>NENHUMA ANÁLISE SALVA</strong><small className="saved-analysis-description">ESCOLHA A MODALIDADE E O NÚMERO DE SPOTS PARA COMEÇAR.</small></>}</div>
       {library.active&&<div className={styles.track}><i style={{width:`${(Math.min(library.active.answers.length,library.active.target)/library.active.target)*100}%`}}/></div>}
@@ -164,8 +164,11 @@ export default function PlayerDnaWorkspace(){
     <p className={styles.prompt}>QUAL É A SUA AÇÃO ?</p>
     <div className={styles.actions} aria-busy={!actionSequenceReady}>{spot.actions.map(action=><button type="button" aria-disabled={!actionSequenceReady} aria-pressed={selectedAction===action} className={selectedAction===action?styles.actionSelected:""} key={action} onClick={()=>chooseAction(action)}>{action}</button>)}</div>
     {sizingOptions.length>0&&<div className={styles.sizingActions}>{sizingOptions.map(sizing=><button type="button" aria-pressed={selectedSizing===sizing} className={selectedSizing===sizing?styles.actionSelected:""} key={sizing} onClick={()=>setSelectedSizing(current=>current===sizing?null:sizing)}>{sizing}</button>)}</div>}
+    <div data-player-comment-card className="player-comment-card" style={{minHeight:72,border:"1px solid rgba(92,187,126,.34)",borderRadius:12,padding:"10px 12px",display:"grid",gap:5,background:"rgba(5,20,12,.72)"}}>
+      <strong style={{fontSize:11,letterSpacing:".08em"}}>AVALIAÇÃO E ANÁLISE</strong>
+      <span style={{fontSize:10,opacity:.86}}>{selectedAction?`AÇÃO DO HERÓI: ${selectedAction}${selectedSizing?` · ${selectedSizing}`:""}. DECISÃO REGISTRADA PARA AVALIAÇÃO DO PLAYER DNA.`:"AGUARDANDO A AÇÃO DO HERÓI."}</span>
+    </div>
     <div className="training-footer" style={{display:"grid",gridTemplateColumns:"repeat(2,minmax(0,1fr))",gap:8}}><button type="button" className={styles.modeButton} onClick={leave}><strong>SALVAR ANÁLISE E SAIR</strong></button><button type="button" className="primary" aria-disabled={!canContinue} onClick={nextSpot}>PRÓXIMO</button></div>
-    <Scenario spot={spot}/>
   </div>;
 }
 
@@ -189,5 +192,4 @@ function Level({spot}:{spot:PlayerDnaSpot}){
   return <section className={`${styles.block} ${styles.levelSection}`}><h4 className={styles.blockTitle}>NÍVEL</h4><div className={styles.levelSummary}><span className={styles.levelNumber}>{levelNumber}</span><strong>{values}</strong></div></section>
 }
 
-function Scenario({spot}:{spot:PlayerDnaSpot}){return <section className={styles.block}><h4 className={styles.blockTitle}>CENÁRIO</h4><div className={styles.scenario}>{spot.scenario.map(item=><span className={styles.badge} key={item}>{item}</span>)}</div></section>}
 function Metric({label,value}:{label:string;value:string}){return <div className="metric"><small>{label}</small><strong>{value}</strong></div>}
