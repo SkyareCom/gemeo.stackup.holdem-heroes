@@ -33,6 +33,7 @@ function activeVillains(spot:PlayerDnaSpot){return spot.players.filter(player=>!
 function isAggressive(action:string){const a=action.toUpperCase();return ["BET","RAISE","3-BET","4-BET","SQUEEZE","OVERBET","ALL-IN"].some(token=>a.includes(token))}
 function isIcm(spot:PlayerDnaSpot){const text=scenarioText(spot);return text.includes("ICM")||text.includes("BOLHA")||text.includes("FT")}
 function isMultiway(spot:PlayerDnaSpot){return scenarioText(spot).includes("MULTIWAY")||activeVillains(spot).length>1}
+function isIp(spot:PlayerDnaSpot){return spot.scenario.some(item=>item.toUpperCase()==="IP")}
 
 function hasStraight(values:number[]){const unique=[...new Set(values)].sort((a,b)=>a-b);if(unique.includes(14))unique.unshift(1);for(let i=0;i<=unique.length-5;i++)if(unique[i+4]-unique[i]===4)return true;return false}
 function straightDraw(values:number[]){const unique=[...new Set(values)];if(unique.includes(14))unique.push(1);const set=new Set(unique);let openEnded=false,gutshot=false;for(let start=1;start<=10;start++){let hits=0;for(let v=start;v<start+5;v++)if(set.has(v))hits++;if(hits===4){const missing=[start,start+1,start+2,start+3,start+4].find(v=>!set.has(v));if(missing===start||missing===start+4)openEnded=true;else gutshot=true}}return{openEnded,gutshot}}
@@ -129,23 +130,27 @@ export function solverActionLabel(sampled:PlayerAction,templateAction:string){
 }
 
 export function solverHeroNodeStrategy(spot:PlayerDnaSpot){
-  const profile=profileHand(spot);const facing=activeVillains(spot).some(v=>v.value>0||isAggressive(v.action));const icm=isIcm(spot);const multiway=isMultiway(spot);const board=boardState(spot);const hero=spot.players.find(p=>p.hero);const effectiveStack=hero?.stack??100;const spr=spot.pot.main>0?effectiveStack/spot.pot.main:99;let f:Partial<Record<PlayerAction,number>>={};
+  const profile=profileHand(spot);const facing=activeVillains(spot).some(v=>v.value>0||isAggressive(v.action));const icm=isIcm(spot);const multiway=isMultiway(spot);const board=boardState(spot);const hero=spot.players.find(p=>p.hero);const effectiveStack=hero?.stack??100;const spr=spot.pot.main>0?effectiveStack/spot.pot.main:99;const ip=isIp(spot);let f:Partial<Record<PlayerAction,number>>={};
   if(spot.street==="PREFLOP"){
     if(profile.tier==="PREMIUM")f={FOLD:1,CALL:20,RAISE:64,"ALL-IN":15};
     else if(profile.tier==="STRONG")f={FOLD:12,CALL:51,RAISE:32,"ALL-IN":5};
     else if(profile.tier==="MEDIUM")f={FOLD:38,CALL:44,RAISE:16,"ALL-IN":2};
     else f={FOLD:78,CALL:17,RAISE:4,"ALL-IN":1};
   }else if(facing){
-    if(profile.made==="STRAIGHT"&&board.fourStraight)f={FOLD:1,CALL:92,RAISE:6,"ALL-IN":1};
+    if(profile.made==="STRAIGHT"&&board.fourStraight)f={CALL:94,RAISE:6};
     else if(profile.equityClass==="MONSTER")f={FOLD:1,CALL:18,RAISE:72,"ALL-IN":9};
     else if(profile.equityClass==="STRONG"&&spr<=1.75&&(profile.comboDraw||profile.openEnded||profile.gutshot||profile.flushDraw))f={FOLD:1,CALL:24,RAISE:74,"ALL-IN":1};
-    else if(profile.equityClass==="STRONG")f={FOLD:2,CALL:88,RAISE:9,"ALL-IN":1};
+    else if(profile.equityClass==="STRONG")f={FOLD:1,CALL:98,RAISE:1};
     else if(profile.equityClass==="DRAW")f={FOLD:12,CALL:57,RAISE:29,"ALL-IN":2};
     else if(profile.equityClass==="MARGINAL")f={FOLD:60,CALL:37,RAISE:2,"ALL-IN":1};
     else f={FOLD:88,CALL:10,RAISE:1,"ALL-IN":1};
   }else{
-    if(profile.equityClass==="MONSTER")f={CHECK:8,BET:88,"ALL-IN":4};
-    else if(profile.equityClass==="STRONG"&&board.paired)f={CHECK:9,BET:90,"ALL-IN":1};
+    if(spot.mode==="TORNEIO"&&spot.street==="FLOP"&&ip&&profile.equityClass==="STRONG"&&spr<=3.25&&!profile.flushDraw&&!profile.openEnded&&!profile.gutshot)f={CHECK:89,BET:11};
+    else if(profile.equityClass==="MONSTER"&&spot.street==="RIVER")f={CHECK:1,BET:98,"ALL-IN":1};
+    else if(profile.equityClass==="MONSTER")f={CHECK:8,BET:88,"ALL-IN":4};
+    else if(profile.equityClass==="STRONG"&&board.paired)f={CHECK:6,BET:94};
+    else if(profile.equityClass==="STRONG"&&spot.street==="RIVER")f={CHECK:12,BET:88};
+    else if(profile.equityClass==="STRONG"&&spot.street==="TURN")f={CHECK:25,BET:75};
     else if(profile.equityClass==="STRONG")f={CHECK:20,BET:78,"ALL-IN":2};
     else if(profile.equityClass==="DRAW")f={CHECK:38,BET:60,"ALL-IN":2};
     else if(profile.equityClass==="MARGINAL")f={CHECK:74,BET:25,"ALL-IN":1};
