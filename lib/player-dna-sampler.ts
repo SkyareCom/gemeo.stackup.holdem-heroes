@@ -41,15 +41,31 @@ function makeVariant(template:PlayerDnaSpot,slot:number,sessionSeed:number,answe
   // without turning a solved value/draw class into an unrelated hand.
   const suitMap=suitPermutation(random);const heroCards=remapCards(template.heroCards,suitMap)??template.heroCards;const board=remapCards(template.board,suitMap);
   const stackFactor=.90+random()*.20;const valueFactor=.92+random()*.16;
+  const hasSidePots=Boolean(template.pot.sides?.length);
+  const templateVillainCommitted=template.players.filter(player=>!player.hero).reduce((sum,player)=>sum+Math.max(0,player.value),0);
   const players=template.players.map(player=>{
     const stack=round(player.stack*stackFactor,template.mode);
-    if(player.hero)return{...player,stack,value:0,action:"---"};
+    if(player.hero)return{...player,stack,value:round(Math.max(0,player.value)*valueFactor,template.mode),action:"---"};
+
+    // Side-pot templates are structurally sensitive: changing one participant's action can invalidate
+    // the main/side-pot composition. Preserve those actions and vary only stacks/suits/amount scale.
+    if(hasSidePots){
+      const value=round(Math.max(0,player.value)*valueFactor,template.mode);
+      return{...player,stack,value};
+    }
+
     const policy=solverNodePolicy(template,player.position,player.action);const sampled=sampleSolverAction(policy,random);const action=solverActionLabel(sampled,player.action);
     const templateValue=player.value>0?round(player.value*valueFactor,template.mode):0;
     const value=sampled==="CHECK"||sampled==="FOLD"?0:sampled==="ALL-IN"?stack:templateValue>0?templateValue:round(template.pot.main*(sampled==="BET"?.5:.75),template.mode);
     return{...player,stack,value,action,rangeProfile:policy.range,solverActionFrequency:policy.actions[sampled]??0,solverNodeSource:policy.source};
   });
-  const pot={main:round(template.pot.main*valueFactor,template.mode),...(template.pot.sides?.length?{sides:template.pot.sides.map(side=>({...side,value:round(side.value*valueFactor,template.mode)}))}:{})};
+
+  const scaledTemplatePot=round(template.pot.main*valueFactor,template.mode);
+  const newVillainCommitted=players.filter(player=>!player.hero).reduce((sum,player)=>sum+Math.max(0,player.value),0);
+  const scaledOldCommitted=round(templateVillainCommitted*valueFactor,template.mode);
+  const commitmentDelta=hasSidePots?0:newVillainCommitted-scaledOldCommitted;
+  const mainPot=round(Math.max(0.1,scaledTemplatePot+commitmentDelta),template.mode);
+  const pot={main:mainPot,...(template.pot.sides?.length?{sides:template.pot.sides.map(side=>({...side,value:round(side.value*valueFactor,template.mode)}))}:{})};
   const h=players.find(player=>player.hero)??players[0];
   return{...template,id:`${template.id}-${sessionSeed.toString(36)}-${slot.toString(36)}-${hashText(adaptation).toString(36)}`,heroCards,board,players,pot,prompt:generatedPrompt(players,h.position),scenario:[...template.scenario]};
 }
