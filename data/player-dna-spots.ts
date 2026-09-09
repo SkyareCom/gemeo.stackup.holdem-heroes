@@ -13,6 +13,9 @@ export type PlayerDnaPlayer={
   rangeProfile?:string;
   solverActionFrequency?:number;
   solverNodeSource?:"PREFLOP_RANGE_MATRIX"|"POSTFLOP_SOLVER_NODE";
+  sampledCombo?:string;
+  rangeComboCount?:number;
+  conditionedComboWeight?:number;
 };
 export type PlayerDnaSpot={
   id:string;
