@@ -34,9 +34,9 @@ function combosForClass(handClass:string){
 }
 function actionBias(handClass:string,action:PlayerAction){
   const pair=/^([2-9TJQKA])\1$/.test(handClass);const ranks=handClass.slice(0,2).split("").map(rank=>VALUE[rank]??0);const high=Math.max(...ranks);const suited=handClass.endsWith("S");
-  if(action==="RAISE"||action==="BET"||action==="ALL-IN")return 1+(pair?.35:0)+(high>=13?.2:0)+(suited?.08:0);
-  if(action==="CALL")return 1+(suited?.12:0)+(pair?.12:0);
-  if(action==="FOLD")return 1+(high<=10?.15:0);
+  if(action==="RAISE"||action==="BET"||action==="ALL-IN")return 1+(pair?0.35:0)+(high>=13?0.2:0)+(suited?0.08:0);
+  if(action==="CALL")return 1+(suited?0.12:0)+(pair?0.12:0);
+  if(action==="FOLD")return 1+(high<=10?0.15:0);
   return 1;
 }
 
