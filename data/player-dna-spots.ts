@@ -4,6 +4,16 @@ export type TournamentProfile="MTT REGULAR"|"BOUNTY"|"HIGH ROLLER"|"TURBO";
 export type AnteFormat="NONE"|"BB_ANTE"|"BB_PL";
 export type PlayerAction="FOLD"|"CHECK"|"CALL"|"BET"|"RAISE"|"ALL-IN";
 export type Score={aggression:number;discipline:number;pressure:number;passivity:number};
+export type PlayerDnaPlayer={
+  position:string;
+  stack:number;
+  action:string;
+  value:number;
+  hero?:boolean;
+  rangeProfile?:string;
+  solverActionFrequency?:number;
+  solverNodeSource?:"PREFLOP_RANGE_MATRIX"|"POSTFLOP_SOLVER_NODE";
+};
 export type PlayerDnaSpot={
   id:string;
   mode:GameMode;
@@ -12,7 +22,7 @@ export type PlayerDnaSpot={
   street:"PREFLOP"|"FLOP"|"TURN"|"RIVER";
   heroCards:string;
   board?:string;
-  players:{position:string;stack:number;action:string;value:number;hero?:boolean}[];
+  players:PlayerDnaPlayer[];
   pot:{main:number;sides?:{value:number;players:string[]}[]};
   scenario:string[];
   prompt:string;
