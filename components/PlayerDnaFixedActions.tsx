@@ -9,13 +9,21 @@ const BET_SIZES=["33%","50%","66%","POT"];
 export default function PlayerDnaFixedActions(){
   useEffect(()=>{
     let scheduled=false;
+    let feedbackTimer:number|undefined;
 
     const showUnavailable=(session:HTMLElement,label:string)=>{
-      const card=session.querySelector<HTMLElement>("[data-player-comment-card]");
-      if(!card)return;
-      const previous=card.innerHTML;
-      card.innerHTML=`<strong style="font-size:10px">AÇÃO INDISPONÍVEL NESTE SPOT</strong><span style="font-size:9px;opacity:.78">${label} NÃO É UMA OPÇÃO VÁLIDA PARA A SITUAÇÃO ATUAL.</span>`;
-      window.setTimeout(()=>{if(card.isConnected)card.innerHTML=previous},900);
+      let feedback=session.querySelector<HTMLElement>("[data-fixed-player-feedback]");
+      if(!feedback){
+        feedback=document.createElement("div");
+        feedback.dataset.fixedPlayerFeedback="true";
+        feedback.className="player-dna-fixed-feedback";
+        const fixed=session.querySelector<HTMLElement>("[data-fixed-player-actions-v2]");
+        if(fixed)fixed.insertAdjacentElement("afterend",feedback);else session.appendChild(feedback);
+      }
+      feedback.textContent=`${label} NÃO É UMA OPÇÃO VÁLIDA PARA A SITUAÇÃO ATUAL.`;
+      feedback.dataset.visible="true";
+      if(feedbackTimer)window.clearTimeout(feedbackTimer);
+      feedbackTimer=window.setTimeout(()=>{if(feedback?.isConnected)feedback.dataset.visible="false"},1200);
     };
 
     const apply=()=>{
@@ -96,13 +104,15 @@ export default function PlayerDnaFixedActions(){
       .player-dna-fixed-actions-v2 button{height:44px;min-height:44px;padding:5px 3px;border:1px solid #255000;border-radius:10px;background:rgba(31,54,31,.2);color:#ede6db;font-size:9px;font-weight:700;line-height:1.05;text-align:center;cursor:pointer;touch-action:manipulation}
       .player-dna-fixed-actions-v2 button[aria-pressed="true"]{border-color:#ede6db;color:#009929;box-shadow:inset 0 0 0 1px rgba(237,230,219,.22)}
       .player-dna-fixed-actions-v2 button[aria-disabled="true"]{opacity:.35;cursor:not-allowed}
+      .player-dna-fixed-feedback{min-height:0;margin:0;text-align:center;font-size:9px;font-weight:700;letter-spacing:.03em;opacity:0;transform:translateY(-2px);transition:opacity .16s ease,transform .16s ease;pointer-events:none}
+      .player-dna-fixed-feedback[data-visible="true"]{margin:4px 0 2px;opacity:.78;transform:translateY(0)}
       @media(max-width:800px){.player-dna-fixed-actions-v2{gap:4px}.player-dna-fixed-actions-v2 button{font-size:8px;padding:4px 2px}}
     `;
     document.head.appendChild(style);
     apply();
     const observer=new MutationObserver(schedule);
     observer.observe(document.documentElement,{childList:true,subtree:true,attributes:true,attributeFilter:["aria-pressed","aria-disabled"]});
-    return()=>{observer.disconnect();style.remove()};
+    return()=>{if(feedbackTimer)window.clearTimeout(feedbackTimer);observer.disconnect();style.remove()};
   },[]);
   return null;
 }
