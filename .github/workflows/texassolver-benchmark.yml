@@ -20,12 +20,11 @@ jobs:
         shell: bash
         run: |
           set -euxo pipefail
-          mkdir -p .texassolver
+          mkdir -p .texassolver benchmark/texassolver/results
           curl -L --retry 3 --fail \
             https://github.com/bupticybee/TexasSolver/releases/download/v0.2.0/TexasSolver-v0.2.0-Linux.zip \
             -o /tmp/texassolver.zip
           unzip -q /tmp/texassolver.zip -d .texassolver
-          find .texassolver -maxdepth 4 -type f | sort | head -100
           BIN=$(find .texassolver -type f -name console_solver | head -1)
           test -n "$BIN"
           chmod +x "$BIN"
@@ -34,6 +33,7 @@ jobs:
         shell: bash
         run: |
           set -euxo pipefail
+          mkdir -p benchmark/texassolver/results
           python3 benchmark/texassolver/run_battery.py | tee benchmark/texassolver/results/workflow.log
       - name: Upload solver outputs
         if: always()
