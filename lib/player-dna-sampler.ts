@@ -1,5 +1,5 @@
 import type {AnteFormat,GameMode,PlayerAction,PlayerDnaSpot} from "@/data/player-dna-spots";
-import {solverInspiredVillainRange} from "@/lib/gto-range-policy";
+import {sampleSolverAction,solverActionLabel,solverNodePolicy} from "@/lib/gto-range-policy";
 
 type Street=PlayerDnaSpot["street"];
 type PriorAnswer={action:PlayerAction};
@@ -30,23 +30,28 @@ export function describeSpot(spot:PlayerDnaSpot):SpotDimensions{
   return{street:spot.street,heroPosition:h.position,stackBand:h.stack<=30?"SHORT":h.stack<=80?"MEDIUM":"DEEP",heads:spot.players.filter(player=>player.hero||player.action!=="FOLD").length>2?"MULTIWAY":"HEADS-UP",positionState:has(spot,"OOP")?"OOP":"IP",potType:has(spot,"4-BET")?"4BET":has(spot,"3-BET")?"3BET":has(spot,"LIMP")?"LIMPED":has(spot,"SRP")?"SRP":"OTHER",theme:has(spot,"BLUFF CATCH")?"BLUFF-CATCH":has(spot,"VALUE")?"VALUE":has(spot,"BLIND WAR")?"BLIND-WAR":has(spot,"SQUEEZE")?"SQUEEZE":spot.players.some(player=>player.action==="ALL-IN")?"ALL-IN":has(spot,"DRAW")||has(spot,"COMBO")?"DRAW":has(spot,"ICM")||has(spot,"BOLHA")?"PRESSURE":"STANDARD",texture:spot.street==="PREFLOP"?"PREFLOP":paired?"PAIRED":monotone?"MONOTONE":has(spot,"DRAW")||has(spot,"COMBO")?"WET":"DRY",sizing:maxAction===0?"NONE":ratio<=.33?"SMALL":ratio<=.7?"MEDIUM":ratio<=1?"LARGE":"OVERBET",tournamentPhase:has(spot,"EARLY")?"EARLY":has(spot,"MID")?"MID":has(spot,"BOLHA")?"BUBBLE":has(spot,"ITM")?"ITM":has(spot,"FT")?"FT":"NA",icm:has(spot,"ICM"),ante:has(spot,"ANTE"),gameProfile:spot.gameProfile??spot.mode,anteMode:spot.anteMode??"NONE"};
 }
 
+function generatedPrompt(players:Array<{position:string;action:string;value:number;hero?:boolean}>,heroPosition:string){
+  const villains=players.filter(p=>!p.hero).map(p=>`${p.position} ${p.action}${p.value>0?` ${p.value}`:""}`).join(" · ");
+  return `AÇÃO ATÉ O HERÓI: ${villains}. HERO EM ${heroPosition}. QUAL É A MELHOR DECISÃO?`;
+}
+
 function makeVariant(template:PlayerDnaSpot,slot:number,sessionSeed:number,answers:PriorAnswer[]):PlayerDnaSpot{
   const adaptation=answers.slice(-6).map(answer=>answer.action).join("|")||"START";const random=randomFrom(hashText(`${template.id}:${sessionSeed}:${slot}:${adaptation}`));
-  // IMPORTANT: preserve the template's rank/board relationship. Randomizing all cards independently
-  // destroyed the strategic meaning of solved/reference spots (e.g. turning a value hand into J2o air).
-  // Suit isomorphisms create fresh card appearances while retaining pair/draw/blocker structure.
+  // Preserve rank/board relationships from the calibrated seed. Suit isomorphism changes appearance
+  // without turning a solved value/draw class into an unrelated hand.
   const suitMap=suitPermutation(random);const heroCards=remapCards(template.heroCards,suitMap)??template.heroCards;const board=remapCards(template.board,suitMap);
   const stackFactor=.90+random()*.20;const valueFactor=.92+random()*.16;
-  const players=template.players.map(player=>({
-    ...player,
-    stack:round(player.stack*stackFactor,template.mode),
-    value:player.value>0?round(player.value*valueFactor,template.mode):0,
-    action:player.hero?"---":player.action,
-    ...(!player.hero?{rangeProfile:solverInspiredVillainRange(template,player.position,player.action)}:{})
-  }));
+  const players=template.players.map(player=>{
+    const stack=round(player.stack*stackFactor,template.mode);
+    if(player.hero)return{...player,stack,value:0,action:"---"};
+    const policy=solverNodePolicy(template,player.position,player.action);const sampled=sampleSolverAction(policy,random);const action=solverActionLabel(sampled,player.action);
+    const templateValue=player.value>0?round(player.value*valueFactor,template.mode):0;
+    const value=sampled==="CHECK"||sampled==="FOLD"?0:sampled==="ALL-IN"?stack:templateValue>0?templateValue:round(template.pot.main*(sampled==="BET"?.5:.75),template.mode);
+    return{...player,stack,value,action,rangeProfile:policy.range,solverActionFrequency:policy.actions[sampled]??0,solverNodeSource:policy.source};
+  });
   const pot={main:round(template.pot.main*valueFactor,template.mode),...(template.pot.sides?.length?{sides:template.pot.sides.map(side=>({...side,value:round(side.value*valueFactor,template.mode)}))}:{})};
   const h=players.find(player=>player.hero)??players[0];
-  return{...template,id:`${template.id}-${sessionSeed.toString(36)}-${slot.toString(36)}-${hashText(adaptation).toString(36)}`,heroCards,board,players,pot,prompt:`${template.prompt} HERO EM ${h.position}.`,scenario:[...template.scenario]};
+  return{...template,id:`${template.id}-${sessionSeed.toString(36)}-${slot.toString(36)}-${hashText(adaptation).toString(36)}`,heroCards,board,players,pot,prompt:generatedPrompt(players,h.position),scenario:[...template.scenario]};
 }
 
 export function buildBalancedSpotSession(bank:PlayerDnaSpot[],mode:GameMode,count:number,seed=Date.now(),answers:PriorAnswer[]=[]):PlayerDnaSpot[]{
