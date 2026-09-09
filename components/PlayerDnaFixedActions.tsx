@@ -10,6 +10,14 @@ export default function PlayerDnaFixedActions(){
   useEffect(()=>{
     let scheduled=false;
 
+    const showUnavailable=(session:HTMLElement,label:string)=>{
+      const card=session.querySelector<HTMLElement>("[data-player-comment-card]");
+      if(!card)return;
+      const previous=card.innerHTML;
+      card.innerHTML=`<strong style="font-size:10px">AÇÃO INDISPONÍVEL NESTE SPOT</strong><span style="font-size:9px;opacity:.78">${label} NÃO É UMA OPÇÃO VÁLIDA PARA A SITUAÇÃO ATUAL.</span>`;
+      window.setTimeout(()=>{if(card.isConnected)card.innerHTML=previous},900);
+    };
+
     const apply=()=>{
       scheduled=false;
       const session=document.querySelector<HTMLElement>(".training-session");
@@ -42,20 +50,24 @@ export default function PlayerDnaFixedActions(){
         actionBox.insertAdjacentElement("afterend",fixed);
         fixed.addEventListener("click",event=>{
           const target=(event.target as HTMLElement).closest<HTMLButtonElement>("button[data-action]");
-          if(!target||target.disabled)return;
+          if(!target)return;
+          if(target.dataset.available!=="true"){
+            showUnavailable(session,target.textContent?.trim()||"AÇÃO");
+            return;
+          }
           const live=[...session.querySelectorAll<HTMLButtonElement>('button[aria-pressed]')]
             .filter(button=>ACTION_NAMES.includes((button.textContent??"").trim())&&!button.closest("[data-fixed-player-actions-v2]"));
           const requested=target.dataset.action??"";
           const base=requested==="RAISE"?(live.some(button=>(button.textContent??"").trim()==="RAISE")?"RAISE":"BET"):requested;
           const baseButton=live.find(button=>(button.textContent??"").trim()===base);
-          if(!baseButton)return;
+          if(!baseButton){showUnavailable(session,target.textContent?.trim()||requested);return}
           if(baseButton.getAttribute("aria-pressed")!=="true")baseButton.click();
           const size=target.dataset.size;
           if(size){
             window.setTimeout(()=>{
               const current=[...session.querySelectorAll<HTMLButtonElement>('button[aria-pressed]')]
                 .find(button=>(button.textContent??"").trim()===size&&!button.closest("[data-fixed-player-actions-v2]"));
-              current?.click();
+              if(current)current.click();else showUnavailable(session,target.textContent?.trim()||requested);
             },60);
           }
         });
@@ -73,7 +85,7 @@ export default function PlayerDnaFixedActions(){
         const base=item.action==="RAISE"?raiseBase:item.action;
         const available=actions.includes(base);
         const pressed=selected===base&&(!item.size||selectedSizing===item.size);
-        return `<button type="button" data-action="${item.action}" data-size="${item.size}" aria-pressed="${pressed}" ${available?"":"disabled"}>${item.label}</button>`;
+        return `<button type="button" data-action="${item.action}" data-size="${item.size}" data-available="${available}" aria-disabled="${!available}" aria-pressed="${pressed}" title="${available?item.label:`${item.label} INDISPONÍVEL NESTE SPOT`}">${item.label}</button>`;
       }).join("");
     };
 
@@ -81,9 +93,9 @@ export default function PlayerDnaFixedActions(){
     const style=document.createElement("style");
     style.textContent=`
       .player-dna-fixed-actions-v2{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:5px 0}
-      .player-dna-fixed-actions-v2 button{height:44px;min-height:44px;padding:5px 3px;border:1px solid #255000;border-radius:10px;background:rgba(31,54,31,.2);color:#ede6db;font-size:9px;font-weight:700;line-height:1.05;text-align:center}
+      .player-dna-fixed-actions-v2 button{height:44px;min-height:44px;padding:5px 3px;border:1px solid #255000;border-radius:10px;background:rgba(31,54,31,.2);color:#ede6db;font-size:9px;font-weight:700;line-height:1.05;text-align:center;cursor:pointer;touch-action:manipulation}
       .player-dna-fixed-actions-v2 button[aria-pressed="true"]{border-color:#ede6db;color:#009929;box-shadow:inset 0 0 0 1px rgba(237,230,219,.22)}
-      .player-dna-fixed-actions-v2 button:disabled{opacity:.35}
+      .player-dna-fixed-actions-v2 button[aria-disabled="true"]{opacity:.35;cursor:not-allowed}
       @media(max-width:800px){.player-dna-fixed-actions-v2{gap:4px}.player-dna-fixed-actions-v2 button{font-size:8px;padding:4px 2px}}
     `;
     document.head.appendChild(style);
