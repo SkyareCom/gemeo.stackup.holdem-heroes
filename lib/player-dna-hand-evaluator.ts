@@ -68,5 +68,5 @@ export function evaluateHandDecision(spot:PlayerDnaSpot,action:PlayerAction,sizi
   const selected=sizing?`${action} ${sizing}`:action;
   const recommended=strategy.primary.join(" / ");
   const comment=grade==="MELHOR LINHA"?`${selected}: decisão alinhada à faixa de maior frequência do modelo de referência. ${strategy.comment}`:grade==="ACEITÁVEL"?`${selected}: linha defensável e presente no mix, embora abaixo da frequência principal. ${strategy.comment}`:`${selected}: linha de baixa frequência no modelo de referência. ${strategy.comment}`;
-  return {grade,confidence:90,recommended,frequencies:strategy.frequencies,comment,math:mathNote(spot),source:"REFERÊNCIA SOLVER-ALIGNED CALIBRADA · NÃO SUBSTITUI OUTPUT DE SOLVER AO VIVO"};
+  return {grade,confidence:0,recommended,frequencies:strategy.frequencies,comment,math:mathNote(spot),source:"REFERÊNCIA ESTRATÉGICA CALIBRADA · PENDENTE DE BENCHMARK CONTRA SOLVER"};
 }
