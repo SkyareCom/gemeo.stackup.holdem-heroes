@@ -3,6 +3,7 @@
 import {useEffect,useMemo,useState} from "react";
 import PlayerDnaPokerTable from "@/components/PlayerDnaPokerTable";
 import {evaluatePlayerDna,type DecisionSizing,type PlayerDnaAnswer} from "@/lib/player-dna";
+import {evaluateHandDecision} from "@/lib/player-dna-hand-evaluator";
 import {buildBalancedSpotSession} from "@/lib/player-dna-sampler";
 import {playerDnaSpots,type GameMode,type PlayerAction,type PlayerDnaSpot} from "@/data/player-dna-spots";
 import styles from "./PlayerDnaWorkspace.module.css";
@@ -64,6 +65,7 @@ export default function PlayerDnaWorkspace(){
   const result=useMemo(()=>finished?evaluatePlayerDna(session,answers):null,[finished,session,answers]);
   const selectedReport=library.reports.find(report=>report.id===selectedReportId)??null;
   const latestReport=library.reports[0]??null;
+  const handEvaluation=useMemo(()=>spot&&selectedAction?evaluateHandDecision(spot,selectedAction,selectedSizing):null,[spot,selectedAction,selectedSizing]);
 
   useEffect(()=>{
     let next:DnaLibrary=emptyLibrary;
@@ -154,6 +156,7 @@ export default function PlayerDnaWorkspace(){
   const sizingOptions=selectedAction==="BET"?betSizings:selectedAction==="RAISE"?raiseSizings:[];
   const canContinue=Boolean(actionSequenceReady&&selectedAction&&(!(selectedAction==="BET"||selectedAction==="RAISE")||selectedSizing));
   const progress=Math.round((answers.length/target)*100);
+  const frequencyLine=handEvaluation?Object.entries(handEvaluation.frequencies).map(([action,value])=>`${action} ${value}%`).join(" · "):"";
 
   return <div className={`${styles.session} training-session`}>
     <div className="eyebrow">PLAYER DNA</div>
@@ -164,9 +167,16 @@ export default function PlayerDnaWorkspace(){
     <p className={styles.prompt}>QUAL É A SUA AÇÃO ?</p>
     <div className={styles.actions} aria-busy={!actionSequenceReady}>{spot.actions.map(action=><button type="button" aria-disabled={!actionSequenceReady} aria-pressed={selectedAction===action} className={selectedAction===action?styles.actionSelected:""} key={action} onClick={()=>chooseAction(action)}>{action}</button>)}</div>
     {sizingOptions.length>0&&<div className={styles.sizingActions}>{sizingOptions.map(sizing=><button type="button" aria-pressed={selectedSizing===sizing} className={selectedSizing===sizing?styles.actionSelected:""} key={sizing} onClick={()=>setSelectedSizing(current=>current===sizing?null:sizing)}>{sizing}</button>)}</div>}
-    <div data-player-comment-card className="player-comment-card" style={{minHeight:72,border:"1px solid rgba(92,187,126,.34)",borderRadius:12,padding:"10px 12px",display:"grid",gap:5,background:"rgba(5,20,12,.72)"}}>
+    <div data-player-comment-card className="player-comment-card" style={{minHeight:108,border:"1px solid rgba(92,187,126,.46)",borderRadius:12,padding:"11px 12px",display:"grid",gap:6,background:"rgba(5,20,12,.82)"}}>
       <strong style={{fontSize:11,letterSpacing:".08em"}}>AVALIAÇÃO E ANÁLISE</strong>
-      <span style={{fontSize:10,opacity:.86}}>{selectedAction?`AÇÃO DO HERÓI: ${selectedAction}${selectedSizing?` · ${selectedSizing}`:""}. DECISÃO REGISTRADA PARA AVALIAÇÃO DO PLAYER DNA.`:"AGUARDANDO A AÇÃO DO HERÓI."}</span>
+      {!handEvaluation?<span style={{fontSize:10,opacity:.82}}>AGUARDANDO A AÇÃO DO HERÓI.</span>:<>
+        <strong style={{fontSize:10}}>RESULTADO: {handEvaluation.grade}{handEvaluation.confidence>0?` · CONFIANÇA ${handEvaluation.confidence}%`:""}</strong>
+        <span style={{fontSize:10,opacity:.92}}>RECOMENDADA: {handEvaluation.recommended}</span>
+        {frequencyLine&&<span style={{fontSize:9,opacity:.88}}>{frequencyLine}</span>}
+        <span style={{fontSize:10,lineHeight:1.35,opacity:.9}}>{handEvaluation.comment}</span>
+        <span style={{fontSize:9,lineHeight:1.3,opacity:.72}}>{handEvaluation.math}</span>
+        <small style={{fontSize:8,opacity:.56}}>{handEvaluation.source}</small>
+      </>}
     </div>
     <div className="training-footer" style={{display:"grid",gridTemplateColumns:"repeat(2,minmax(0,1fr))",gap:8}}><button type="button" className={styles.modeButton} onClick={leave}><strong>SALVAR ANÁLISE E SAIR</strong></button><button type="button" className="primary" aria-disabled={!canContinue} onClick={nextSpot}>PRÓXIMO</button></div>
   </div>;
