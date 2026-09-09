@@ -44,13 +44,15 @@ CASES = [
 ]
 
 PROFILE = {
-    # Keep the same solver tree/accuracy; only give expensive flop nodes enough wall-clock
-    # budget to finish. Run #13 showed several healthy flop solves completing in 55-83s,
-    # so the prior 90s cap was measuring timeout pressure more than solver coverage.
+    # Keep the same solver tree, ranges and accuracy. The 180s budget from run #14 proved
+    # that wall-clock alone does not cure the remaining six flop timeouts, so this run keeps
+    # that budget and raises TexasSolver worker parallelism instead of weakening the solve.
     "flop": dict(timeout=180, accuracy=4.0, iterations=30, dump_rounds=1),
     "turn": dict(timeout=150, accuracy=2.0, iterations=80, dump_rounds=1),
     "river": dict(timeout=120, accuracy=1.0, iterations=120, dump_rounds=1),
 }
+
+SOLVER_THREADS = 8
 
 
 def find_solver():
@@ -87,7 +89,7 @@ set_bet_sizes ip,river,bet,66
 set_bet_sizes ip,river,raise,75
 set_allin_threshold 0.80
 build_tree
-set_thread_num 3
+set_thread_num {SOLVER_THREADS}
 set_accuracy {p['accuracy']}
 set_max_iteration {p['iterations']}
 set_print_interval 20
@@ -182,6 +184,7 @@ def build_report(summary):
         "by_street": by_street,
         "by_texture": by_texture,
         "sizing_note": "Broad battery uses one canonical bet/raise size per street; flop uses compact asymmetric IP/OOP smoke ranges to improve solve coverage while retaining benchmark hero classes.",
+        "solver_threads": SOLVER_THREADS,
     }
 
 
