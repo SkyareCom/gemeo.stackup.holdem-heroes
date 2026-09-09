@@ -38,7 +38,7 @@ function isIp(spot:PlayerDnaSpot){return spot.scenario.some(item=>item.toUpperCa
 function hasStraight(values:number[]){const unique=[...new Set(values)].sort((a,b)=>a-b);if(unique.includes(14))unique.unshift(1);for(let i=0;i<=unique.length-5;i++)if(unique[i+4]-unique[i]===4)return true;return false}
 function straightDraw(values:number[]){const unique=[...new Set(values)];if(unique.includes(14))unique.push(1);const set=new Set(unique);let openEnded=false,gutshot=false;for(let start=1;start<=10;start++){let hits=0;for(let v=start;v<start+5;v++)if(set.has(v))hits++;if(hits===4){const missing=[start,start+1,start+2,start+3,start+4].find(v=>!set.has(v));if(missing===start||missing===start+4)openEnded=true;else gutshot=true}}return{openEnded,gutshot}}
 function fourToStraight(values:number[]){const unique=[...new Set(values)];if(unique.includes(14))unique.push(1);const set=new Set(unique);for(let start=1;start<=10;start++){let hits=0;for(let v=start;v<start+5;v++)if(set.has(v))hits++;if(hits>=4)return true}return false}
-function boardState(spot:PlayerDnaSpot){const board=cards(spot.board);const values=[...new Set(board.map(c=>RANK_VALUE[rank(c)]??0))].sort((a,b)=>a-b);const rankCounts=new Map<string,number>();board.forEach(c=>rankCounts.set(rank(c),(rankCounts.get(rank(c))??0)+1));const paired=[...rankCounts.values()].some(n=>n>=2);const fourStraight=fourToStraight(values);return{paired,fourStraight}}
+function boardState(spot:PlayerDnaSpot){const board=cards(spot.board);const values=[...new Set(board.map(c=>RANK_VALUE[rank(c)]??0))].sort((a,b)=>a-b);const rankCounts=new Map<string,number>(),suitCounts=new Map<string,number>();board.forEach(c=>{rankCounts.set(rank(c),(rankCounts.get(rank(c))??0)+1);suitCounts.set(suit(c),(suitCounts.get(suit(c))??0)+1)});const paired=[...rankCounts.values()].some(n=>n>=2);const fourStraight=fourToStraight(values);const twoTone=Math.max(0,...suitCounts.values())>=2;let connected=false;for(let i=1;i<values.length;i++)if(values[i]-values[i-1]<=2)connected=true;const dry=!paired&&!twoTone&&!connected;return{paired,fourStraight,dry}}
 
 export function profileHand(spot:PlayerDnaSpot):HandProfile{
   const hero=cards(spot.heroCards),board=cards(spot.board),all=[...hero,...board];
@@ -139,6 +139,7 @@ export function solverHeroNodeStrategy(spot:PlayerDnaSpot){
   }else if(facing){
     if(profile.made==="STRAIGHT"&&board.fourStraight)f={CALL:94,RAISE:6};
     else if(profile.equityClass==="MONSTER")f={FOLD:1,CALL:18,RAISE:72,"ALL-IN":9};
+    else if(spot.street==="FLOP"&&profile.equityClass==="STRONG"&&profile.topPair&&board.dry&&spr>=4&&!profile.flushDraw&&!profile.openEnded&&!profile.gutshot)f={CALL:41,RAISE:59};
     else if(profile.equityClass==="STRONG"&&spr<=1.75&&(profile.comboDraw||profile.openEnded||profile.gutshot||profile.flushDraw))f={FOLD:1,CALL:24,RAISE:74,"ALL-IN":1};
     else if(profile.equityClass==="STRONG")f={FOLD:1,CALL:98,RAISE:1};
     else if(profile.equityClass==="DRAW")f={FOLD:12,CALL:57,RAISE:29,"ALL-IN":2};
@@ -148,6 +149,7 @@ export function solverHeroNodeStrategy(spot:PlayerDnaSpot){
     if(spot.mode==="TORNEIO"&&spot.street==="FLOP"&&ip&&profile.equityClass==="STRONG"&&spr<=3.25&&!profile.flushDraw&&!profile.openEnded&&!profile.gutshot)f={CHECK:89,BET:11};
     else if(profile.equityClass==="MONSTER"&&spot.street==="RIVER")f={CHECK:1,BET:98,"ALL-IN":1};
     else if(profile.equityClass==="MONSTER")f={CHECK:8,BET:88,"ALL-IN":4};
+    else if(profile.equityClass==="STRONG"&&board.paired&&spot.street==="FLOP")f={CHECK:50,BET:50};
     else if(profile.equityClass==="STRONG"&&board.paired)f={CHECK:6,BET:94};
     else if(profile.equityClass==="STRONG"&&spot.street==="RIVER")f={CHECK:12,BET:88};
     else if(profile.equityClass==="STRONG"&&spot.street==="TURN")f={CHECK:25,BET:75};
