@@ -10,6 +10,13 @@ export default function PlayerDnaFixedActions(){
   useEffect(()=>{
     let scheduled=false;
     let feedbackTimer:number|undefined;
+    const hiddenBoxes=new Set<HTMLElement>();
+
+    const hideNativeBox=(box:HTMLElement|null)=>{
+      if(!box)return;
+      hiddenBoxes.add(box);
+      box.style.setProperty("display","none","important");
+    };
 
     const showUnavailable=(session:HTMLElement,label:string)=>{
       let feedback=session.querySelector<HTMLElement>("[data-fixed-player-feedback]");
@@ -37,7 +44,7 @@ export default function PlayerDnaFixedActions(){
 
       const actionBox=nativeActions[0]?.parentElement as HTMLElement|null;
       if(!actionBox)return;
-      actionBox.style.setProperty("display","none","important");
+      hideNativeBox(actionBox);
 
       const actions=[...new Set(nativeActions.map(button=>(button.textContent??"").trim()))];
       const selected=nativeActions.find(button=>button.getAttribute("aria-pressed")==="true")?.textContent?.trim()??null;
@@ -47,7 +54,7 @@ export default function PlayerDnaFixedActions(){
       const nativeSizing=[...session.querySelectorAll<HTMLButtonElement>('button[aria-pressed]')]
         .filter(button=>[...RAISE_SIZES,...BET_SIZES,"25%","75%","125%","150%","SQUEEZE"].includes((button.textContent??"").trim())&&!button.closest("[data-fixed-player-actions-v2]"));
       const sizingBox=nativeSizing[0]?.parentElement as HTMLElement|null;
-      if(sizingBox)sizingBox.style.setProperty("display","none","important");
+      hideNativeBox(sizingBox);
       const selectedSizing=nativeSizing.find(button=>button.getAttribute("aria-pressed")==="true")?.textContent?.trim()??null;
 
       let fixed=session.querySelector<HTMLElement>("[data-fixed-player-actions-v2]");
@@ -89,12 +96,13 @@ export default function PlayerDnaFixedActions(){
         {label:"ALL IN",action:"ALL-IN",size:""},
       ];
 
-      fixed.innerHTML=rows.map(item=>{
+      const markup=rows.map(item=>{
         const base=item.action==="RAISE"?raiseBase:item.action;
         const available=actions.includes(base);
         const pressed=selected===base&&(!item.size||selectedSizing===item.size);
         return `<button type="button" data-action="${item.action}" data-size="${item.size}" data-available="${available}" aria-disabled="${!available}" aria-pressed="${pressed}" title="${available?item.label:`${item.label} INDISPONÍVEL NESTE SPOT`}">${item.label}</button>`;
       }).join("");
+      if(fixed.innerHTML!==markup)fixed.innerHTML=markup;
     };
 
     const schedule=()=>{if(scheduled)return;scheduled=true;requestAnimationFrame(apply)};
@@ -112,7 +120,12 @@ export default function PlayerDnaFixedActions(){
     apply();
     const observer=new MutationObserver(schedule);
     observer.observe(document.documentElement,{childList:true,subtree:true,attributes:true,attributeFilter:["aria-pressed","aria-disabled"]});
-    return()=>{if(feedbackTimer)window.clearTimeout(feedbackTimer);observer.disconnect();style.remove()};
+    return()=>{
+      if(feedbackTimer)window.clearTimeout(feedbackTimer);
+      observer.disconnect();
+      hiddenBoxes.forEach(box=>box.style.removeProperty("display"));
+      style.remove();
+    };
   },[]);
   return null;
 }
