@@ -18,7 +18,7 @@ function hashText(value:string){let hash=2166136261;for(let i=0;i<value.length;i
 function randomFrom(seed:number){let state=(seed||1)>>>0;return()=>{state=(Math.imul(state,1664525)+1013904223)>>>0;return state/4294967296}}
 function has(spot:PlayerDnaSpot,text:string){return spot.scenario.some(item=>item.toUpperCase().includes(text))}
 function hero(spot:PlayerDnaSpot){return spot.players.find(player=>player.hero)??spot.players[0]}
-function round(value:number,mode:GameMode){return mode==="TORNEIO"?Math.max(.1,Math.round(value*10)/10):Math.max(1,Math.round(value))}
+function round(value:number,mode:GameMode){if(value<=0)return 0;return mode==="TORNEIO"?Math.max(.1,Math.round(value*10)/10):Math.max(1,Math.round(value))}
 function stableShuffle<T>(items:T[],seed:number){const out=[...items];const random=randomFrom(seed);for(let i=out.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[out[i],out[j]]=[out[j],out[i]]}return out}
 
 function suitPermutation(random:()=>number){const suits=[...SUITS];for(let i=suits.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[suits[i],suits[j]]=[suits[j],suits[i]]}return new Map(SUITS.map((s,i)=>[s,suits[i]]))}
@@ -37,8 +37,6 @@ function generatedPrompt(players:Array<{position:string;action:string;value:numb
 
 function makeVariant(template:PlayerDnaSpot,slot:number,sessionSeed:number,answers:PriorAnswer[]):PlayerDnaSpot{
   const adaptation=answers.slice(-6).map(answer=>answer.action).join("|")||"START";const random=randomFrom(hashText(`${template.id}:${sessionSeed}:${slot}:${adaptation}`));
-  // Preserve rank/board relationships from the calibrated seed. Suit isomorphism changes appearance
-  // without turning a solved value/draw class into an unrelated hand.
   const suitMap=suitPermutation(random);const heroCards=remapCards(template.heroCards,suitMap)??template.heroCards;const board=remapCards(template.board,suitMap);
   const stackFactor=.90+random()*.20;const valueFactor=.92+random()*.16;
   const hasSidePots=Boolean(template.pot.sides?.length);
@@ -46,14 +44,10 @@ function makeVariant(template:PlayerDnaSpot,slot:number,sessionSeed:number,answe
   const players=template.players.map(player=>{
     const stack=round(player.stack*stackFactor,template.mode);
     if(player.hero)return{...player,stack,value:round(Math.max(0,player.value)*valueFactor,template.mode),action:"---"};
-
-    // Side-pot templates are structurally sensitive: changing one participant's action can invalidate
-    // the main/side-pot composition. Preserve those actions and vary only stacks/suits/amount scale.
     if(hasSidePots){
       const value=round(Math.max(0,player.value)*valueFactor,template.mode);
       return{...player,stack,value};
     }
-
     const policy=solverNodePolicy(template,player.position,player.action);const sampled=sampleSolverAction(policy,random);const action=solverActionLabel(sampled,player.action);
     const templateValue=player.value>0?round(player.value*valueFactor,template.mode):0;
     const value=sampled==="CHECK"||sampled==="FOLD"?0:sampled==="ALL-IN"?stack:templateValue>0?templateValue:round(template.pot.main*(sampled==="BET"?.5:.75),template.mode);
