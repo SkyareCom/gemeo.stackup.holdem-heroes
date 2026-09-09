@@ -15,6 +15,10 @@ OUT.mkdir(parents=True, exist_ok=True)
 RANGE_IP = "AA,KK,QQ,JJ,TT,99:0.75,88:0.75,77:0.5,66:0.25,55:0.25,AK,AQs,AQo:0.75,AJs,AJo:0.5,ATs:0.75,A6s:0.25,A5s:0.75,A4s:0.75,A3s:0.5,A2s:0.5,KQs,KQo:0.5,KJs,KTs:0.75,K5s:0.25,K4s:0.25,QJs:0.75,QTs:0.75,Q9s:0.5,JTs:0.75,J9s:0.75,J8s:0.75,T9s:0.75,T8s:0.75,T7s:0.75,98s:0.75,97s:0.75,96s:0.5,87s:0.75,86s:0.5,85s:0.5,76s:0.75,75s:0.5,65s:0.75,64s:0.5,54s:0.75,53s:0.5,43s:0.5"
 RANGE_OOP = "QQ:0.5,JJ:0.75,TT,99,88,77,66,55,44,33,22,AKo:0.25,AQs,AQo:0.75,AJs,AJo:0.75,ATs,ATo:0.75,A9s,A8s,A7s,A6s,A5s,A4s,A3s,A2s,KQ,KJ,KTs,KTo:0.5,K9s,K8s,K7s,K6s,K5s,K4s:0.5,K3s:0.5,K2s:0.5,QJ,QTs,Q9s,Q8s,Q7s,JTs,JTo:0.5,J9s,J8s,T9s,T8s,T7s,98s,97s,96s,87s,86s,76s,75s,65s,64s,54s,53s,43s"
 
+# Flop trees are much larger than turn/river trees. This compact smoke range keeps all
+# benchmark hero classes represented while bounding memory/runtime and avoiding solver crashes.
+RANGE_FLOP = "AA,KK,QQ,JJ,TT,99,88,77,66,55,44,33,22,AK,AQs,AQo,AJs,AJo,ATs,ATo,A9s,A8s,A5s,KQs,KQo,KJs,KTs,QJs,QTs,JTs,T9s,98s,87s,76s,65s,54s"
+
 CASES = [
     dict(id="cash-co-vs-btn-flop", street="flop", pot_type="SRP", texture="K-high-rainbow", board="Kd,8s,3c", pot=16, stack=94, hero="KcQc", path=["CHECK", "BET"], expected_app="CALL"),
     dict(id="cash-bb-vs-co-turn", street="turn", pot_type="SRP", texture="K-high-two-tone", board="Kc,8h,3s,9s", pot=49, stack=70, hero="KdJd", path=["CHECK", "BET"], expected_app="CALL"),
@@ -29,19 +33,17 @@ CASES = [
     dict(id="cash-high-spr-k72r-ip", street="flop", pot_type="SRP", texture="K-high-dry-rainbow", board="Kh,7d,2s", pot=8, stack=120, hero="KsQs", path=["CHECK"], expected_app="BET"),
     dict(id="cash-low-spr-a84r-oop", street="flop", pot_type="large-pot", texture="A-high-rainbow", board="Ad,8c,4s", pot=38, stack=42, hero="AhJh", path=["CHECK", "BET"], expected_app="CALL"),
     dict(id="cash-turn-paired-ip", street="turn", pot_type="SRP", texture="paired-turn", board="Jh,6d,2c,6s", pot=24, stack=76, hero="JcTc", path=["CHECK"], expected_app="BET"),
-    dict(id="cash-turn-four-straight-oop", street="turn", pot_type="SRP", texture="four-straight", board="9h,8d,7c,6s", pot=30, stack=72, hero="Th9s", path=["CHECK", "BET"], expected_app="CALL"),
+    dict(id="cash-turn-four-straight-oop", street="turn", pot_type="SRP", texture="four-straight", board="9h,8d,7c,6s", pot=30, stack=72, hero="Ts9s", path=["CHECK", "BET"], expected_app="CALL"),
     dict(id="cash-turn-flush-completes-ip", street="turn", pot_type="SRP", texture="flush-completes", board="Qh,8h,3c,2h", pot=25, stack=74, hero="KhQd", path=["CHECK"], expected_app="CHECK"),
     dict(id="cash-river-paired-oop-vs-bet", street="river", pot_type="SRP", texture="paired-river", board="Jh,8d,3c,3s,2h", pot=48, stack=55, hero="JcTc", path=["CHECK", "BET"], expected_app="CALL"),
-    dict(id="cash-river-four-flush-ip", street="river", pot_type="SRP", texture="four-flush", board="Ah,8h,4c,2h,Kh", pot=42, stack=58, hero="QhJs", path=["CHECK"], expected_app="BET"),
-    dict(id="cash-river-straight-board-oop", street="river", pot_type="SRP", texture="straight-board", board="9h,8d,7c,6s,5h", pot=60, stack=48, hero="Th9s", path=["CHECK", "BET"], expected_app="CALL"),
+    dict(id="cash-river-four-flush-ip", street="river", pot_type="SRP", texture="four-flush", board="Ah,8h,4c,2h,Kh", pot=42, stack=58, hero="QhJh", path=["CHECK"], expected_app="BET"),
+    dict(id="cash-river-straight-board-oop", street="river", pot_type="SRP", texture="straight-board", board="9h,8d,7c,6s,5h", pot=60, stack=48, hero="Ts9s", path=["CHECK", "BET"], expected_app="CALL"),
     dict(id="mtt-shallow-flop-chipEV", street="flop", pot_type="SRP", texture="Q-high-two-tone", board="Qh,9h,3c", pot=9, stack=24, hero="QsTs", path=["CHECK"], expected_app="BET"),
     dict(id="mtt-shallow-turn-chipEV", street="turn", pot_type="SRP", texture="K-high-connected", board="Kd,Ts,7c,9h", pot=13, stack=20, hero="KcQh", path=["CHECK", "BET"], expected_app="CALL"),
 ]
 
-# Fast calibration profile. We intentionally keep one canonical bet and raise size per
-# street in this broad battery. Dedicated sizing batteries can expand the tree later.
 PROFILE = {
-    "flop": dict(timeout=180, accuracy=3.0, iterations=60, dump_rounds=1),
+    "flop": dict(timeout=120, accuracy=4.0, iterations=40, dump_rounds=1),
     "turn": dict(timeout=150, accuracy=2.0, iterations=80, dump_rounds=1),
     "river": dict(timeout=120, accuracy=1.0, iterations=120, dump_rounds=1),
 }
@@ -59,11 +61,13 @@ def find_solver():
 
 def input_text(c, out_name):
     p = PROFILE[c["street"]]
+    range_ip = RANGE_FLOP if c["street"] == "flop" else RANGE_IP
+    range_oop = RANGE_FLOP if c["street"] == "flop" else RANGE_OOP
     return f"""set_pot {c['pot']}
 set_effective_stack {c['stack']}
 set_board {c['board']}
-set_range_ip {RANGE_IP}
-set_range_oop {RANGE_OOP}
+set_range_ip {range_ip}
+set_range_oop {range_oop}
 set_bet_sizes oop,flop,bet,50
 set_bet_sizes oop,flop,raise,75
 set_bet_sizes ip,flop,bet,50
@@ -79,7 +83,7 @@ set_bet_sizes ip,river,bet,66
 set_bet_sizes ip,river,raise,75
 set_allin_threshold 0.80
 build_tree
-set_thread_num 4
+set_thread_num 3
 set_accuracy {p['accuracy']}
 set_max_iteration {p['iterations']}
 set_print_interval 20
@@ -173,7 +177,7 @@ def build_report(summary):
         "top_action_match_pct": round(100 * len(matches) / len(ok), 2) if ok else None,
         "by_street": by_street,
         "by_texture": by_texture,
-        "sizing_note": "Broad battery uses one canonical bet/raise size per street to bound runtime; exact solver actions are still preserved.",
+        "sizing_note": "Broad battery uses one canonical bet/raise size per street; flop uses a compact smoke range to bound runtime while preserving benchmark hero classes.",
     }
 
 
