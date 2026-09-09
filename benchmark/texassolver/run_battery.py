@@ -44,7 +44,10 @@ CASES = [
 ]
 
 PROFILE = {
-    "flop": dict(timeout=90, accuracy=4.0, iterations=30, dump_rounds=1),
+    # Keep the same solver tree/accuracy; only give expensive flop nodes enough wall-clock
+    # budget to finish. Run #13 showed several healthy flop solves completing in 55-83s,
+    # so the prior 90s cap was measuring timeout pressure more than solver coverage.
+    "flop": dict(timeout=180, accuracy=4.0, iterations=30, dump_rounds=1),
     "turn": dict(timeout=150, accuracy=2.0, iterations=80, dump_rounds=1),
     "river": dict(timeout=120, accuracy=1.0, iterations=120, dump_rounds=1),
 }
