@@ -6,6 +6,15 @@ import styles from "./PokerAssistantWorkspace.module.css";
 type Usage={plan:"FREE"|"PRO"|"ELITE"|"UNLIMITED";dayQuestions:number;dailyLimit:number|null;monthCredits:number;monthlyCredits:number|null};
 type AiMeta={depth?:"FAST"|"SMART"|"DEEP";credits?:number;plan?:Usage["plan"];usage?:Usage};
 
+function localPokerAnswer(question:string){
+  const q=question.toUpperCase();
+  if(q.includes("POT ODDS"))return "MODO LOCAL: POT ODDS = VALOR DO CALL / (POTE APÓS O CALL). COMPARE ESSA PORCENTAGEM COM SUA EQUITY ESTIMADA. SE A EQUITY FOR MAIOR QUE A EQUITY MÍNIMA EXIGIDA, O CALL TENDE A SER LUCRATIVO EM CHIP EV.";
+  if(q.includes("ICM"))return "MODO LOCAL: ICM AUMENTA O CUSTO DE SER ELIMINADO EM FASES DE PREMIAÇÃO. NA BOLHA E EM MESA FINAL, CALLS DE ALL-IN COSTUMAM EXIGIR MAIS EQUITY DO QUE EM CHIP EV PURO. STACKS, PAYOUTS E COBERTURA DOS ADVERSÁRIOS MUDAM A DECISÃO.";
+  if(q.includes("3-BET")||q.includes("RANGE"))return "MODO LOCAL: UM RANGE DE 3-BET DEVE CONSIDERAR POSIÇÃO, STACK EFETIVO, TAMANHO DA ABERTURA E TENDÊNCIAS DO ADVERSÁRIO. CONTRA BTN, O BB PODE DEFENDER MAIS COM CALL E 3-BET DO QUE CONTRA POSIÇÕES INICIAIS. SEPARE VALUE, BLUFFS E MÃOS QUE REALIZAM BEM SUA EQUITY.";
+  if(q.includes("DEALER")||q.includes("CARTA"))return "MODO LOCAL: REGRAS EXATAS DEPENDEM DO REGULAMENTO DA CASA E DO TORNEIO. EM CASO DE CARTA EXPOSTA OU ERRO DE DISTRIBUIÇÃO, O PROCEDIMENTO PADRÃO É PARAR A AÇÃO E CHAMAR O FLOOR/DEALER RESPONSÁVEL ANTES DE CONTINUAR.";
+  return "MODO LOCAL DO PREVIEW: A INTERFACE ESTÁ FUNCIONANDO, MAS O GITHUB PAGES NÃO EXECUTA O BACKEND DA STACKUP AI. PARA UMA RESPOSTA COMPLETA COM IA, ESTE MESMO FRONTEND PRECISA ESTAR CONECTADO AO SERVIDOR DA API.";
+}
+
 export default function PokerAssistantWorkspace(){
   const[question,setQuestion]=useState("");
   const[answer,setAnswer]=useState("");
@@ -48,8 +57,8 @@ export default function PokerAssistantWorkspace(){
       else if(code==="MONTHLY_CREDITS")setError("CRÉDITOS STACKUP AI DO PLANO ESGOTADOS NESTE MÊS.");
       else if(code==="IMAGE_TOO_LARGE")setError("A IMAGEM DEVE TER NO MÁXIMO 8 MB.");
       else if(code==="UNSUPPORTED_IMAGE")setError("FORMATO DE IMAGEM NÃO SUPORTADO.");
-      else if(code==="VISION_TEMPORARILY_UNAVAILABLE"||code==="AI_TEMPORARILY_UNAVAILABLE")setError("STACKUP AI INDISPONÍVEL NO MOMENTO. VERIFIQUE A CONFIGURAÇÃO DO PROVEDOR NO SERVIDOR.");
-      else setError("NÃO FOI POSSÍVEL PROCESSAR A PERGUNTA.");
+      else if(image)setError("A IMAGEM FOI ANEXADA, MAS O PREVIEW ESTÁTICO NÃO TEM O BACKEND DE VISÃO ATIVO.");
+      else{setAnswer(localPokerAnswer(text));setMeta(null)}
     }finally{setLoading(false)}
   }
 
