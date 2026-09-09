@@ -36,7 +36,8 @@ function isMultiway(spot:PlayerDnaSpot){return scenarioText(spot).includes("MULT
 
 function hasStraight(values:number[]){const unique=[...new Set(values)].sort((a,b)=>a-b);if(unique.includes(14))unique.unshift(1);for(let i=0;i<=unique.length-5;i++)if(unique[i+4]-unique[i]===4)return true;return false}
 function straightDraw(values:number[]){const unique=[...new Set(values)];if(unique.includes(14))unique.push(1);const set=new Set(unique);let openEnded=false,gutshot=false;for(let start=1;start<=10;start++){let hits=0;for(let v=start;v<start+5;v++)if(set.has(v))hits++;if(hits===4){const missing=[start,start+1,start+2,start+3,start+4].find(v=>!set.has(v));if(missing===start||missing===start+4)openEnded=true;else gutshot=true}}return{openEnded,gutshot}}
-function boardState(spot:PlayerDnaSpot){const board=cards(spot.board);const values=[...new Set(board.map(c=>RANK_VALUE[rank(c)]??0))].sort((a,b)=>a-b);const rankCounts=new Map<string,number>();board.forEach(c=>rankCounts.set(rank(c),(rankCounts.get(rank(c))??0)+1));const paired=[...rankCounts.values()].some(n=>n>=2);let connected=false;for(let i=0;i<values.length;i++)for(let j=i+2;j<values.length;j++)if(values[j]-values[i]<=4)connected=true;const draw=straightDraw(values);return{paired,connected:connected||draw.openEnded||draw.gutshot}}
+function fourToStraight(values:number[]){const unique=[...new Set(values)];if(unique.includes(14))unique.push(1);const set=new Set(unique);for(let start=1;start<=10;start++){let hits=0;for(let v=start;v<start+5;v++)if(set.has(v))hits++;if(hits>=4)return true}return false}
+function boardState(spot:PlayerDnaSpot){const board=cards(spot.board);const values=[...new Set(board.map(c=>RANK_VALUE[rank(c)]??0))].sort((a,b)=>a-b);const rankCounts=new Map<string,number>();board.forEach(c=>rankCounts.set(rank(c),(rankCounts.get(rank(c))??0)+1));const paired=[...rankCounts.values()].some(n=>n>=2);const fourStraight=fourToStraight(values);return{paired,fourStraight}}
 
 export function profileHand(spot:PlayerDnaSpot):HandProfile{
   const hero=cards(spot.heroCards),board=cards(spot.board),all=[...hero,...board];
@@ -135,8 +136,9 @@ export function solverHeroNodeStrategy(spot:PlayerDnaSpot){
     else if(profile.tier==="MEDIUM")f={FOLD:38,CALL:44,RAISE:16,"ALL-IN":2};
     else f={FOLD:78,CALL:17,RAISE:4,"ALL-IN":1};
   }else if(facing){
-    if(profile.equityClass==="MONSTER")f={FOLD:1,CALL:18,RAISE:72,"ALL-IN":9};
-    else if(profile.equityClass==="STRONG"&&spr<=1.75&&board.connected)f={FOLD:1,CALL:24,RAISE:74,"ALL-IN":1};
+    if(profile.made==="STRAIGHT"&&board.fourStraight)f={FOLD:1,CALL:92,RAISE:6,"ALL-IN":1};
+    else if(profile.equityClass==="MONSTER")f={FOLD:1,CALL:18,RAISE:72,"ALL-IN":9};
+    else if(profile.equityClass==="STRONG"&&spr<=1.75&&(profile.comboDraw||profile.openEnded||profile.gutshot||profile.flushDraw))f={FOLD:1,CALL:24,RAISE:74,"ALL-IN":1};
     else if(profile.equityClass==="STRONG")f={FOLD:2,CALL:88,RAISE:9,"ALL-IN":1};
     else if(profile.equityClass==="DRAW")f={FOLD:12,CALL:57,RAISE:29,"ALL-IN":2};
     else if(profile.equityClass==="MARGINAL")f={FOLD:60,CALL:37,RAISE:2,"ALL-IN":1};
