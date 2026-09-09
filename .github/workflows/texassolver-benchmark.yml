@@ -5,6 +5,7 @@ on:
   push:
     paths:
       - 'benchmark/texassolver/**'
+      - 'lib/gto-range-policy.ts'
       - '.github/workflows/texassolver-benchmark.yml'
 
 permissions:
@@ -35,6 +36,12 @@ jobs:
           set -euxo pipefail
           mkdir -p benchmark/texassolver/results
           python3 benchmark/texassolver/run_battery.py | tee benchmark/texassolver/results/workflow.log
+      - name: Compare against live Player DNA engine
+        shell: bash
+        run: |
+          set -euxo pipefail
+          npx --yes tsx benchmark/texassolver/compare_app_engine.ts benchmark/texassolver/results/summary.json \
+            | tee benchmark/texassolver/results/app-engine-comparison.log
       - name: Upload solver outputs
         if: always()
         uses: actions/upload-artifact@v4
