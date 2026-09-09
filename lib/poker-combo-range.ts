@@ -9,12 +9,6 @@ export type WeightedCombo={cards:[string,string];handClass:string;weight:number}
 function normalizeCard(card:string){
   return card.trim().replace(/s$/i,"♠").replace(/h$/i,"♥").replace(/d$/i,"♦").replace(/c$/i,"♣");
 }
-function className(a:string,b:string){
-  const va=VALUE[a[0]]??0,vb=VALUE[b[0]]??0;
-  if(va===vb)return `${a[0]}${b[0]}`;
-  const hi=va>vb?a:b,lo=va>vb?b:a;
-  return `${hi[0]}${lo[0]}${hi.slice(-1)===lo.slice(-1)?"S":"O"}`;
-}
 function pairClasses(start:string){const i=RANKS.indexOf(start as typeof RANKS[number]);return i<0?[]:RANKS.slice(i).map(rank=>`${rank}${rank}`)}
 function plusClasses(hi:string,lo:string,suffix:"S"|"O"){
   const hiIndex=RANKS.indexOf(hi as typeof RANKS[number]),loIndex=RANKS.indexOf(lo as typeof RANKS[number]);
