@@ -1,0 +1,92 @@
+#!/usr/bin/env python3
+import json, os, pathlib, shutil, subprocess, sys, time
+
+ROOT = pathlib.Path(__file__).resolve().parent
+OUT = ROOT / "results"
+OUT.mkdir(parents=True, exist_ok=True)
+
+RANGE_IP = "AA,KK,QQ,JJ,TT,99:0.75,88:0.75,77:0.5,66:0.25,55:0.25,AK,AQs,AQo:0.75,AJs,AJo:0.5,ATs:0.75,A6s:0.25,A5s:0.75,A4s:0.75,A3s:0.5,A2s:0.5,KQs,KQo:0.5,KJs,KTs:0.75,K5s:0.25,K4s:0.25,QJs:0.75,QTs:0.75,Q9s:0.5,JTs:0.75,J9s:0.75,J8s:0.75,T9s:0.75,T8s:0.75,T7s:0.75,98s:0.75,97s:0.75,96s:0.5,87s:0.75,86s:0.5,85s:0.5,76s:0.75,75s:0.5,65s:0.75,64s:0.5,54s:0.75,53s:0.5,43s:0.5"
+RANGE_OOP = "QQ:0.5,JJ:0.75,TT,99,88,77,66,55,44,33,22,AKo:0.25,AQs,AQo:0.75,AJs,AJo:0.75,ATs,ATo:0.75,A9s,A8s,A7s,A6s,A5s,A4s,A3s,A2s,KQ,KJ,KTs,KTo:0.5,K9s,K8s,K7s,K6s,K5s,K4s:0.5,K3s:0.5,K2s:0.5,QJ,QTs,Q9s,Q8s,Q7s,JTs,JTo:0.5,J9s,J8s,T9s,T8s,T7s,98s,97s,96s,87s,86s,76s,75s,65s,64s,54s,53s,43s"
+
+CASES = [
+    dict(id="cash-co-vs-btn-flop", board="Kd,8s,3c", pot=16, stack=94, hero="KcQc", hero_side="OOP", path=["CHECK","BET"], expected_app="CALL"),
+    dict(id="cash-bb-vs-co-turn", board="Kc,8h,3s,9s", pot=49, stack=70, hero="KdJd", hero_side="OOP", path=["CHECK","BET"], expected_app="CALL"),
+    dict(id="cash-btn-vs-bb-river-value", board="Qh,7d,4s,2c,6c", pot=36, stack=50, hero="QsJs", hero_side="IP", path=["CHECK"], expected_app="BET"),
+    dict(id="cash-bb-vs-btn-river-bet", board="Kc,9d,5s,4h,2d", pot=90, stack=68, hero="KhQh", hero_side="OOP", path=["CHECK","BET"], expected_app="CALL"),
+    dict(id="mtt-btn-vs-bb-turn-chipEV", board="Qd,8s,4c,Ah", pot=15, stack=33, hero="KsQc", hero_side="IP", path=["CHECK"], expected_app="CHECK"),
+]
+
+def find_solver():
+    env = os.environ.get("TEXASSOLVER_BIN")
+    if env and pathlib.Path(env).exists(): return pathlib.Path(env)
+    for p in pathlib.Path.cwd().rglob("console_solver"):
+        if p.is_file(): return p
+    raise SystemExit("console_solver not found")
+
+def input_text(c, out_name):
+    return f"""set_pot {c['pot']}\nset_effective_stack {c['stack']}\nset_board {c['board']}\nset_range_ip {RANGE_IP}\nset_range_oop {RANGE_OOP}\nset_bet_sizes oop,flop,bet,33,50,75\nset_bet_sizes oop,flop,raise,50,100\nset_bet_sizes oop,flop,allin\nset_bet_sizes ip,flop,bet,33,50,75\nset_bet_sizes ip,flop,raise,50,100\nset_bet_sizes ip,flop,allin\nset_bet_sizes oop,turn,bet,33,50,75\nset_bet_sizes oop,turn,raise,50,100\nset_bet_sizes oop,turn,allin\nset_bet_sizes ip,turn,bet,33,50,75\nset_bet_sizes ip,turn,raise,50,100\nset_bet_sizes ip,turn,allin\nset_bet_sizes oop,river,bet,33,66,100\nset_bet_sizes oop,river,donk,33,66\nset_bet_sizes oop,river,raise,50,100\nset_bet_sizes oop,river,allin\nset_bet_sizes ip,river,bet,33,66,100\nset_bet_sizes ip,river,raise,50,100\nset_bet_sizes ip,river,allin\nset_allin_threshold 0.67\nbuild_tree\nset_thread_num 4\nset_accuracy 0.75\nset_max_iteration 250\nset_print_interval 25\nset_use_isomorphism 1\nstart_solve\nset_dump_rounds 3\ndump_result {out_name}\n"""
+
+def choose_child(node, prefix):
+    children = node.get("childrens", {}) if isinstance(node, dict) else {}
+    candidates = [(k,v) for k,v in children.items() if k.upper().startswith(prefix.upper())]
+    if not candidates:
+        raise KeyError(f"no child {prefix}; have {list(children)[:12]}")
+    if prefix.upper()=="BET":
+        # deterministic middle-size branch; representative of the app's small/medium bet nodes
+        return sorted(candidates, key=lambda kv: kv[0])[len(candidates)//2][1]
+    return candidates[0][1]
+
+def hero_strategy(node, hero):
+    block = node.get("strategy", {})
+    actions = block.get("actions", [])
+    table = block.get("strategy", {})
+    keys = [hero, hero[2:]+hero[:2]]
+    vals = None; used = None
+    for k in keys:
+        if k in table: vals=table[k]; used=k; break
+    if vals is None:
+        # suit/rank order can be canonicalized; match same two cards ignoring order
+        target={hero[:2],hero[2:]}
+        for k,v in table.items():
+            if len(k)==4 and {k[:2],k[2:]}==target: vals=v; used=k; break
+    if vals is None: raise KeyError(f"hero {hero} not found in strategy ({len(table)} hands)")
+    pairs=[(actions[i], float(vals[i])) for i in range(min(len(actions),len(vals)))]
+    agg={"FOLD":0.0,"CHECK":0.0,"CALL":0.0,"BET":0.0,"RAISE":0.0,"ALL-IN":0.0}
+    for a,v in pairs:
+        u=a.upper(); key = "BET" if u.startswith("BET") else "RAISE" if u.startswith("RAISE") else u.split()[0]
+        if key in agg: agg[key]+=v
+    s=sum(agg.values()) or 1.0
+    pct={k:round(v*100/s,2) for k,v in agg.items() if v>1e-8}
+    best=max(pct, key=pct.get) if pct else "---"
+    return used,pairs,pct,best
+
+def main():
+    solver=find_solver(); solver.chmod(solver.stat().st_mode | 0o111)
+    work=solver.parent
+    summary=[]
+    for c in CASES:
+        print(f"=== SOLVE {c['id']} ===", flush=True)
+        inp=work/f"stackup-{c['id']}.txt"; raw=work/f"stackup-{c['id']}.json"
+        inp.write_text(input_text(c, raw.name))
+        start=time.time()
+        proc=subprocess.run([str(solver),"-i",inp.name],cwd=work,text=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,timeout=900)
+        log=OUT/f"{c['id']}.log"; log.write_text(proc.stdout)
+        if proc.returncode!=0 or not raw.exists():
+            summary.append({**c,"status":"solver_failed","returncode":proc.returncode,"seconds":round(time.time()-start,2),"log_tail":proc.stdout[-1200:]})
+            continue
+        dest=OUT/f"{c['id']}.json"; shutil.copy2(raw,dest)
+        try:
+            node=json.loads(raw.read_text())
+            for step in c["path"]: node=choose_child(node,step)
+            used,pairs,pct,best=hero_strategy(node,c["hero"])
+            summary.append({**c,"status":"ok","seconds":round(time.time()-start,2),"solver_hand_key":used,"solver_actions":pairs,"solver_frequency_pct":pct,"solver_best":best,"app_expected":c["expected_app"],"top_action_match":best==c["expected_app"]})
+        except Exception as e:
+            summary.append({**c,"status":"parse_failed","seconds":round(time.time()-start,2),"error":repr(e)})
+    ok=[x for x in summary if x.get("status")=="ok"]
+    matches=[x for x in ok if x.get("top_action_match")]
+    report={"solver":"TexasSolver v0.2.0 console","scope":"HU postflop; tournament case is chipEV only (no ICM)","cases":summary,"solved":len(ok),"top_action_matches":len(matches),"top_action_match_pct":round(100*len(matches)/len(ok),2) if ok else None}
+    (OUT/"summary.json").write_text(json.dumps(report,indent=2,ensure_ascii=False))
+    print(json.dumps(report,indent=2,ensure_ascii=False))
+    if not ok: sys.exit(2)
+
+if __name__=="__main__": main()
