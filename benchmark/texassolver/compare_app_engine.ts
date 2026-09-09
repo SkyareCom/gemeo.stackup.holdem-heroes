@@ -37,7 +37,7 @@ type Report = {
   avg_total_variation_distance_pct?: number | null;
   solver_coverage_pct?: number | null;
   fidelity_gate_passed?: boolean;
-  fidelity_gate?: { min_coverage_pct: number; min_top_action_pct: number; max_avg_tvd_pct: number };
+  fidelity_gate?: { min_coverage_pct: number; min_top_action_pct_exclusive: number; max_avg_tvd_pct: number };
   by_street?: Record<string, BucketStats>;
   by_texture?: Record<string, BucketStats>;
   comparison_method?: string;
@@ -46,8 +46,8 @@ type Report = {
 
 const ACTIONS: PlayerAction[] = ["FOLD", "CHECK", "CALL", "BET", "RAISE", "ALL-IN"];
 const ACCEPTABLE_SOLVER_FREQUENCY_PCT = 20;
-const MIN_COVERAGE_PCT = 90;
-const MIN_TOP_ACTION_PCT = 98;
+const MIN_COVERAGE_PCT = 100;
+const MIN_TOP_ACTION_PCT_EXCLUSIVE = 98;
 const MAX_AVG_TVD_PCT = 5;
 
 function spacedCards(text: string) {
@@ -139,9 +139,9 @@ function recomputeBuckets(report: Report) {
   report.solver_acceptable_app_line_pct = ok.length ? Math.round((10000 * acceptable.length) / ok.length) / 100 : null;
   report.avg_total_variation_distance_pct = tvds.length ? Math.round((100 * tvds.reduce((a, b) => a + b, 0)) / tvds.length) / 100 : null;
   report.solver_coverage_pct = caseCount ? Math.round((10000 * ok.length) / caseCount) / 100 : null;
-  report.fidelity_gate = { min_coverage_pct: MIN_COVERAGE_PCT, min_top_action_pct: MIN_TOP_ACTION_PCT, max_avg_tvd_pct: MAX_AVG_TVD_PCT };
+  report.fidelity_gate = { min_coverage_pct: MIN_COVERAGE_PCT, min_top_action_pct_exclusive: MIN_TOP_ACTION_PCT_EXCLUSIVE, max_avg_tvd_pct: MAX_AVG_TVD_PCT };
   report.fidelity_gate_passed = Number(report.solver_coverage_pct ?? 0) >= MIN_COVERAGE_PCT
-    && Number(report.top_action_match_pct ?? 0) >= MIN_TOP_ACTION_PCT
+    && Number(report.top_action_match_pct ?? 0) > MIN_TOP_ACTION_PCT_EXCLUSIVE
     && Number(report.avg_total_variation_distance_pct ?? 999) <= MAX_AVG_TVD_PCT;
 
   const byStreet: NonNullable<Report["by_street"]> = {};
@@ -190,7 +190,7 @@ for (const row of report.cases) {
   delete row.app_expected;
 }
 
-report.comparison_method = `TexasSolver action frequencies versus live solverHeroNodeStrategy(); acceptable app line means solver frequency >= ${ACCEPTABLE_SOLVER_FREQUENCY_PCT}%; fidelity gate requires >=${MIN_COVERAGE_PCT}% solved coverage, >=${MIN_TOP_ACTION_PCT}% top-action agreement and <=${MAX_AVG_TVD_PCT}% average TVD`;
+report.comparison_method = `TexasSolver action frequencies versus live solverHeroNodeStrategy(); acceptable app line means solver frequency >= ${ACCEPTABLE_SOLVER_FREQUENCY_PCT}%; fidelity gate requires ${MIN_COVERAGE_PCT}% solved coverage, >${MIN_TOP_ACTION_PCT_EXCLUSIVE}% top-action agreement and <=${MAX_AVG_TVD_PCT}% average TVD`;
 recomputeBuckets(report);
 fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
 console.log(JSON.stringify({
