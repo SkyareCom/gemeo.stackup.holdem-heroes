@@ -1,5 +1,6 @@
 import type {AnteFormat,GameMode,PlayerAction,PlayerDnaSpot} from "@/data/player-dna-spots";
 import {sampleSolverAction,solverActionLabel,solverNodePolicy} from "@/lib/gto-range-policy";
+import {comboKey,conditionRangeOnAction,expandWeightedRange,sampleWeightedCombo} from "@/lib/poker-combo-range";
 
 type Street=PlayerDnaSpot["street"];
 type PriorAnswer={action:PlayerAction};
@@ -21,6 +22,7 @@ function hero(spot:PlayerDnaSpot){return spot.players.find(player=>player.hero)?
 function round(value:number,mode:GameMode){if(value<=0)return 0;return mode==="TORNEIO"?Math.max(.1,Math.round(value*10)/10):Math.max(1,Math.round(value))}
 function capCommitment(value:number,stack:number,mode:GameMode){return round(Math.min(Math.max(0,value),Math.max(0,stack)),mode)}
 function stableShuffle<T>(items:T[],seed:number){const out=[...items];const random=randomFrom(seed);for(let i=out.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[out[i],out[j]]=[out[j],out[i]]}return out}
+function splitCards(text?:string){return(text??"").split(" ").filter(Boolean)}
 
 function suitPermutation(random:()=>number){const suits=[...SUITS];for(let i=suits.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[suits[i],suits[j]]=[suits[j],suits[i]]}return new Map(SUITS.map((s,i)=>[s,suits[i]]))}
 function remapCard(card:string,map:Map<string,string>){if(!card)return card;const rank=card.slice(0,-1),suit=card.slice(-1);return `${rank}${map.get(suit)??suit}`}
@@ -41,10 +43,7 @@ function legalHeroActions(street:Street,players:PlayerDnaSpot["players"]):Player
   const activeVillains=players.filter(player=>!player.hero&&player.action!=="FOLD");
   const highest=Math.max(0,...activeVillains.map(player=>Math.max(0,player.value)));
   const outstanding=Math.max(0,highest-Math.max(0,h.value));
-  if(outstanding>0){
-    if(h.stack<=outstanding)return["FOLD","CALL"];
-    return["FOLD","CALL","RAISE","ALL-IN"];
-  }
+  if(outstanding>0){if(h.stack<=outstanding)return["FOLD","CALL"];return["FOLD","CALL","RAISE","ALL-IN"]}
   return street==="PREFLOP"?["CHECK","RAISE","ALL-IN"]:["CHECK","BET","ALL-IN"];
 }
 
@@ -54,18 +53,20 @@ function makeVariant(template:PlayerDnaSpot,slot:number,sessionSeed:number,answe
   const stackFactor=.90+random()*.20;const valueFactor=.92+random()*.16;
   const hasSidePots=Boolean(template.pot.sides?.length);
   const templateVillainCommitted=template.players.filter(player=>!player.hero).reduce((sum,player)=>sum+Math.max(0,player.value),0);
+  const usedCards=new Set([...splitCards(heroCards),...splitCards(board)]);
   const players=template.players.map(player=>{
     const stack=round(player.stack*stackFactor,template.mode);
     if(player.hero)return{...player,stack,value:capCommitment(player.value*valueFactor,stack,template.mode),action:"---"};
-    if(hasSidePots){
-      const value=capCommitment(player.value*valueFactor,stack,template.mode);
-      return{...player,stack,value};
-    }
+    if(hasSidePots){const value=capCommitment(player.value*valueFactor,stack,template.mode);return{...player,stack,value}}
     const policy=solverNodePolicy(template,player.position,player.action);const sampled=sampleSolverAction(policy,random);const action=solverActionLabel(sampled,player.action);
     const templateValue=player.value>0?round(player.value*valueFactor,template.mode):0;
     const rawValue=sampled==="CHECK"||sampled==="FOLD"?0:sampled==="ALL-IN"?stack:templateValue>0?templateValue:round(template.pot.main*(sampled==="BET"?.5:.75),template.mode);
     const value=capCommitment(rawValue,stack,template.mode);
-    return{...player,stack,value,action,rangeProfile:policy.range,solverActionFrequency:policy.actions[sampled]??0,solverNodeSource:policy.source};
+    const available=expandWeightedRange(policy.range,[...usedCards]);
+    const conditioned=conditionRangeOnAction(available,sampled);
+    const combo=sampleWeightedCombo(conditioned,random);
+    if(combo){usedCards.add(combo.cards[0]);usedCards.add(combo.cards[1])}
+    return{...player,stack,value,action,rangeProfile:policy.range,solverActionFrequency:policy.actions[sampled]??0,solverNodeSource:policy.source,sampledCombo:combo?comboKey(combo.cards):undefined,rangeComboCount:available.length,conditionedComboWeight:combo?Math.round(combo.weight*1_000_000)/1_000_000:undefined};
   });
 
   const scaledTemplatePot=round(template.pot.main*valueFactor,template.mode);
@@ -74,8 +75,7 @@ function makeVariant(template:PlayerDnaSpot,slot:number,sessionSeed:number,answe
   const commitmentDelta=hasSidePots?0:newVillainCommitted-scaledOldCommitted;
   const mainPot=round(Math.max(0.1,scaledTemplatePot+commitmentDelta),template.mode);
   const pot={main:mainPot,...(template.pot.sides?.length?{sides:template.pot.sides.map(side=>({...side,value:round(side.value*valueFactor,template.mode)}))}:{})};
-  const h=players.find(player=>player.hero)??players[0];
-  const actions=legalHeroActions(template.street,players);
+  const h=players.find(player=>player.hero)??players[0];const actions=legalHeroActions(template.street,players);
   return{...template,id:`${template.id}-${sessionSeed.toString(36)}-${slot.toString(36)}-${hashText(adaptation).toString(36)}`,heroCards,board,players,pot,prompt:generatedPrompt(players,h.position),actions,scenario:[...template.scenario]};
 }
 
