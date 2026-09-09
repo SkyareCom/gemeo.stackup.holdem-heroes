@@ -44,15 +44,12 @@ CASES = [
 ]
 
 PROFILE = {
-    # Keep the same solver tree, ranges and accuracy. The 180s budget from run #14 proved
-    # that wall-clock alone does not cure the remaining six flop timeouts, so this run keeps
-    # that budget and raises TexasSolver worker parallelism instead of weakening the solve.
     "flop": dict(timeout=180, accuracy=4.0, iterations=30, dump_rounds=1),
     "turn": dict(timeout=150, accuracy=2.0, iterations=80, dump_rounds=1),
     "river": dict(timeout=120, accuracy=1.0, iterations=120, dump_rounds=1),
 }
 
-SOLVER_THREADS = 8
+DEFAULT_SOLVER_THREADS = 8
 
 
 def find_solver():
@@ -65,16 +62,30 @@ def find_solver():
     raise SystemExit("console_solver not found")
 
 
-def input_text(c, out_name):
-    p = PROFILE[c["street"]]
-    range_ip = RANGE_FLOP_IP if c["street"] == "flop" else RANGE_IP
-    range_oop = RANGE_FLOP_OOP if c["street"] == "flop" else RANGE_OOP
-    return f"""set_pot {c['pot']}
-set_effective_stack {c['stack']}
-set_board {c['board']}
-set_range_ip {range_ip}
-set_range_oop {range_oop}
-set_bet_sizes oop,flop,bet,50
+def solver_threads(c):
+    # TexasSolver v0.2.0 has shown an intermittent card lookup crash on shallow flop trees
+    # under 8 workers. Keep the throughput gain for high-SPR flops while using the stable
+    # 3-worker profile for SPR <= 3.25.
+    if c["street"] == "flop" and c["pot"] > 0 and c["stack"] / c["pot"] <= 3.25:
+        return 3
+    return DEFAULT_SOLVER_THREADS
+
+
+def sizing_lines(c):
+    if c["street"] == "flop":
+        # Root-flop calibration keeps the tested flop raise branch intact, but downstream
+        # turn/river play is intentionally reduced to one bet branch per player. This cuts
+        # the chance-tree explosion without shrinking ranges or changing the target flop node.
+        return """set_bet_sizes oop,flop,bet,50
+set_bet_sizes oop,flop,raise,75
+set_bet_sizes ip,flop,bet,50
+set_bet_sizes ip,flop,raise,75
+set_bet_sizes oop,turn,bet,66
+set_bet_sizes ip,turn,bet,66
+set_bet_sizes oop,river,bet,66
+set_bet_sizes oop,river,donk,66
+set_bet_sizes ip,river,bet,66"""
+    return """set_bet_sizes oop,flop,bet,50
 set_bet_sizes oop,flop,raise,75
 set_bet_sizes ip,flop,bet,50
 set_bet_sizes ip,flop,raise,75
@@ -86,10 +97,22 @@ set_bet_sizes oop,river,bet,66
 set_bet_sizes oop,river,donk,66
 set_bet_sizes oop,river,raise,75
 set_bet_sizes ip,river,bet,66
-set_bet_sizes ip,river,raise,75
+set_bet_sizes ip,river,raise,75"""
+
+
+def input_text(c, out_name):
+    p = PROFILE[c["street"]]
+    range_ip = RANGE_FLOP_IP if c["street"] == "flop" else RANGE_IP
+    range_oop = RANGE_FLOP_OOP if c["street"] == "flop" else RANGE_OOP
+    return f"""set_pot {c['pot']}
+set_effective_stack {c['stack']}
+set_board {c['board']}
+set_range_ip {range_ip}
+set_range_oop {range_oop}
+{sizing_lines(c)}
 set_allin_threshold 0.80
 build_tree
-set_thread_num {SOLVER_THREADS}
+set_thread_num {solver_threads(c)}
 set_accuracy {p['accuracy']}
 set_max_iteration {p['iterations']}
 set_print_interval 20
@@ -171,7 +194,7 @@ def build_report(summary):
             stats["match_pct"] = round(100 * stats["matches"] / stats["solved"], 2) if stats["solved"] else None
     return {
         "solver": "TexasSolver v0.2.0 console",
-        "scope": "HU postflop chipEV only; fast calibration tree; tournament-labelled cases exclude ICM",
+        "scope": "HU postflop chipEV only; flop calibration keeps root flop bet/raise sizing and uses a reduced downstream turn/river bet-only continuation tree; tournament-labelled cases exclude ICM",
         "case_count": len(CASES),
         "processed": len(summary),
         "cases": summary,
@@ -183,8 +206,8 @@ def build_report(summary):
         "top_action_match_pct": round(100 * len(matches) / len(ok), 2) if ok else None,
         "by_street": by_street,
         "by_texture": by_texture,
-        "sizing_note": "Broad battery uses one canonical bet/raise size per street; flop uses compact asymmetric IP/OOP smoke ranges to improve solve coverage while retaining benchmark hero classes.",
-        "solver_threads": SOLVER_THREADS,
+        "sizing_note": "Turn/river benchmark cases retain the canonical bet/raise tree. Flop cases retain the canonical flop bet/raise branch but omit downstream turn/river raises to improve solve coverage without shrinking flop ranges; shallow flop solves use 3 threads for TexasSolver v0.2.0 stability, other cases use 8.",
+        "solver_threads_default": DEFAULT_SOLVER_THREADS,
     }
 
 
@@ -222,7 +245,7 @@ def main():
             if isinstance(output, bytes):
                 output = output.decode("utf-8", errors="replace")
             (OUT / f"{c['id']}.log").write_text(output)
-            summary.append({**c, "status": "timeout", "timeout_seconds": timeout, "seconds": round(time.time() - start, 2)})
+            summary.append({**c, "status": "timeout", "timeout_seconds": timeout, "seconds": round(time.time() - start, 2), "solver_threads": solver_threads(c)})
             save_report(summary)
             print(f"TIMEOUT {c['id']} after {timeout}s; continuing", flush=True)
             continue
@@ -234,6 +257,7 @@ def main():
                 "status": "solver_failed",
                 "returncode": proc.returncode,
                 "seconds": round(time.time() - start, 2),
+                "solver_threads": solver_threads(c),
                 "log_tail": output[-1200:],
             })
             save_report(summary)
@@ -251,6 +275,7 @@ def main():
                 **c,
                 "status": "ok",
                 "seconds": round(time.time() - start, 2),
+                "solver_threads": solver_threads(c),
                 "resolved_path": resolved_path,
                 "solver_hand_key": used,
                 "solver_actions": pairs,
@@ -262,7 +287,7 @@ def main():
                 "top_action_match": best == c["expected_app"],
             })
         except Exception as exc:
-            summary.append({**c, "status": "parse_failed", "seconds": round(time.time() - start, 2), "error": repr(exc)})
+            summary.append({**c, "status": "parse_failed", "seconds": round(time.time() - start, 2), "solver_threads": solver_threads(c), "error": repr(exc)})
         save_report(summary)
 
     report = save_report(summary)
