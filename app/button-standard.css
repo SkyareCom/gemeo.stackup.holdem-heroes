@@ -1,40 +1,46 @@
 /* PADRÃO ÚNICO DOS BOTÕES DO APP
  * ALTURA VISUAL PADRÃO: 44PX.
- * EXCEÇÕES: CARDS DE SPOTS, QUE MANTÊM ALTURA PRÓPRIA.
+ * EXCEÇÕES: CARDS DE SPOTS, CARTAS E CONTROLES ESPECIALIZADOS.
+ *
+ * REGRA: O PADRÃO GLOBAL É A BASE. COMPONENTES ESPECÍFICOS PODEM
+ * SOBRESCREVER A APARÊNCIA SEM PRECISAR LUTAR CONTRA !IMPORTANT.
  */
 
 html body button,
 html body a.module-back {
-  display:inline-flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-  min-width:0!important;
-  height:44px!important;
-  min-height:44px!important;
-  max-height:44px!important;
-  margin:0!important;
-  padding:0 10px!important;
-  box-sizing:border-box!important;
-  overflow:hidden!important;
-  border:1px solid #255000!important;
-  border-radius:12px!important;
-  background:rgba(0,100,20,.07)!important;
-  background-image:none!important;
-  color:#009929!important;
-  -webkit-text-fill-color:#009929!important;
-  font-size:12px!important;
-  font-weight:400!important;
-  line-height:1!important;
-  text-align:center!important;
-  text-decoration:none!important;
-  white-space:nowrap!important;
-  box-shadow:none!important;
-  transform:none!important;
-  text-transform:uppercase!important;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:0;
+  height:44px;
+  min-height:44px;
+  max-height:44px;
+  margin:0;
+  padding:0 10px;
+  box-sizing:border-box;
+  overflow:hidden;
+  border:1px solid #255000;
+  border-radius:12px;
+  background:rgba(0,100,20,.07);
+  background-image:none;
+  color:#009929;
+  -webkit-text-fill-color:#009929;
+  font-size:12px;
+  font-weight:400;
+  line-height:1;
+  text-align:center;
+  text-decoration:none;
+  white-space:nowrap;
+  box-shadow:none;
+  transform:none;
+  text-transform:uppercase;
+  cursor:pointer;
+  touch-action:manipulation;
 }
-html body button > *,html body a.module-back > *{min-width:0!important;max-width:100%!important;margin:0!important;padding:0!important;color:inherit!important;-webkit-text-fill-color:inherit!important;font-size:12px!important;font-weight:400!important;line-height:1!important;text-align:center!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
-html body button:hover,html body button:focus-visible,html body button:active,html body a.module-back:hover,html body a.module-back:focus-visible,html body a.module-back:active{border-color:#ede6db!important;box-shadow:inset 0 0 0 1px #ede6db!important;background:rgba(0,100,20,.07)!important;color:#009929!important;-webkit-text-fill-color:#009929!important;transform:none!important}
-html body button:disabled{opacity:.42!important;cursor:not-allowed!important;border-color:#255000!important;box-shadow:none!important}
+html body button > *,html body a.module-back > *{min-width:0;max-width:100%;margin:0;padding:0;color:inherit;-webkit-text-fill-color:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html body button:hover,html body button:focus-visible,html body button:active,html body a.module-back:hover,html body a.module-back:focus-visible,html body a.module-back:active{border-color:#ede6db;box-shadow:inset 0 0 0 1px #ede6db;background:rgba(0,100,20,.07);color:#009929;-webkit-text-fill-color:#009929;transform:none}
+html body button:disabled,
+html body button[aria-disabled="true"]{opacity:.42!important;cursor:not-allowed!important;box-shadow:none!important;pointer-events:none!important}
 
 /* TODOS OS GRUPOS SECUNDÁRIOS SÃO DUAS COLUNAS REAIS. */
 html body .module-navigation,
