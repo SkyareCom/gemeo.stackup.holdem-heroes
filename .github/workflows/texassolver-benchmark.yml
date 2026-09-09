@@ -1,0 +1,45 @@
+name: TexasSolver Calibration Battery
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'benchmark/texassolver/**'
+      - '.github/workflows/texassolver-benchmark.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  solve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download TexasSolver v0.2.0 Linux
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p .texassolver
+          curl -L --retry 3 --fail \
+            https://github.com/bupticybee/TexasSolver/releases/download/v0.2.0/TexasSolver-v0.2.0-Linux.zip \
+            -o /tmp/texassolver.zip
+          unzip -q /tmp/texassolver.zip -d .texassolver
+          find .texassolver -maxdepth 4 -type f | sort | head -100
+          BIN=$(find .texassolver -type f -name console_solver | head -1)
+          test -n "$BIN"
+          chmod +x "$BIN"
+          echo "TEXASSOLVER_BIN=$GITHUB_WORKSPACE/$BIN" >> "$GITHUB_ENV"
+      - name: Run solver battery
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 benchmark/texassolver/run_battery.py | tee benchmark/texassolver/results/workflow.log
+      - name: Upload solver outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: texassolver-calibration-results
+          path: benchmark/texassolver/results/
+          if-no-files-found: warn
+          retention-days: 14
