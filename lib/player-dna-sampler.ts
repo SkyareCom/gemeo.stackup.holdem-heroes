@@ -19,6 +19,7 @@ function randomFrom(seed:number){let state=(seed||1)>>>0;return()=>{state=(Math.
 function has(spot:PlayerDnaSpot,text:string){return spot.scenario.some(item=>item.toUpperCase().includes(text))}
 function hero(spot:PlayerDnaSpot){return spot.players.find(player=>player.hero)??spot.players[0]}
 function round(value:number,mode:GameMode){if(value<=0)return 0;return mode==="TORNEIO"?Math.max(.1,Math.round(value*10)/10):Math.max(1,Math.round(value))}
+function capCommitment(value:number,stack:number,mode:GameMode){return round(Math.min(Math.max(0,value),Math.max(0,stack)),mode)}
 function stableShuffle<T>(items:T[],seed:number){const out=[...items];const random=randomFrom(seed);for(let i=out.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[out[i],out[j]]=[out[j],out[i]]}return out}
 
 function suitPermutation(random:()=>number){const suits=[...SUITS];for(let i=suits.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[suits[i],suits[j]]=[suits[j],suits[i]]}return new Map(SUITS.map((s,i)=>[s,suits[i]]))}
@@ -35,6 +36,18 @@ function generatedPrompt(players:Array<{position:string;action:string;value:numb
   return `AÇÃO ATÉ O HERÓI: ${villains}. HERO EM ${heroPosition}. QUAL É A MELHOR DECISÃO?`;
 }
 
+function legalHeroActions(street:Street,players:PlayerDnaSpot["players"]):PlayerAction[]{
+  const h=players.find(player=>player.hero);if(!h)return[];
+  const activeVillains=players.filter(player=>!player.hero&&player.action!=="FOLD");
+  const highest=Math.max(0,...activeVillains.map(player=>Math.max(0,player.value)));
+  const outstanding=Math.max(0,highest-Math.max(0,h.value));
+  if(outstanding>0){
+    if(h.stack<=outstanding)return["FOLD","CALL"];
+    return["FOLD","CALL","RAISE","ALL-IN"];
+  }
+  return street==="PREFLOP"?["CHECK","RAISE","ALL-IN"]:["CHECK","BET","ALL-IN"];
+}
+
 function makeVariant(template:PlayerDnaSpot,slot:number,sessionSeed:number,answers:PriorAnswer[]):PlayerDnaSpot{
   const adaptation=answers.slice(-6).map(answer=>answer.action).join("|")||"START";const random=randomFrom(hashText(`${template.id}:${sessionSeed}:${slot}:${adaptation}`));
   const suitMap=suitPermutation(random);const heroCards=remapCards(template.heroCards,suitMap)??template.heroCards;const board=remapCards(template.board,suitMap);
@@ -43,14 +56,15 @@ function makeVariant(template:PlayerDnaSpot,slot:number,sessionSeed:number,answe
   const templateVillainCommitted=template.players.filter(player=>!player.hero).reduce((sum,player)=>sum+Math.max(0,player.value),0);
   const players=template.players.map(player=>{
     const stack=round(player.stack*stackFactor,template.mode);
-    if(player.hero)return{...player,stack,value:round(Math.max(0,player.value)*valueFactor,template.mode),action:"---"};
+    if(player.hero)return{...player,stack,value:capCommitment(player.value*valueFactor,stack,template.mode),action:"---"};
     if(hasSidePots){
-      const value=round(Math.max(0,player.value)*valueFactor,template.mode);
+      const value=capCommitment(player.value*valueFactor,stack,template.mode);
       return{...player,stack,value};
     }
     const policy=solverNodePolicy(template,player.position,player.action);const sampled=sampleSolverAction(policy,random);const action=solverActionLabel(sampled,player.action);
     const templateValue=player.value>0?round(player.value*valueFactor,template.mode):0;
-    const value=sampled==="CHECK"||sampled==="FOLD"?0:sampled==="ALL-IN"?stack:templateValue>0?templateValue:round(template.pot.main*(sampled==="BET"?.5:.75),template.mode);
+    const rawValue=sampled==="CHECK"||sampled==="FOLD"?0:sampled==="ALL-IN"?stack:templateValue>0?templateValue:round(template.pot.main*(sampled==="BET"?.5:.75),template.mode);
+    const value=capCommitment(rawValue,stack,template.mode);
     return{...player,stack,value,action,rangeProfile:policy.range,solverActionFrequency:policy.actions[sampled]??0,solverNodeSource:policy.source};
   });
 
@@ -61,7 +75,8 @@ function makeVariant(template:PlayerDnaSpot,slot:number,sessionSeed:number,answe
   const mainPot=round(Math.max(0.1,scaledTemplatePot+commitmentDelta),template.mode);
   const pot={main:mainPot,...(template.pot.sides?.length?{sides:template.pot.sides.map(side=>({...side,value:round(side.value*valueFactor,template.mode)}))}:{})};
   const h=players.find(player=>player.hero)??players[0];
-  return{...template,id:`${template.id}-${sessionSeed.toString(36)}-${slot.toString(36)}-${hashText(adaptation).toString(36)}`,heroCards,board,players,pot,prompt:generatedPrompt(players,h.position),scenario:[...template.scenario]};
+  const actions=legalHeroActions(template.street,players);
+  return{...template,id:`${template.id}-${sessionSeed.toString(36)}-${slot.toString(36)}-${hashText(adaptation).toString(36)}`,heroCards,board,players,pot,prompt:generatedPrompt(players,h.position),actions,scenario:[...template.scenario]};
 }
 
 export function buildBalancedSpotSession(bank:PlayerDnaSpot[],mode:GameMode,count:number,seed=Date.now(),answers:PriorAnswer[]=[]):PlayerDnaSpot[]{
