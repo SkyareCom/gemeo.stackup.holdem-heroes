@@ -1,10 +1,10 @@
 import type {DecisionSizing} from "@/lib/player-dna";
 import type {PlayerAction,PlayerDnaSpot} from "@/data/player-dna-spots";
 import {profileHand,solverHeroNodeStrategy} from "@/lib/gto-range-policy";
+import {getExactSolverReference} from "@/lib/player-dna-solver-reference";
 
 export type DecisionGrade="MELHOR LINHA"|"ACEITÁVEL"|"IMPRECISA"|"SEM REFERÊNCIA SUFICIENTE";
 export type HandEvaluation={grade:DecisionGrade;confidence:number;recommended:string;frequencies:Partial<Record<PlayerAction,number>>;comment:string;math:string;source:string};
-type ExactSolverReference={kind:"TEXASSOLVER_EXACT_COMBO";validated:true;frequencies:Partial<Record<PlayerAction,number>>;nodeId?:string};
 
 function facingBet(spot:PlayerDnaSpot){
   const hero=spot.players.find(p=>p.hero);if(!hero)return null;
@@ -19,13 +19,6 @@ function order(freq:Partial<Record<PlayerAction,number>>){return(Object.entries(
 function scenarioText(spot:PlayerDnaSpot){return spot.scenario.join(" ").toUpperCase()}
 function multiway(spot:PlayerDnaSpot){return scenarioText(spot).includes("MULTIWAY")||spot.players.filter(p=>!p.hero&&p.action!=="FOLD").length>1}
 function icm(spot:PlayerDnaSpot){const t=scenarioText(spot);return t.includes("ICM")||t.includes("BOLHA")||t.includes("FT")}
-function exactReference(spot:PlayerDnaSpot):ExactSolverReference|null{
-  const value=(spot as PlayerDnaSpot&{solverReference?:unknown}).solverReference;
-  if(!value||typeof value!=="object")return null;
-  const ref=value as Partial<ExactSolverReference>;
-  if(ref.kind!=="TEXASSOLVER_EXACT_COMBO"||ref.validated!==true||!ref.frequencies||typeof ref.frequencies!=="object")return null;
-  return ref as ExactSolverReference;
-}
 function normalizeReference(freq:Partial<Record<PlayerAction,number>>,allowed:PlayerAction[]){
   const out:Partial<Record<PlayerAction,number>>={};const allowedSet=new Set(allowed);let total=0;
   for(const [action,value] of Object.entries(freq) as [PlayerAction,number][])if(allowedSet.has(action)&&Number.isFinite(value)&&value>0){out[action]=value;total+=value}
@@ -62,7 +55,7 @@ function nodeConfidence(bestFreq:number,spot:PlayerDnaSpot){
 }
 
 export function evaluateHandDecision(spot:PlayerDnaSpot,action:PlayerAction,sizing?:DecisionSizing|null):HandEvaluation{
-  const exact=exactReference(spot);const exactFreq=exact?normalizeReference(exact.frequencies,spot.actions):{};const hasExact=Object.keys(exactFreq).length>0;
+  const exact=getExactSolverReference(spot);const exactFreq=exact?normalizeReference(exact.frequencies,spot.actions):{};const hasExact=Object.keys(exactFreq).length>0;
   const frequencies=hasExact?exactFreq:solverHeroNodeStrategy(spot);const ranked=order(frequencies);if(!ranked.length)return{grade:"SEM REFERÊNCIA SUFICIENTE",confidence:0,recommended:"---",frequencies:{},comment:"SPOT SEM AÇÕES VÁLIDAS NO NÓ DE REFERÊNCIA.",math:mathNote(spot),source:"MOTOR GTO PLAYER DNA"};
   const best=ranked[0][0];const bestFreq=ranked[0][1];const bestSizing=recommendedSizing(spot,best);const recommended=bestSizing?`${best} ${bestSizing}`:best;const grade=gradeDecision(action,sizing,frequencies,best,bestSizing);const selectedFreq=frequencies[action]??0;const selected=sizing?`${action} ${sizing}`:action;
   const villainLines=spot.players.filter(p=>!p.hero).map(p=>`${p.position} ${p.action}`).join(" · ");
