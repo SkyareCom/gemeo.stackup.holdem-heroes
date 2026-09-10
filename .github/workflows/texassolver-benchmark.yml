@@ -35,7 +35,7 @@ jobs:
         run: |
           set -euxo pipefail
           mkdir -p benchmark/texassolver/results
-          python3 benchmark/texassolver/run_battery.py | tee benchmark/texassolver/results/workflow.log
+          python3 benchmark/texassolver/run_battery_strict.py | tee benchmark/texassolver/results/workflow.log
       - name: Extract exact combo strategy bank
         shell: bash
         run: |
