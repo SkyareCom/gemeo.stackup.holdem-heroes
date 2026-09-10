@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  workflow_run:
+    workflows: ["TexasSolver Calibration Battery"]
+    types: [completed]
 
 permissions:
   contents: read
@@ -17,10 +20,16 @@ concurrency:
 
 jobs:
   build:
+    if: ${{ github.event_name != 'workflow_run' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main') }}
     runs-on: ubuntu-latest
+    env:
+      TARGET_SHA: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
+      VALIDATION_RUN_ID: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.id || '' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TARGET_SHA }}
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -39,15 +48,23 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p public/solver-runtime /tmp/solver-bank
-          RUN_JSON=$(curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/$GH_REPO/actions/workflows/texassolver-benchmark.yml/runs?branch=main&status=success&per_page=1")
-          RUN_ID=$(jq -r '.workflow_runs[0].id // empty' <<< "$RUN_JSON")
-          RUN_HEAD_SHA=$(jq -r '.workflow_runs[0].head_sha // empty' <<< "$RUN_JSON")
+          if [ -n "$VALIDATION_RUN_ID" ]; then
+            RUN_JSON=$(curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/$GH_REPO/actions/runs/$VALIDATION_RUN_ID")
+            test "$(jq -r '.conclusion' <<< "$RUN_JSON")" = "success"
+            test "$(jq -r '.head_branch' <<< "$RUN_JSON")" = "main"
+          else
+            RUN_JSON=$(curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/$GH_REPO/actions/workflows/texassolver-benchmark.yml/runs?branch=main&status=success&per_page=1" \
+              | jq '.workflow_runs[0]')
+          fi
+          RUN_ID=$(jq -r '.id // empty' <<< "$RUN_JSON")
+          RUN_HEAD_SHA=$(jq -r '.head_sha // empty' <<< "$RUN_JSON")
           test -n "$RUN_ID"
           test -n "$RUN_HEAD_SHA"
 
           COMPARE_JSON=$(curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/$GH_REPO/compare/$RUN_HEAD_SHA...$GITHUB_SHA")
+            "https://api.github.com/repos/$GH_REPO/compare/$RUN_HEAD_SHA...$TARGET_SHA")
           SOLVER_RELEVANT_CHANGES=$(jq '[.files[]?.filename | select(
             startswith("benchmark/texassolver/") or
             startswith("lib/player-dna-") or
@@ -78,7 +95,7 @@ jobs:
           test "$(jq -r '.rejectedBoardCollisionCombos' /tmp/solver-bank/exact-combo-bank.json)" = "0"
           cp /tmp/solver-bank/exact-combo-bank.json data/texassolver-runtime-bank.json
           cp /tmp/solver-bank/exact-combo-bank.json public/solver-runtime/exact-combo-bank.json
-          jq --arg solverRunId "$RUN_ID" --arg solverHeadSha "$RUN_HEAD_SHA" --arg deployedHeadSha "$GITHUB_SHA" \
+          jq --arg solverRunId "$RUN_ID" --arg solverHeadSha "$RUN_HEAD_SHA" --arg deployedHeadSha "$TARGET_SHA" \
             '{schemaVersion,source,scope,nodeCount,exactComboDecisionCount,rejectedBoardCollisionCombos,solverRunId:$solverRunId,solverHeadSha:$solverHeadSha,deployedHeadSha:$deployedHeadSha}' \
             /tmp/solver-bank/exact-combo-bank.json > public/solver-runtime/manifest.json
 
