@@ -39,10 +39,32 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p public/solver-runtime /tmp/solver-bank
-          RUN_ID=$(curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/$GH_REPO/actions/workflows/texassolver-benchmark.yml/runs?branch=main&status=success&per_page=1" \
-            | jq -r '.workflow_runs[0].id // empty')
+          RUN_JSON=$(curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$GH_REPO/actions/workflows/texassolver-benchmark.yml/runs?branch=main&status=success&per_page=1")
+          RUN_ID=$(jq -r '.workflow_runs[0].id // empty' <<< "$RUN_JSON")
+          RUN_HEAD_SHA=$(jq -r '.workflow_runs[0].head_sha // empty' <<< "$RUN_JSON")
           test -n "$RUN_ID"
+          test -n "$RUN_HEAD_SHA"
+
+          COMPARE_JSON=$(curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$GH_REPO/compare/$RUN_HEAD_SHA...$GITHUB_SHA")
+          SOLVER_RELEVANT_CHANGES=$(jq '[.files[]?.filename | select(
+            startswith("benchmark/texassolver/") or
+            startswith("lib/player-dna-") or
+            . == "lib/gto-range-policy.ts" or
+            . == ".github/workflows/texassolver-benchmark.yml"
+          )] | length' <<< "$COMPARE_JSON")
+          if [ "$SOLVER_RELEVANT_CHANGES" -ne 0 ]; then
+            echo "Refusing stale TexasSolver artifact: solver-relevant files changed after validated commit $RUN_HEAD_SHA"
+            jq -r '.files[]?.filename | select(
+              startswith("benchmark/texassolver/") or
+              startswith("lib/player-dna-") or
+              . == "lib/gto-range-policy.ts" or
+              . == ".github/workflows/texassolver-benchmark.yml"
+            )' <<< "$COMPARE_JSON"
+            exit 1
+          fi
+
           ARTIFACT_ID=$(curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
             "https://api.github.com/repos/$GH_REPO/actions/runs/$RUN_ID/artifacts?name=texassolver-calibration-results" \
             | jq -r '.artifacts[0].id // empty')
@@ -56,7 +78,9 @@ jobs:
           test "$(jq -r '.rejectedBoardCollisionCombos' /tmp/solver-bank/exact-combo-bank.json)" = "0"
           cp /tmp/solver-bank/exact-combo-bank.json data/texassolver-runtime-bank.json
           cp /tmp/solver-bank/exact-combo-bank.json public/solver-runtime/exact-combo-bank.json
-          jq '{schemaVersion,source,scope,nodeCount,exactComboDecisionCount,rejectedBoardCollisionCombos}' /tmp/solver-bank/exact-combo-bank.json > public/solver-runtime/manifest.json
+          jq --arg solverRunId "$RUN_ID" --arg solverHeadSha "$RUN_HEAD_SHA" --arg deployedHeadSha "$GITHUB_SHA" \
+            '{schemaVersion,source,scope,nodeCount,exactComboDecisionCount,rejectedBoardCollisionCombos,solverRunId:$solverRunId,solverHeadSha:$solverHeadSha,deployedHeadSha:$deployedHeadSha}' \
+            /tmp/solver-bank/exact-combo-bank.json > public/solver-runtime/manifest.json
 
       - name: Verify exact solver runtime sessions
         run: npx --yes tsx benchmark/texassolver/verify_runtime_bank.ts data/texassolver-runtime-bank.json
