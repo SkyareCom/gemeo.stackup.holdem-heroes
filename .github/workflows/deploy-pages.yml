@@ -58,6 +58,9 @@ jobs:
           cp /tmp/solver-bank/exact-combo-bank.json public/solver-runtime/exact-combo-bank.json
           jq '{schemaVersion,source,scope,nodeCount,exactComboDecisionCount,rejectedBoardCollisionCombos}' /tmp/solver-bank/exact-combo-bank.json > public/solver-runtime/manifest.json
 
+      - name: Verify exact solver runtime sessions
+        run: npx --yes tsx benchmark/texassolver/verify_runtime_bank.ts data/texassolver-runtime-bank.json
+
       - name: Prepare static preview
         run: rm -rf app/api
 
