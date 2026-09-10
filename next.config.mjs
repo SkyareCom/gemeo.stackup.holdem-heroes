@@ -16,7 +16,7 @@ const nextConfig = {
         ...(isGitHubPages
           ? {
               basePath: `/${repo}`,
-              assetPrefix: `/${repo}/`,
+              assetPrefix: `/${repo}`,
             }
           : {}),
       }
