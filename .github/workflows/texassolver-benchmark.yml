@@ -36,6 +36,13 @@ jobs:
           set -euxo pipefail
           mkdir -p benchmark/texassolver/results
           python3 benchmark/texassolver/run_battery.py | tee benchmark/texassolver/results/workflow.log
+      - name: Extract exact combo strategy bank
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 benchmark/texassolver/extract_exact_combo_bank.py benchmark/texassolver/results \
+            --output benchmark/texassolver/results/exact-combo-bank.json \
+            | tee benchmark/texassolver/results/exact-combo-bank.log
       - name: Compare against live Player DNA engine
         shell: bash
         run: |
