@@ -9,7 +9,7 @@ on:
       - '.github/workflows/texassolver-benchmark.yml'
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   solve:
@@ -49,6 +49,21 @@ jobs:
           set -euxo pipefail
           npx --yes tsx benchmark/texassolver/compare_app_engine.ts benchmark/texassolver/results/summary.json \
             | tee benchmark/texassolver/results/app-engine-comparison.log
+      - name: Publish validated exact combo bank
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p data
+          cp benchmark/texassolver/results/exact-combo-bank.json data/texassolver-exact-combo-bank.json
+          git config user.name "stackup-solver-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/texassolver-exact-combo-bank.json
+          if git diff --cached --quiet; then
+            echo "Validated runtime bank already current"
+          else
+            git commit -m "data: promote validated TexasSolver exact combo bank"
+            git push origin HEAD:main
+          fi
       - name: Upload solver outputs
         if: always()
         uses: actions/upload-artifact@v4
