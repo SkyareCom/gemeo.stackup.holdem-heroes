@@ -24,9 +24,13 @@ _RANGE_FLOP_IP_ADDITIONS = {
     "cash-connected-ip-flop": ",QJo",
 }
 
-# These exact flop nodes were validated with one thread. All other flops retain
-# the original battery thread policy so stable cases do not regress to timeout.
+# TexasSolver v0.2.0 has shown nondeterministic crashes on these exact flop
+# trees at higher concurrency. One thread changes only execution concurrency,
+# not the configured ranges/tree/accuracy, and has already been the stable path
+# for the slow/expanded flop nodes.
 _SINGLE_THREAD_FLOPS = {
+    "cash-a72r-oop-vs-bet",
+    "cash-ac9c4c-ip-after-check",
     "cash-low-spr-a84r-oop",
     "cash-paired-low-ip-flop",
     "cash-connected-ip-flop",
