@@ -27,19 +27,23 @@ _RANGE_FLOP_IP_ADDITIONS = {
 # TexasSolver v0.2.0 has shown nondeterministic crashes on these exact flop
 # trees at higher concurrency. One thread changes only execution concurrency,
 # not the configured ranges/tree/accuracy, and has already been the stable path
-# for the slow/expanded flop nodes.
+# for the expanded exact-combo flop nodes.
 _SINGLE_THREAD_FLOPS = {
-    "cash-a72r-oop-vs-bet",
     "cash-ac9c4c-ip-after-check",
     "cash-low-spr-a84r-oop",
     "cash-paired-low-ip-flop",
     "cash-connected-ip-flop",
 }
 
-# The paired-low exact-combo solve has already completed in the isolated retry,
-# but can exceed the generic 180s ceiling on shared CI runners. Raising only the
-# flop ceiling does not change solver inputs or strategy; it only lets the
-# already-validated single-thread solve finish under slower runner load.
+# A72r has solved successfully at higher concurrency but can time out at one
+# thread. Three threads keeps concurrency conservative while avoiding the 300s
+# single-thread timeout seen in run #30; solver inputs/tree/accuracy are unchanged.
+_THREE_THREAD_FLOPS = {
+    "cash-a72r-oop-vs-bet",
+}
+
+# Slow exact-combo flop solves can exceed the generic 180s ceiling on shared CI
+# runners. Raising only the wall-clock ceiling does not alter solver strategy.
 base.PROFILE["flop"]["timeout"] = 300
 
 
@@ -58,6 +62,8 @@ def strict_input_text(case, out_name):
 def strict_threads(case):
     if case["id"] in _SINGLE_THREAD_FLOPS:
         return 1
+    if case["id"] in _THREE_THREAD_FLOPS:
+        return 3
     return _BASE_THREADS(case)
 
 
