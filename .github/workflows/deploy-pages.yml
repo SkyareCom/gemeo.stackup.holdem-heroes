@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
   pages: write
   id-token: write
 
@@ -29,6 +30,31 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Promote latest passing TexasSolver bank
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p public/solver-runtime /tmp/solver-bank
+          RUN_ID=$(curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$GH_REPO/actions/workflows/texassolver-benchmark.yml/runs?branch=main&status=success&per_page=1" \
+            | jq -r '.workflow_runs[0].id // empty')
+          test -n "$RUN_ID"
+          ARTIFACT_ID=$(curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$GH_REPO/actions/runs/$RUN_ID/artifacts?name=texassolver-calibration-results" \
+            | jq -r '.artifacts[0].id // empty')
+          test -n "$ARTIFACT_ID"
+          curl -fsSL -L -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$GH_REPO/actions/artifacts/$ARTIFACT_ID/zip" -o /tmp/solver-bank.zip
+          unzip -q /tmp/solver-bank.zip -d /tmp/solver-bank
+          test -s /tmp/solver-bank/exact-combo-bank.json
+          test "$(jq -r '.nodeCount' /tmp/solver-bank/exact-combo-bank.json)" = "32"
+          test "$(jq -r '.rejectedBoardCollisionCombos' /tmp/solver-bank/exact-combo-bank.json)" = "0"
+          cp /tmp/solver-bank/exact-combo-bank.json public/solver-runtime/exact-combo-bank.json
+          jq '{schemaVersion,source,scope,nodeCount,exactComboDecisionCount,rejectedBoardCollisionCombos}' /tmp/solver-bank/exact-combo-bank.json > public/solver-runtime/manifest.json
 
       - name: Prepare static preview
         run: rm -rf app/api
