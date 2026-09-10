@@ -90,8 +90,8 @@ export default function PlayerDnaFixedActions(){
 
       const rows=[
         {label:"FOLD",action:"FOLD",size:""},
-        {label:"CALL",action:"CALL",size:""},
         {label:"CHECK",action:"CHECK",size:""},
+        {label:"CALL",action:"CALL",size:""},
         ...sizes.map(size=>({label:`RAISE ${size}`,action:"RAISE",size})),
         {label:"ALL IN",action:"ALL-IN",size:""},
       ];
