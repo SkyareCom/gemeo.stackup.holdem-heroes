@@ -111,6 +111,21 @@ jobs:
           GITHUB_PAGES: "true"
         run: npm run build
 
+      - name: Verify Pages CSS asset paths
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s out/index.html
+          CSS_HREF=$(grep -oE 'href="[^"]+\.css[^"]*"' out/index.html | head -1 | cut -d'"' -f2)
+          test -n "$CSS_HREF"
+          case "$CSS_HREF" in
+            /gemeo.stackup.holdem-heroes/_next/*) ;;
+            *) echo "Invalid GitHub Pages CSS path: $CSS_HREF"; exit 1 ;;
+          esac
+          LOCAL_CSS="out/${CSS_HREF#/gemeo.stackup.holdem-heroes/}"
+          test -s "$LOCAL_CSS"
+          echo "Verified CSS asset: $CSS_HREF -> $LOCAL_CSS"
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
