@@ -6,6 +6,10 @@
 :root{
   --app-command-button-width:160px;
   --app-command-button-height:44px;
+  --app-command-border:#255000;
+  --app-command-text:#009929;
+  --app-command-selected:#ede6db;
+  --app-command-background:rgba(0,100,20,.07);
 }
 
 html body button,
@@ -23,13 +27,13 @@ html body a.module-back{
   padding:0 10px;
   box-sizing:border-box;
   overflow:hidden;
-  border:1px solid #255000;
+  border:1px solid var(--app-command-border)!important;
   border-radius:12px;
-  background:rgba(0,100,20,.07);
-  background-image:none;
-  color:#009929;
-  -webkit-text-fill-color:#009929;
-  font-size:12px;
+  background:var(--app-command-background)!important;
+  background-image:none!important;
+  color:var(--app-command-text)!important;
+  -webkit-text-fill-color:var(--app-command-text)!important;
+  font-size:12px!important;
   font-weight:400;
   line-height:1;
   text-align:center;
@@ -50,9 +54,9 @@ html body a.module-back > *{
   max-width:100%;
   margin:0;
   padding:0;
-  color:inherit;
-  -webkit-text-fill-color:inherit;
-  font-size:inherit;
+  color:inherit!important;
+  -webkit-text-fill-color:inherit!important;
+  font-size:inherit!important;
   font-weight:inherit;
   line-height:inherit;
   text-align:center;
@@ -67,11 +71,11 @@ html body button:active,
 html body a.module-back:hover,
 html body a.module-back:focus-visible,
 html body a.module-back:active{
-  border-color:#ede6db;
-  box-shadow:inset 0 0 0 1px #ede6db;
-  background:rgba(0,100,20,.07);
-  color:#009929;
-  -webkit-text-fill-color:#009929;
+  border-color:var(--app-command-selected)!important;
+  box-shadow:inset 0 0 0 1px var(--app-command-selected)!important;
+  background:var(--app-command-background)!important;
+  color:var(--app-command-text)!important;
+  -webkit-text-fill-color:var(--app-command-text)!important;
   transform:none;
 }
 
@@ -83,7 +87,7 @@ html body button[aria-disabled="true"]{
   pointer-events:none!important;
 }
 
-/* GRUPOS DE BOTÕES DE COMANDO: MESMA MEDIDA, CENTRALIZADOS. */
+/* GRUPOS DE COMANDO: DUAS COLUNAS DO MESMO TAMANHO. */
 html body .module-navigation,
 html body .player-dna-page .history-actions,
 html body .player-dna-page .saved-analysis-panel > div:last-child,
@@ -108,6 +112,65 @@ html body [class*="MathLabWorkspace_conceptLayout"] aside{
   gap:8px!important;
   width:100%!important;
   min-width:0!important;
+}
+
+/* PLAYER DNA — CONTRATO FINAL DOS BOTÕES DE COMANDO.
+ * Estes seletores têm especificidade suficiente para neutralizar regras antigas
+ * de globals.css que ainda usavam 50%, 100%, 30px ou 34px. */
+html body main.player-dna-page .module-navigation > a.module-back,
+html body main.player-dna-page .saved-analysis-panel button,
+html body main.player-dna-page .history-panel button,
+html body main.player-dna-page .training-footer > button,
+html body main.player-dna-page .result button{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:var(--app-command-button-width)!important;
+  min-width:var(--app-command-button-width)!important;
+  max-width:var(--app-command-button-width)!important;
+  height:var(--app-command-button-height)!important;
+  min-height:var(--app-command-button-height)!important;
+  max-height:var(--app-command-button-height)!important;
+  padding:0 10px!important;
+  box-sizing:border-box!important;
+  border:1px solid var(--app-command-border)!important;
+  border-radius:12px!important;
+  background:var(--app-command-background)!important;
+  background-image:none!important;
+  color:var(--app-command-text)!important;
+  -webkit-text-fill-color:var(--app-command-text)!important;
+  font-size:12px!important;
+  line-height:1!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  box-shadow:none!important;
+  transform:none!important;
+  justify-self:center!important;
+  flex:0 0 var(--app-command-button-width)!important;
+}
+html body main.player-dna-page .module-navigation > a.module-back > *,
+html body main.player-dna-page .saved-analysis-panel button > *,
+html body main.player-dna-page .history-panel button > *,
+html body main.player-dna-page .training-footer > button > *,
+html body main.player-dna-page .result button > *{
+  color:inherit!important;
+  -webkit-text-fill-color:inherit!important;
+  font-size:12px!important;
+  line-height:1!important;
+}
+html body main.player-dna-page .module-navigation > a.module-back:hover,
+html body main.player-dna-page .module-navigation > a.module-back:focus-visible,
+html body main.player-dna-page .saved-analysis-panel button:hover:not(:disabled),
+html body main.player-dna-page .saved-analysis-panel button:focus-visible:not(:disabled),
+html body main.player-dna-page .history-panel button:hover:not(:disabled),
+html body main.player-dna-page .history-panel button:focus-visible:not(:disabled),
+html body main.player-dna-page .training-footer > button:hover:not(:disabled),
+html body main.player-dna-page .training-footer > button:focus-visible:not(:disabled),
+html body main.player-dna-page .result button:hover:not(:disabled),
+html body main.player-dna-page .result button:focus-visible:not(:disabled){
+  border-color:var(--app-command-selected)!important;
+  box-shadow:inset 0 0 0 1px var(--app-command-selected)!important;
 }
 
 /* PLAYER DNA — CARDS DE SPOTS SÃO EXCEÇÃO E MANTÊM FORMATO DE CARD. */
@@ -138,8 +201,8 @@ html body .player-dna-page .depth-choices > button{
   flex:none!important;
 }
 html body .player-dna-page .depth-choices > button[aria-pressed="true"]{
-  border-color:#ede6db!important;
-  box-shadow:inset 0 0 0 1px #ede6db,0 0 12px rgba(237,230,219,.18)!important;
+  border-color:var(--app-command-selected)!important;
+  box-shadow:inset 0 0 0 1px var(--app-command-selected),0 0 12px rgba(237,230,219,.18)!important;
   background:#10291a!important;
 }
 html body .player-dna-page .depth-choices > button > strong{
@@ -195,37 +258,13 @@ html body .player-dna-page [class*="sizingActions"] > button{
   font-size:12px!important;
   font-weight:500!important;
 }
-
-/* RODAPÉ DO PLAYER DNA — MESMA MEDIDA DO PADRÃO GLOBAL. */
-html body .player-dna-page .training-footer{
-  display:grid!important;
-  grid-template-columns:repeat(2,var(--app-command-button-width))!important;
-  justify-content:center!important;
-  gap:8px!important;
-  width:100%!important;
-}
-html body .player-dna-page .training-footer > button{
-  width:var(--app-command-button-width)!important;
-  min-width:var(--app-command-button-width)!important;
-  max-width:var(--app-command-button-width)!important;
-  height:var(--app-command-button-height)!important;
-  min-height:var(--app-command-button-height)!important;
-  max-height:var(--app-command-button-height)!important;
-  padding:0 8px!important;
-  border-radius:12px!important;
-  font-size:10px!important;
-  justify-self:center!important;
-  flex:0 0 var(--app-command-button-width)!important;
-}
-html body .player-dna-page .training-footer > button > strong{
-  font-size:10px!important;
-  line-height:1!important;
-  white-space:nowrap!important;
-  overflow:visible!important;
-  text-overflow:clip!important;
+html body .player-dna-page .training-session [class*="actions"] > button[aria-pressed="true"],
+html body .player-dna-page [class*="sizingActions"] > button[aria-pressed="true"]{
+  border-color:var(--app-command-selected)!important;
+  box-shadow:inset 0 0 0 1px var(--app-command-selected)!important;
 }
 
-/* HAND REVIEW — O GRID DE AÇÕES DE POKER TAMBÉM É EXCEÇÃO. */
+/* HAND REVIEW — GRID DE AÇÕES DO POKER É EXCEÇÃO. */
 html body [class*="HandReviewWorkspace_actionGrid"]{
   grid-template-columns:repeat(4,minmax(0,1fr))!important;
   justify-content:stretch!important;
