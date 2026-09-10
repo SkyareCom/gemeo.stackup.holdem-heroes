@@ -137,6 +137,11 @@ html body .player-dna-page .depth-choices > button{
   justify-self:stretch!important;
   flex:none!important;
 }
+html body .player-dna-page .depth-choices > button[aria-pressed="true"]{
+  border-color:#ede6db!important;
+  box-shadow:inset 0 0 0 1px #ede6db,0 0 12px rgba(237,230,219,.18)!important;
+  background:#10291a!important;
+}
 html body .player-dna-page .depth-choices > button > strong{
   display:block!important;
   color:#8cf0b2!important;
