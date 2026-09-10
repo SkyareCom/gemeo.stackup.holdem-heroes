@@ -52,7 +52,9 @@ jobs:
           unzip -q /tmp/solver-bank.zip -d /tmp/solver-bank
           test -s /tmp/solver-bank/exact-combo-bank.json
           test "$(jq -r '.nodeCount' /tmp/solver-bank/exact-combo-bank.json)" = "32"
+          test "$(jq -r '.exactComboDecisionCount' /tmp/solver-bank/exact-combo-bank.json)" -ge "6456"
           test "$(jq -r '.rejectedBoardCollisionCombos' /tmp/solver-bank/exact-combo-bank.json)" = "0"
+          cp /tmp/solver-bank/exact-combo-bank.json data/texassolver-runtime-bank.json
           cp /tmp/solver-bank/exact-combo-bank.json public/solver-runtime/exact-combo-bank.json
           jq '{schemaVersion,source,scope,nodeCount,exactComboDecisionCount,rejectedBoardCollisionCombos}' /tmp/solver-bank/exact-combo-bank.json > public/solver-runtime/manifest.json
 
