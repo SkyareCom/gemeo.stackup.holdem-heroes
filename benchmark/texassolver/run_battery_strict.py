@@ -35,13 +35,14 @@ _SINGLE_THREAD_FLOPS = {
     "cash-connected-ip-flop",
 }
 
-# These flop nodes have each shown instability at 8 threads while solving at a
-# conservative intermediate concurrency. Three threads leaves all strategic
-# inputs untouched and avoids both the observed 8-thread segfaults and the A72
-# one-thread timeout.
+# These flop nodes have each shown instability at 8 threads. Three threads
+# leaves all strategic inputs untouched while reducing the concurrency that
+# triggers TexasSolver v0.2.0 segfaults on shared CI runners.
 _THREE_THREAD_FLOPS = {
     "cash-co-vs-btn-flop",
     "cash-a72r-oop-vs-bet",
+    "cash-low-connected-oop-vs-bet",
+    "cash-a-high-ip-flop",
 }
 
 # Slow exact-combo flop solves can exceed the generic 180s ceiling on shared CI
