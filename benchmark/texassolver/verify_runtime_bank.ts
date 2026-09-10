@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import {buildExactComboSession,exactComboBankCapacity,type ExactComboBank} from "../../lib/player-dna-exact-combo-session";
 import {getExactSolverReference} from "../../lib/player-dna-solver-reference";
+import {evaluateHandDecision} from "../../lib/player-dna-hand-evaluator";
 import type {PlayerAction} from "../../data/player-dna-spots";
 
 const path=process.argv[2]??"data/texassolver-runtime-bank.json";
@@ -24,7 +25,15 @@ for(const mode of ["CASH","TORNEIO","ALEATORIO"] as const){
     if(new Set([...heroCards,...board]).size!==heroCards.length+board.length)throw new Error(`${mode} card collision ${spot.id}`);
     const total=actions.reduce((sum,a)=>sum+(ref.frequencies[a]??0),0);
     if(Math.abs(total-100)>.15)throw new Error(`${mode} frequency sum ${total} ${spot.id}`);
+    const positive=actions.filter(a=>(ref.frequencies[a]??0)>0);
+    if(spot.actions.length!==positive.length||positive.some(a=>!spot.actions.includes(a)))throw new Error(`${mode} non-solver action exposed ${spot.id}`);
     for(const a of actions)if((ref.frequencies[a]??0)>0&&!spot.actions.includes(a))throw new Error(`${mode} missing legal action ${a} ${spot.id}`);
+    const best=positive.sort((a,b)=>(ref.frequencies[b]??0)-(ref.frequencies[a]??0))[0];
+    if(!best)throw new Error(`${mode} missing best action ${spot.id}`);
+    const plain=evaluateHandDecision(spot,best,null);
+    const sized=evaluateHandDecision(spot,best,"4X");
+    if(plain.grade!==sized.grade||plain.recommended!==sized.recommended)throw new Error(`${mode} heuristic sizing leaked into exact solver grade ${spot.id}`);
+    if(/\s(?:25%|33%|50%|66%|75%|POT|125%|150%|2X|2\.5X|3X|4X|SQUEEZE)$/.test(plain.recommended))throw new Error(`${mode} heuristic sizing exposed as exact recommendation ${spot.id}`);
   }
 }
-console.log(JSON.stringify({verified:true,nodeCount:bank.nodeCount,exactComboDecisionCount:bank.exactComboDecisionCount,rejectedBoardCollisionCombos:bank.rejectedBoardCollisionCombos,capacities,sessionTestSize:3000},null,2));
+console.log(JSON.stringify({verified:true,nodeCount:bank.nodeCount,exactComboDecisionCount:bank.exactComboDecisionCount,rejectedBoardCollisionCombos:bank.rejectedBoardCollisionCombos,capacities,sessionTestSize:3000,exactActionLeakage:false,heuristicSizingLeakage:false},null,2));
