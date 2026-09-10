@@ -36,6 +36,18 @@ export const validatedTexasSolverNodes:ValidatedTexasSolverNode[]=[
 {id:"cash-river-straight-board-oop",street:"RIVER",positionState:"OOP",potType:"SRP",texture:"straight-board",board:"9h 8d 7c 6s 5h",rootPot:60,effectiveStack:48,hero:"Ts9s",facingAction:"BET",facingValue:48,frequencies:{CALL:100}},
 {id:"mtt-shallow-flop-chipEV",street:"FLOP",positionState:"IP",potType:"SRP",texture:"Q-high-two-tone",board:"Qh 9h 3c",rootPot:9,effectiveStack:24,hero:"QsTs",facingAction:"CHECK",facingValue:0,frequencies:{CHECK:87.01,BET:12.99}},
 {id:"mtt-shallow-turn-chipEV",street:"TURN",positionState:"OOP",potType:"SRP",texture:"K-high-connected",board:"Kd Ts 7c 9h",rootPot:13,effectiveStack:20,hero:"KcQh",facingAction:"BET",facingValue:9,frequencies:{FOLD:.13,CALL:22.88,RAISE:76.99}},
+{id:"cash-a-high-ip-flop",street:"FLOP",positionState:"IP",potType:"SRP",texture:"A-high-rainbow",board:"As 8d 3c",rootPot:12,effectiveStack:88,hero:"AhQh",facingAction:"CHECK",facingValue:0,frequencies:{CHECK:27.37,BET:72.63}},
+{id:"cash-q-high-oop-flop",street:"FLOP",positionState:"OOP",potType:"SRP",texture:"Q-high-two-tone",board:"Qs 9s 4d",rootPot:15,effectiveStack:82,hero:"QhJh",facingAction:"BET",facingValue:8,frequencies:{FOLD:11.89,CALL:86.7,RAISE:1.41}},
+{id:"cash-paired-low-ip-flop",street:"FLOP",positionState:"IP",potType:"SRP",texture:"paired-low",board:"9c 5d 5s",rootPot:10,effectiveStack:90,hero:"Tc9h",facingAction:"CHECK",facingValue:0,frequencies:{CHECK:41.67,BET:58.33}},
+{id:"cash-connected-ip-flop",street:"FLOP",positionState:"IP",potType:"SRP",texture:"connected-rainbow",board:"Js Td 8c",rootPot:14,effectiveStack:86,hero:"QsJc",facingAction:"CHECK",facingValue:0,frequencies:{CHECK:15.64,BET:84.36}},
+{id:"cash-turn-a-high-oop",street:"TURN",positionState:"OOP",potType:"SRP",texture:"A-high-dynamic",board:"Ad 9s 4c Ts",rootPot:28,effectiveStack:70,hero:"AhQh",facingAction:"BET",facingValue:18,frequencies:{FOLD:.04,CALL:53.83,RAISE:46.13}},
+{id:"cash-turn-k-high-ip",street:"TURN",positionState:"IP",potType:"SRP",texture:"K-high-rainbow",board:"Ks 7d 3c 2h",rootPot:22,effectiveStack:78,hero:"KhQh",facingAction:"CHECK",facingValue:0,frequencies:{CHECK:1.98,BET:98.02}},
+{id:"cash-turn-paired-oop",street:"TURN",positionState:"OOP",potType:"SRP",texture:"paired-turn",board:"Qd 8s 3c 8h",rootPot:32,effectiveStack:66,hero:"QsJs",facingAction:"BET",facingValue:21,frequencies:{FOLD:.05,CALL:84.53,RAISE:15.42}},
+{id:"cash-turn-connected-ip",street:"TURN",positionState:"IP",potType:"SRP",texture:"connected-turn",board:"Th 9d 6c 8s",rootPot:30,effectiveStack:64,hero:"JhTs",facingAction:"CHECK",facingValue:0,frequencies:{CHECK:87.19,BET:12.81}},
+{id:"cash-river-a-high-ip",street:"RIVER",positionState:"IP",potType:"SRP",texture:"A-high-rainbow",board:"As 8d 4c 2h 6s",rootPot:44,effectiveStack:54,hero:"AhQh",facingAction:"CHECK",facingValue:0,frequencies:{BET:100}},
+{id:"cash-river-k-high-oop",street:"RIVER",positionState:"OOP",potType:"SRP",texture:"K-high-rainbow",board:"Ks 9d 5c 3h 2s",rootPot:52,effectiveStack:50,hero:"KhQh",facingAction:"BET",facingValue:50,frequencies:{CALL:100}},
+{id:"cash-river-paired-ip",street:"RIVER",positionState:"IP",potType:"SRP",texture:"paired-river",board:"Qd 7s 4c 7h 2s",rootPot:46,effectiveStack:52,hero:"QsJs",facingAction:"CHECK",facingValue:0,frequencies:{BET:100}},
+{id:"cash-river-four-straight-ip",street:"RIVER",positionState:"IP",potType:"SRP",texture:"four-straight",board:"Jh Td 9c 8s 3h",rootPot:58,effectiveStack:48,hero:"QsJc",facingAction:"CHECK",facingValue:0,frequencies:{BET:100}},
 ];
 
-export const validatedTexasSolverScope={solver:"TexasSolver v0.2.0",run:19,caseCount:20,scope:"HU_POSTFLOP_CHIPEV",coveragePct:100,topActionMatchPct:100,avgTvdPct:2.04} as const;
+export const validatedTexasSolverScope={solver:"TexasSolver v0.2.0",run:32,caseCount:32,scope:"HU_POSTFLOP_CHIPEV",coveragePct:100,topActionMatchPct:100,avgTvdPct:1.27,exactComboDecisions:6456} as const;
