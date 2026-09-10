@@ -5,6 +5,7 @@ on:
   push:
     paths:
       - 'benchmark/texassolver/**'
+      - 'lib/player-dna-*.ts'
       - 'lib/gto-range-policy.ts'
       - '.github/workflows/texassolver-benchmark.yml'
 
