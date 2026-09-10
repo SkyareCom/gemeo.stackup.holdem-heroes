@@ -32,6 +32,12 @@ _SINGLE_THREAD_FLOPS = {
     "cash-connected-ip-flop",
 }
 
+# The paired-low exact-combo solve has already completed in the isolated retry,
+# but can exceed the generic 180s ceiling on shared CI runners. Raising only the
+# flop ceiling does not change solver inputs or strategy; it only lets the
+# already-validated single-thread solve finish under slower runner load.
+base.PROFILE["flop"]["timeout"] = 300
+
 
 def strict_input_text(case, out_name):
     original_ip = base.RANGE_IP
