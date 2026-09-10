@@ -205,3 +205,8 @@ console.log(JSON.stringify({
   fidelity_gate: report.fidelity_gate,
   comparison_method: report.comparison_method,
 }, null, 2));
+
+if (!report.fidelity_gate_passed) {
+  console.error("TexasSolver fidelity gate failed; refusing to treat this calibration run as validated.");
+  process.exitCode = 2;
+}
