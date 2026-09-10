@@ -1,0 +1,45 @@
+name: TexasSolver Missing Node Retry
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "benchmark/texassolver/retry_missing_cases.py"
+      - ".github/workflows/texassolver-retry-missing.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  solve-missing:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download TexasSolver v0.2.0 Linux
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p .texassolver benchmark/texassolver/results/retry-missing
+          curl -L --retry 3 --fail \
+            https://github.com/bupticybee/TexasSolver/releases/download/v0.2.0/TexasSolver-v0.2.0-Linux.zip \
+            -o /tmp/texassolver.zip
+          unzip -q /tmp/texassolver.zip -d .texassolver
+          BIN=$(find .texassolver -type f -name console_solver | head -1)
+          test -n "$BIN"
+          chmod +x "$BIN"
+          echo "TEXASSOLVER_BIN=$GITHUB_WORKSPACE/$BIN" >> "$GITHUB_ENV"
+      - name: Retry unresolved nodes
+        shell: bash
+        run: |
+          set -euxo pipefail
+          python3 benchmark/texassolver/retry_missing_cases.py \
+            | tee benchmark/texassolver/results/retry-missing/workflow.log
+      - name: Upload retry outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: texassolver-missing-node-retry
+          path: benchmark/texassolver/results/retry-missing/
+          if-no-files-found: warn
+          retention-days: 14
