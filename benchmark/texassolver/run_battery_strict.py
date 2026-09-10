@@ -41,6 +41,7 @@ _SINGLE_THREAD_FLOPS = {
 _THREE_THREAD_FLOPS = {
     "cash-co-vs-btn-flop",
     "cash-a72r-oop-vs-bet",
+    "cash-q77r-ip-after-check",
     "cash-low-connected-oop-vs-bet",
     "cash-a-high-ip-flop",
 }
