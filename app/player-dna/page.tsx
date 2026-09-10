@@ -1,5 +1,6 @@
 import Link from "next/link";
 import PlayerDnaWorkspace from "@/components/PlayerDnaWorkspace";
+import PlayerDnaFixedActions from "@/components/PlayerDnaFixedActions";
 import "./player-dna-typography.css";
 
 export default function PlayerDnaPage(){
@@ -9,6 +10,7 @@ export default function PlayerDnaPage(){
       <Link className="module-back player-dna-nav-button" href="/">MÓDULOS</Link>
     </nav>
     <section className="panel profile-panel">
+      <PlayerDnaFixedActions/>
       <PlayerDnaWorkspace/>
     </section>
   </main>;
