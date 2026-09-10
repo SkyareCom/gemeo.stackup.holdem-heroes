@@ -3,9 +3,9 @@
 
 Keep the proven battery configuration for nodes that already solve reliably.
 Only the decision nodes that need an additional exact Hero class receive that
-range extension, and only the flop nodes proven unstable at higher concurrency
-use one solver thread. This keeps node inputs explicit without changing the
-validated configuration of unrelated cases.
+range extension, and only flop nodes proven unstable at higher concurrency use
+reduced solver thread counts. This keeps node inputs explicit without changing
+the validated ranges/tree/accuracy of unrelated cases.
 """
 import run_battery as base
 
@@ -27,7 +27,7 @@ _RANGE_FLOP_IP_ADDITIONS = {
 # TexasSolver v0.2.0 has shown nondeterministic crashes on these exact flop
 # trees at higher concurrency. One thread changes only execution concurrency,
 # not the configured ranges/tree/accuracy, and has already been the stable path
-# for the expanded exact-combo flop nodes.
+# for these expanded exact-combo flop nodes.
 _SINGLE_THREAD_FLOPS = {
     "cash-ac9c4c-ip-after-check",
     "cash-low-spr-a84r-oop",
@@ -35,10 +35,12 @@ _SINGLE_THREAD_FLOPS = {
     "cash-connected-ip-flop",
 }
 
-# A72r has solved successfully at higher concurrency but can time out at one
-# thread. Three threads keeps concurrency conservative while avoiding the 300s
-# single-thread timeout seen in run #30; solver inputs/tree/accuracy are unchanged.
+# These flop nodes have each shown instability at 8 threads while solving at a
+# conservative intermediate concurrency. Three threads leaves all strategic
+# inputs untouched and avoids both the observed 8-thread segfaults and the A72
+# one-thread timeout.
 _THREE_THREAD_FLOPS = {
+    "cash-co-vs-btn-flop",
     "cash-a72r-oop-vs-bet",
 }
 
