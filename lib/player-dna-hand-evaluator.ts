@@ -57,10 +57,10 @@ function nodeConfidence(bestFreq:number,spot:PlayerDnaSpot){
 export function evaluateHandDecision(spot:PlayerDnaSpot,action:PlayerAction,sizing?:DecisionSizing|null):HandEvaluation{
   const exact=getExactSolverReference(spot);const exactFreq=exact?normalizeReference(exact.frequencies,spot.actions):{};const hasExact=Object.keys(exactFreq).length>0;
   const frequencies=hasExact?exactFreq:solverHeroNodeStrategy(spot);const ranked=order(frequencies);if(!ranked.length)return{grade:"SEM REFERÊNCIA SUFICIENTE",confidence:0,recommended:"---",frequencies:{},comment:"SPOT SEM AÇÕES VÁLIDAS NO NÓ DE REFERÊNCIA.",math:mathNote(spot),source:"MOTOR GTO PLAYER DNA"};
-  const best=ranked[0][0];const bestFreq=ranked[0][1];const bestSizing=recommendedSizing(spot,best);const recommended=bestSizing?`${best} ${bestSizing}`:best;const grade=gradeDecision(action,sizing,frequencies,best,bestSizing);const selectedFreq=frequencies[action]??0;const selected=sizing?`${action} ${sizing}`:action;
+  const best=ranked[0][0];const bestFreq=ranked[0][1];const bestSizing=hasExact?null:recommendedSizing(spot,best);const recommended=bestSizing?`${best} ${bestSizing}`:best;const grade=gradeDecision(action,hasExact?null:sizing,frequencies,best,bestSizing);const selectedFreq=frequencies[action]??0;const selected=hasExact?action:(sizing?`${action} ${sizing}`:action);
   const villainLines=spot.players.filter(p=>!p.hero).map(p=>`${p.position} ${p.action}`).join(" · ");
   const confidence=nodeConfidence(bestFreq,spot);const descriptor=handDescriptor(spot);
-  const sizingText=(action==="RAISE"||action==="BET")&&bestSizing&&action===best&&sizing&&sizing!==bestSizing?` O SIZING DE REFERÊNCIA É ${bestSizing}.`:"";
+  const sizingText=!hasExact&&(action==="RAISE"||action==="BET")&&bestSizing&&action===best&&sizing&&sizing!==bestSizing?` O SIZING DE REFERÊNCIA É ${bestSizing}.`:"";
   const comment=grade==="MELHOR LINHA"?`${selected}: LINHA PRINCIPAL DO NÓ (${selectedFreq}%). MÃO ${descriptor}. VILÕES: ${villainLines}.`:grade==="ACEITÁVEL"?`${selected}: LINHA PRESENTE NO MIX (${selectedFreq}%). ${recommended} É A PRINCIPAL (${bestFreq}%).${sizingText} MÃO ${descriptor}.`:`${selected}: BAIXA FREQUÊNCIA NO NÓ (${selectedFreq}%). ${recommended} É A LINHA PRINCIPAL (${bestFreq}%).${sizingText} MÃO ${descriptor}.`;
   const source=hasExact?`TEXASSOLVER · COMBO EXATO${exact?.nodeId?` · ${exact.nodeId}`:""}`:"MOTOR GTO PLAYER DNA · RANGE DO VILÃO → AÇÃO DO VILÃO → ESTRATÉGIA DO HERÓI";
   return{grade,confidence,recommended,frequencies,comment,math:mathNote(spot),source};
