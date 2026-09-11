@@ -1,4 +1,3 @@
-// Solver validation sync for UI-only selected-state release. Strategy logic unchanged.
 import type {AnteFormat,GameMode,PlayerAction,PlayerDnaSpot} from "@/data/player-dna-spots";
 import runtimeBankJson from "@/data/texassolver-runtime-bank.json";
 import {buildExactComboSession,exactComboBankCapacity,type ExactComboBank} from "@/lib/player-dna-exact-combo-session";
