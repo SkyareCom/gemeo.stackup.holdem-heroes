@@ -1,0 +1,200 @@
+/* STACKUP HOLD'EM HEROES — PALETTE + TYPOGRAPHY CONTRACT
+ * Loaded last. This file standardizes app colors without touching the poker table Shadow DOM.
+ */
+:root{
+  --su-navy-950:#020812;
+  --su-navy-900:#04111F;
+  --su-navy-850:#071A2D;
+  --su-navy-800:#0A2440;
+  --su-blue-600:#168EE8;
+  --su-blue-500:#31A8FF;
+  --su-blue-300:#8BD1FF;
+  --su-border-soft:#33516E;
+  --su-text-primary:#F7FBFF;
+  --su-text-secondary:#B7C3D0;
+  --su-text-disabled:#7D8B9B;
+}
+
+html,body,body.unified-background{
+  color-scheme:dark;
+  background:
+    radial-gradient(circle at 14% 0%,rgba(22,142,232,.18),transparent 32%),
+    radial-gradient(circle at 90% 24%,rgba(49,168,255,.10),transparent 34%),
+    linear-gradient(160deg,var(--su-navy-950) 0%,var(--su-navy-900) 52%,var(--su-navy-850) 100%)!important;
+  color:var(--su-text-primary)!important;
+}
+
+/* TYPOGRAPHY COLOR HIERARCHY */
+html body.unified-background main[class] :is(h1,h2,h3,h4,h5,h6,.brand,.stackup-app-title,.stackup-app-title span,.module-title,.module-title span,[class*="Title"],[class*="title"]){
+  color:var(--su-text-primary)!important;
+  -webkit-text-fill-color:var(--su-text-primary)!important;
+}
+html body.unified-background main[class] :is(p,li,td,th,.module-description,[class*="description"],[class*="Description"],[class*="summary"],[class*="Summary"]){
+  color:var(--su-text-secondary)!important;
+  -webkit-text-fill-color:var(--su-text-secondary)!important;
+}
+html body.unified-background main[class] :is(.eyebrow,.tag,.stackup-home-kicker,[class*="eyebrow"],[class*="Eyebrow"],[class*="progress"],[class*="Progress"],[class*="status"],[class*="Status"]){
+  color:var(--su-blue-500)!important;
+  -webkit-text-fill-color:var(--su-blue-500)!important;
+}
+html body.unified-background main[class] :is(small,.stackup-app-subtitle,[class*="meta"],[class*="Meta"],[class*="badge"],[class*="Badge"],[class*="label"],[class*="Label"]){
+  color:var(--su-blue-300)!important;
+  -webkit-text-fill-color:var(--su-blue-300)!important;
+}
+html body.unified-background main[class] :is(button,a,input,textarea,select){
+  color:var(--su-text-primary)!important;
+  -webkit-text-fill-color:var(--su-text-primary)!important;
+}
+html body.unified-background main[class] :is(button:disabled,[aria-disabled="true"],input:disabled,textarea:disabled,select:disabled),
+html body.unified-background main[class] :is(button:disabled,[aria-disabled="true"]) *{
+  color:var(--su-text-disabled)!important;
+  -webkit-text-fill-color:var(--su-text-disabled)!important;
+}
+html body.unified-background main[class] :is(input,textarea)::placeholder{
+  color:var(--su-text-disabled)!important;
+  -webkit-text-fill-color:var(--su-text-disabled)!important;
+  opacity:1!important;
+}
+
+/* GLOBAL SURFACES */
+html body.unified-background main[class] :is(.panel,[class*="panel"],[class*="Panel"],article,fieldset){
+  background:linear-gradient(160deg,var(--su-navy-900),var(--su-navy-850))!important;
+  background-image:linear-gradient(160deg,var(--su-navy-900),var(--su-navy-850))!important;
+  border-color:var(--su-border-soft)!important;
+}
+html body.unified-background main[class] :is(input,textarea,select){
+  background:var(--su-navy-900)!important;
+  background-image:none!important;
+  border-color:var(--su-border-soft)!important;
+}
+html body.unified-background main[class] :is(input,textarea,select):focus{
+  border-color:var(--su-blue-300)!important;
+  outline-color:var(--su-blue-300)!important;
+}
+
+/* GLOBAL COMMAND BUTTONS / NAVIGATION */
+html body.unified-background main[class] :is(button,.module-back){
+  border-color:var(--su-blue-300)!important;
+  background:linear-gradient(180deg,var(--su-navy-800),var(--su-navy-900))!important;
+  background-image:linear-gradient(180deg,var(--su-navy-800),var(--su-navy-900))!important;
+  color:var(--su-text-primary)!important;
+  -webkit-text-fill-color:var(--su-text-primary)!important;
+}
+html body.unified-background main[class] :is(button,.module-back):is(:hover,:focus-visible,:active){
+  border-color:var(--su-text-primary)!important;
+}
+html body.unified-background main[class] :is(.primary,button.primary,[class*="primary"],[class*="Primary"]):not(:disabled){
+  background:linear-gradient(180deg,var(--su-blue-600),var(--su-blue-500))!important;
+  background-image:linear-gradient(180deg,var(--su-blue-600),var(--su-blue-500))!important;
+  border-color:var(--su-blue-300)!important;
+  color:var(--su-text-primary)!important;
+  -webkit-text-fill-color:var(--su-text-primary)!important;
+}
+
+/* HEADER */
+html body.unified-background .stackup-app-header{
+  border-bottom-color:var(--su-blue-300)!important;
+  background:linear-gradient(115deg,var(--su-navy-800),var(--su-navy-900) 58%,var(--su-navy-850))!important;
+  background-image:linear-gradient(115deg,var(--su-navy-800),var(--su-navy-900) 58%,var(--su-navy-850))!important;
+}
+html body.unified-background .stackup-logo{
+  border-color:var(--su-blue-300)!important;
+  background:radial-gradient(circle at 32% 25%,var(--su-navy-800) 0%,var(--su-navy-850) 58%,var(--su-navy-950) 100%)!important;
+  color:var(--su-text-primary)!important;
+  -webkit-text-fill-color:var(--su-text-primary)!important;
+}
+html body.unified-background .stackup-app-subtitle{
+  color:var(--su-blue-300)!important;
+  -webkit-text-fill-color:var(--su-blue-300)!important;
+}
+html body.unified-background .stackup-header-spade{
+  color:rgba(139,209,255,.12)!important;
+  -webkit-text-fill-color:rgba(139,209,255,.12)!important;
+}
+
+/* HOME MODULE CARDS — DARK SURFACE SO TYPOGRAPHY USES THE SAME GLOBAL TEXT PALETTE */
+html body.unified-background main.stackup-home .modules a,
+html body.unified-background main.stackup-home .modules a:nth-child(n){
+  border-color:var(--su-blue-300)!important;
+  background:linear-gradient(145deg,var(--su-navy-850),var(--su-navy-900))!important;
+  background-image:linear-gradient(145deg,var(--su-navy-850),var(--su-navy-900))!important;
+  color:var(--su-text-primary)!important;
+  -webkit-text-fill-color:var(--su-text-primary)!important;
+}
+html body.unified-background main.stackup-home .module-number{
+  border-color:var(--su-blue-500)!important;
+  background:linear-gradient(145deg,var(--su-navy-800),var(--su-navy-950))!important;
+  background-image:linear-gradient(145deg,var(--su-navy-800),var(--su-navy-950))!important;
+  color:var(--su-blue-300)!important;
+  -webkit-text-fill-color:var(--su-blue-300)!important;
+}
+html body.unified-background main.stackup-home .module-description{
+  color:var(--su-text-secondary)!important;
+  -webkit-text-fill-color:var(--su-text-secondary)!important;
+}
+html body.unified-background main.stackup-home .module-chevron{
+  color:var(--su-blue-500)!important;
+  -webkit-text-fill-color:var(--su-blue-500)!important;
+}
+
+/* PLAYER DNA — UI AROUND THE TABLE ONLY. TABLE SHADOW DOM REMAINS UNCHANGED. */
+html body.unified-background main.player-dna-page section.panel.profile-panel,
+html body.unified-background main.player-dna-page .saved-analysis-panel,
+html body.unified-background main.player-dna-page .history-panel,
+html body.unified-background main.player-dna-page .training-session>section{
+  background:linear-gradient(160deg,var(--su-navy-900),var(--su-navy-850))!important;
+  background-image:linear-gradient(160deg,var(--su-navy-900),var(--su-navy-850))!important;
+  border-color:var(--su-border-soft)!important;
+}
+html body.unified-background main.player-dna-page .mode-choices>label,
+html body.unified-background main.player-dna-page .depth-choices>button,
+html body.unified-background main.player-dna-page .training-session [class*="actions"]>button,
+html body.unified-background main.player-dna-page [class*="sizingActions"]>button,
+html body.unified-background main.player-dna-page .player-dna-fixed-actions-v2>button,
+html body.unified-background main.player-dna-page .training-footer>button{
+  background:linear-gradient(180deg,var(--su-navy-800),var(--su-navy-900))!important;
+  background-image:linear-gradient(180deg,var(--su-navy-800),var(--su-navy-900))!important;
+  border-color:var(--su-blue-300)!important;
+  color:var(--su-text-primary)!important;
+  -webkit-text-fill-color:var(--su-text-primary)!important;
+}
+html body.unified-background main.player-dna-page .depth-choices>button{
+  border-color:var(--su-border-soft)!important;
+}
+html body.unified-background main.player-dna-page .depth-choices>button[aria-pressed="true"]{
+  border:2px solid var(--su-text-primary)!important;
+  box-shadow:none!important;
+}
+html body.unified-background main.player-dna-page .depth-choices>button>span,
+html body.unified-background main.player-dna-page .saved-analysis-status,
+html body.unified-background main.player-dna-page .history-count,
+html body.unified-background main.player-dna-page .training-session [class*="progressHead"] :is(span,strong){
+  color:var(--su-blue-300)!important;
+  -webkit-text-fill-color:var(--su-blue-300)!important;
+}
+html body.unified-background main.player-dna-page .training-session [class*="label"],
+html body.unified-background main.player-dna-page .players-header,
+html body.unified-background main.player-dna-page .players-header span{
+  color:var(--su-blue-500)!important;
+  -webkit-text-fill-color:var(--su-blue-500)!important;
+}
+html body.unified-background main.player-dna-page .players-header{
+  background:var(--su-navy-850)!important;
+  background-image:none!important;
+  border-color:var(--su-border-soft)!important;
+}
+html body.unified-background main.player-dna-page .training-footer>button:last-child:not(:disabled){
+  background:linear-gradient(180deg,var(--su-blue-600),var(--su-blue-500))!important;
+  background-image:linear-gradient(180deg,var(--su-blue-600),var(--su-blue-500))!important;
+  color:var(--su-text-primary)!important;
+  -webkit-text-fill-color:var(--su-text-primary)!important;
+}
+
+/* DISABLED STATES */
+html body.unified-background main[class] button:disabled{
+  border-color:var(--su-border-soft)!important;
+  background:var(--su-navy-900)!important;
+  background-image:none!important;
+  color:var(--su-text-disabled)!important;
+  -webkit-text-fill-color:var(--su-text-disabled)!important;
+}
