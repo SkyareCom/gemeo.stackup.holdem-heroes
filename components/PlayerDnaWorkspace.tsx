@@ -13,6 +13,7 @@ const STORAGE_KEY="stackup.player-dna.library.v2";
 const LEGACY_STORAGE_KEY="stackup.player-dna.session.v1";
 const betSizings:DecisionSizing[]=["25%","33%","50%","66%","75%","POT","125%","150%"];
 const raiseSizings:DecisionSizing[]=["2X","2.5X","3X","4X","SQUEEZE"];
+const allPlayerActions:PlayerAction[]=["FOLD","CHECK","CALL","BET","RAISE","ALL-IN"];
 
 type AnalysisMode=GameMode|"ALEATORIO";
 type SavedDnaSession={mode:AnalysisMode;target:number;index:number;answers:PlayerDnaAnswer[];finished:boolean;sessionSeed:number;updatedAt:number};
@@ -117,7 +118,7 @@ export default function PlayerDnaWorkspace(){
   function continueSaved(){const saved=library.active;if(!saved)return;setSelectedReportId(null);setHistoryOpen(false);setMode(saved.mode);setTarget(saved.target);setIndex(Math.min(saved.index,Math.max(0,saved.target-1)));setAnswers(saved.answers);setSelectedAction(null);setSelectedSizing(null);setActionSequenceReady(true);setFinished(false);setSessionSeed(saved.sessionSeed)}
   function deleteSaved(){setLibrary(prev=>({...prev,active:null}))}
   function resetAll(){try{localStorage.removeItem(STORAGE_KEY);localStorage.removeItem(LEGACY_STORAGE_KEY)}catch{}setLibrary(emptyLibrary);setSelectedReportId(null);setHistoryOpen(false);setEditingId(null);setTarget(null);setIndex(0);setAnswers([]);setSelectedAction(null);setSelectedSizing(null);setActionSequenceReady(false);setFinished(false);setSessionSeed(1)}
-  function chooseAction(action:PlayerAction){if(!actionSequenceReady)return;setSelectedAction(current=>current===action?null:action);setSelectedSizing(null)}
+  function chooseAction(action:PlayerAction){setSelectedAction(current=>current===action?null:action);setSelectedSizing(null)}
   function nextSpot(){
     const sizingRequired=selectedAction==="BET"||selectedAction==="RAISE";
     if(!spot||!target||!selectedAction||(sizingRequired&&!selectedSizing))return;
@@ -165,7 +166,7 @@ export default function PlayerDnaWorkspace(){
     <Level spot={spot}/>
     <PlayerDnaPokerTable spot={spot} selectedAction={selectedAction} onSequenceReady={setActionSequenceReady}/>
     <p className={styles.prompt}>QUAL É A SUA AÇÃO ?</p>
-    <div className={styles.actions} aria-busy={!actionSequenceReady}>{spot.actions.map(action=><button type="button" aria-disabled={!actionSequenceReady} aria-pressed={selectedAction===action} className={selectedAction===action?styles.actionSelected:""} key={action} onClick={()=>chooseAction(action)}>{action}</button>)}</div>
+    <div className={styles.actions}>{allPlayerActions.map(action=><button type="button" aria-pressed={selectedAction===action} className={selectedAction===action?styles.actionSelected:""} key={action} onClick={()=>chooseAction(action)}>{action}</button>)}</div>
     {sizingOptions.length>0&&<div className={styles.sizingActions}>{sizingOptions.map(sizing=><button type="button" aria-pressed={selectedSizing===sizing} className={selectedSizing===sizing?styles.actionSelected:""} key={sizing} onClick={()=>setSelectedSizing(current=>current===sizing?null:sizing)}>{sizing}</button>)}</div>}
     <div data-player-comment-card className="player-comment-card" style={{minHeight:108,border:"1px solid rgba(92,187,126,.46)",borderRadius:12,padding:"11px 12px",display:"grid",gap:6,background:"rgba(5,20,12,.82)"}}>
       <strong style={{fontSize:11,letterSpacing:".08em"}}>AVALIAÇÃO E ANÁLISE</strong>
