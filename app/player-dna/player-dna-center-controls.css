@@ -1,0 +1,59 @@
+/* PLAYER DNA — CENTRALIZAÇÃO DE CÉLULAS
+ * Regra final: todo card selecionável e todo botão mantém seu conteúdo
+ * centralizado horizontal e verticalmente na própria célula.
+ * A mesa permanece isolada e não é alterada por esta folha.
+ */
+html body main.player-dna-page button,
+html body main.player-dna-page .player-dna-nav-button,
+html body main.player-dna-page .mode-choices>label,
+html body main.player-dna-page .depth-choices>button{
+  text-align:center!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+
+html body main.player-dna-page button,
+html body main.player-dna-page .player-dna-nav-button{
+  display:inline-flex!important;
+}
+
+html body main.player-dna-page .mode-choices>label{
+  display:flex!important;
+}
+
+html body main.player-dna-page .depth-choices>button{
+  display:flex!important;
+  flex-direction:column!important;
+}
+
+html body main.player-dna-page button>*,
+html body main.player-dna-page .player-dna-nav-button>*,
+html body main.player-dna-page .mode-choices>label>*,
+html body main.player-dna-page .depth-choices>button>*{
+  text-align:center!important;
+  margin-left:auto!important;
+  margin-right:auto!important;
+}
+
+html body main.player-dna-page .mode-choices>label>input{
+  position:absolute!important;
+  opacity:0!important;
+  pointer-events:none!important;
+  margin:0!important;
+}
+
+html body main.player-dna-page .saved-analysis-panel button,
+html body main.player-dna-page .history-panel button,
+html body main.player-dna-page .training-footer>button,
+html body main.player-dna-page .training-session [class*="actions"]>button,
+html body main.player-dna-page .training-session [class*="sizingActions"]>button{
+  place-content:center!important;
+  place-items:center!important;
+}
+
+html body main.player-dna-page .depth-choices>button>strong,
+html body main.player-dna-page .depth-choices>button>span,
+html body main.player-dna-page .mode-choices>label>strong{
+  width:100%!important;
+  text-align:center!important;
+}
