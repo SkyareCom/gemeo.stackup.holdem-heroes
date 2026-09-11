@@ -1,0 +1,61 @@
+/* PLAYER DNA — rodapé de treino.
+ * Regra local e final para impedir que estilos antigos do app estiquem
+ * SALVAR ANÁLISE E SAIR / PRÓXIMO para 50% ou 100% da largura.
+ */
+html body main.player-dna-page .training-footer{
+  display:grid!important;
+  grid-template-columns:repeat(2,var(--app-command-button-width,160px))!important;
+  justify-content:center!important;
+  align-items:center!important;
+  gap:8px!important;
+  width:100%!important;
+  min-width:0!important;
+}
+
+html body main.player-dna-page .training-footer > button{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:var(--app-command-button-width,160px)!important;
+  min-width:var(--app-command-button-width,160px)!important;
+  max-width:var(--app-command-button-width,160px)!important;
+  height:var(--app-command-button-height,44px)!important;
+  min-height:var(--app-command-button-height,44px)!important;
+  max-height:var(--app-command-button-height,44px)!important;
+  padding:0 8px!important;
+  margin:0!important;
+  box-sizing:border-box!important;
+  border:1px solid #255000!important;
+  border-radius:12px!important;
+  background:rgba(0,100,20,.07)!important;
+  background-image:none!important;
+  color:#009929!important;
+  -webkit-text-fill-color:#009929!important;
+  font-size:10px!important;
+  font-weight:400!important;
+  line-height:1!important;
+  text-align:center!important;
+  white-space:nowrap!important;
+  overflow:visible!important;
+  box-shadow:none!important;
+  justify-self:center!important;
+  flex:none!important;
+}
+
+html body main.player-dna-page .training-footer > button > strong{
+  color:inherit!important;
+  -webkit-text-fill-color:inherit!important;
+  font-size:10px!important;
+  font-weight:400!important;
+  line-height:1!important;
+  white-space:nowrap!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+}
+
+html body main.player-dna-page .training-footer > button:hover:not(:disabled),
+html body main.player-dna-page .training-footer > button:focus-visible:not(:disabled),
+html body main.player-dna-page .training-footer > button:active:not(:disabled){
+  border-color:#ede6db!important;
+  box-shadow:inset 0 0 0 1px #ede6db!important;
+}
