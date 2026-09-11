@@ -66,7 +66,7 @@ function paintDepthSelection(selected:HTMLButtonElement|null){
     if(button.getAttribute("aria-pressed")!==nextPressed)button.setAttribute("aria-pressed",nextPressed);
 
     // PADRÃO: SOMENTE A BORDA MUDA NO CARD SELECIONADO.
-    button.style.setProperty("border",`1px solid ${active?SELECTED_BORDER:NORMAL_BORDER}`,"important");
+    button.style.setProperty("border",`${active?"2px":"1px"} solid ${active?SELECTED_BORDER:NORMAL_BORDER}`,"important");
     button.style.removeProperty("box-shadow");
     button.style.removeProperty("background");
     button.style.removeProperty("background-color");
