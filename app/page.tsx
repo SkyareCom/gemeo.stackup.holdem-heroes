@@ -13,8 +13,10 @@ export default function Home(){
   return <main className="stackup-home">
     <StackupAppHeader/>
     <section className="stackup-home-intro">
-      <div className="stackup-home-kicker">MÓDULOS</div>
-      <h1 className="stackup-home-title">STACKUP HEROES</h1>
+      <h1 className="stackup-home-title">
+        <span className="stackup-home-title-line stackup-home-title-line-small">TREINE. ENTENDA.</span>
+        <span className="stackup-home-title-line stackup-home-title-line-main">EVOLUA.</span>
+      </h1>
       <p className="stackup-home-lead">INTELIGÊNCIA ARTIFICIAL, TREINO E ANÁLISE DE POKER PARA ELEVAR O SEU DESEMPENHO A UM NOVO NÍVEL.</p>
     </section>
     <nav className="modules" aria-label="MÓDULOS STACKUP">
