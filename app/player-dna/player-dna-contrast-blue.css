@@ -1,0 +1,124 @@
+/* PLAYER DNA — CONTRAST BLUE TUNING
+ * Somente cor/contraste externo. A mesa Shadow DOM permanece intocada.
+ */
+html body main.player-dna-page{
+  --pd-bg:#020812;
+  --pd-surface:#04111F;
+  --pd-surface-2:#0A2440;
+  --pd-border:#238FDF;
+  --pd-border-soft:#238FDF;
+  --pd-blue:#31A8FF;
+  --pd-blue-strong:#168EE8;
+  --pd-blue-soft:#A9D8FF;
+  --pd-white:#F8FBFF;
+  --pd-silver:#C4D0DD;
+  --pd-ink:#061426;
+}
+
+/* Recolore apenas bordas já existentes. */
+html body main.player-dna-page :is(
+  section.panel.profile-panel,
+  .saved-analysis-panel,
+  .history-panel,
+  .training-session>section,
+  .mode-choices>label,
+  .depth-choices>button,
+  .training-session [class*="actions"]>button,
+  [class*="sizingActions"]>button,
+  .player-dna-fixed-actions-v2>button,
+  .training-footer>button,
+  .players-header,
+  .training-session [class*="evaluation"],
+  .training-session [class*="analysis"]
+){
+  border-color:var(--pd-border)!important;
+}
+
+html body main.player-dna-page section.panel.profile-panel,
+html body main.player-dna-page .saved-analysis-panel,
+html body main.player-dna-page .history-panel,
+html body main.player-dna-page .training-session>section{
+  background:linear-gradient(160deg,rgba(4,17,31,.96),rgba(10,36,64,.82))!important;
+}
+
+html body main.player-dna-page .mode-choices>label,
+html body main.player-dna-page .depth-choices>button,
+html body main.player-dna-page .training-session [class*="actions"]>button,
+html body main.player-dna-page [class*="sizingActions"]>button,
+html body main.player-dna-page .player-dna-fixed-actions-v2>button,
+html body main.player-dna-page .training-footer>button{
+  background:linear-gradient(180deg,#0A315C,#04111F)!important;
+  background-image:linear-gradient(180deg,#0A315C,#04111F)!important;
+  border-color:var(--pd-border)!important;
+  color:var(--pd-white)!important;
+  -webkit-text-fill-color:var(--pd-white)!important;
+}
+
+/* Estado selecionado / pressionado: borda branca. */
+html body main.player-dna-page .mode-choices>label:has(input:checked),
+html body main.player-dna-page .depth-choices>button[aria-pressed="true"],
+html body main.player-dna-page .training-session [class*="actions"]>button[aria-pressed="true"],
+html body main.player-dna-page [class*="sizingActions"]>button[aria-pressed="true"],
+html body main.player-dna-page .player-dna-fixed-actions-v2>button[aria-pressed="true"],
+html body main.player-dna-page .training-footer>button:is(:active,:focus-visible),
+html body main.player-dna-page .player-dna-nav-button:is(:active,:focus-visible){
+  border-color:var(--pd-white)!important;
+  outline-color:var(--pd-white)!important;
+  box-shadow:inset 0 0 0 1px rgba(248,251,255,.55),0 0 14px rgba(49,168,255,.18)!important;
+}
+
+/* O card de quantidade continua mudando somente a borda. */
+html body main.player-dna-page .depth-choices>button[aria-pressed="true"]{
+  border:2px solid var(--pd-white)!important;
+  background:linear-gradient(180deg,#0A315C,#04111F)!important;
+  background-image:linear-gradient(180deg,#0A315C,#04111F)!important;
+}
+
+html body main.player-dna-page .saved-analysis-status,
+html body main.player-dna-page .saved-analysis-status span,
+html body main.player-dna-page .history-count,
+html body main.player-dna-page .training-session [class*="progressHead"] :is(span,strong),
+html body main.player-dna-page .players-header,
+html body main.player-dna-page .players-header span{
+  color:var(--pd-blue-soft)!important;
+  -webkit-text-fill-color:var(--pd-blue-soft)!important;
+}
+
+html body main.player-dna-page section.panel.profile-panel .eyebrow,
+html body main.player-dna-page section.panel.profile-panel .saved-analysis-title,
+html body main.player-dna-page section.panel.profile-panel .history-eyebrow,
+html body main.player-dna-page .training-session [class*="label"]{
+  color:var(--pd-blue)!important;
+  -webkit-text-fill-color:var(--pd-blue)!important;
+}
+
+html body main.player-dna-page .setup-intro,
+html body main.player-dna-page .saved-analysis-description,
+html body main.player-dna-page .history-description,
+html body main.player-dna-page .training-session [class*="participants"],
+html body main.player-dna-page .training-session [class*="badge"]{
+  color:var(--pd-silver)!important;
+  -webkit-text-fill-color:var(--pd-silver)!important;
+}
+
+html body main.player-dna-page [class*="track"]{
+  background:#0A2440!important;
+}
+html body main.player-dna-page [class*="track"] i{
+  background:linear-gradient(90deg,#168EE8,#5BBCFF)!important;
+}
+
+html body main.player-dna-page .training-footer>button:last-child:not(:disabled){
+  border-color:var(--pd-blue)!important;
+  background:linear-gradient(180deg,#168EE8,#0B67C8)!important;
+  background-image:linear-gradient(180deg,#168EE8,#0B67C8)!important;
+  color:var(--pd-white)!important;
+  -webkit-text-fill-color:var(--pd-white)!important;
+}
+html body main.player-dna-page .training-footer>button:last-child:not(:disabled):is(:active,:focus-visible){
+  border-color:var(--pd-white)!important;
+}
+
+html body main.player-dna-page .players-header{
+  background:#071A2D!important;
+}
