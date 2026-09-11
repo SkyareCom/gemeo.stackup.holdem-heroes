@@ -27,7 +27,7 @@ export default function Home(){
           <span>ENTENDA.</span>
           <span>EVOLUA.</span>
         </h1>
-        <p className="stackup-hero-lead" data-preserve-case="true">Aprenda como você joga. Descubra seus leaks.<br/>E aperfeiçoe o seu poker.</p>
+        <p className="stackup-hero-lead" data-preserve-case="true">Aprenda como você joga. Descubra seus leaks. Aprimore sua estratégia e transforme seu poker.</p>
       </div>
       <div className="stackup-hero-visual" aria-hidden="true">
         <span className="stackup-chip-stack stackup-chip-stack-back"><i/><i/><i/><i/></span>
