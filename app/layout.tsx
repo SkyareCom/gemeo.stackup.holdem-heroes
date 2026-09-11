@@ -32,6 +32,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="pt-BR" className={`${loveYaLikeASister.className} ${loveYaLikeASister.variable}`}>
       <head>
+        <script dangerouslySetInnerHTML={{__html:`(()=>{try{const k='heroes-cache-reset-20260911-v2';if(localStorage.getItem(k))return;localStorage.setItem(k,'1');if('serviceWorker'in navigator){navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>{if(r.scope.includes('/gemeo.stackup.holdem-heroes/'))r.unregister();}));}if('caches'in window){caches.keys().then(ks=>ks.forEach(x=>caches.delete(x)));}}catch(e){}})();`}} />
         <style>{`html body, html body *, html body *::before, html body *::after { text-transform: uppercase !important; } html body [data-preserve-case="true"], html body [data-preserve-case="true"] * { text-transform: none !important; }`}</style>
       </head>
       <body className="unified-background">
