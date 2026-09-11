@@ -18,6 +18,28 @@ function ModuleIcon({type}:{type:(typeof modules)[number]["icon"]}){
 
 export default function Home(){
   return <main className="stackup-home stackup-home-template-v2">
+    <style>{`
+      html body .stackup-home-template-v2 .stackup-hero-copy{
+        text-align:left!important;
+        align-items:flex-start!important;
+      }
+      html body .stackup-home-template-v2 .stackup-hero-lead{
+        text-align:left!important;
+        font-size:14px!important;
+      }
+      html body .stackup-home-template-v2 .stackup-hero-title{
+        text-align:left!important;
+        justify-items:start!important;
+      }
+      html body .stackup-home-template-v2 .stackup-hero-title span:nth-child(1),
+      html body .stackup-home-template-v2 .stackup-hero-title span:nth-child(2){
+        font-size:24px!important;
+      }
+      html body .stackup-home-template-v2 .stackup-hero-title span:nth-child(3){
+        font-size:32px!important;
+      }
+    `}</style>
+
     <StackupAppHeader/>
 
     <section className="stackup-home-hero" aria-labelledby="stackup-home-heading">
