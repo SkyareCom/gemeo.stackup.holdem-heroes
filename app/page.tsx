@@ -60,40 +60,6 @@ export default function Home(){
         width:38%!important;
         height:54%!important;
       }
-      html body .stackup-home-template-v2 .stackup-chip-stack{
-        display:flex!important;
-        flex-direction:row!important;
-        align-items:center!important;
-        gap:0!important;
-        width:auto!important;
-      }
-      html body .stackup-home-template-v2 .stackup-chip-stack i{
-        flex:0 0 48px!important;
-        width:48px!important;
-        height:48px!important;
-        margin-left:-16px!important;
-        border:3px solid rgba(184,226,255,.95)!important;
-        border-radius:50%!important;
-        background:
-          radial-gradient(circle at 35% 30%,rgba(255,255,255,.32),transparent 26%),
-          repeating-conic-gradient(from 0deg,#0a203b 0deg 18deg,#a9dcff 18deg 34deg,#0d5794 34deg 52deg,#a9dcff 52deg 68deg)!important;
-        box-shadow:
-          0 7px 12px rgba(0,0,0,.38),
-          inset 0 0 0 4px rgba(5,32,60,.65),
-          inset 0 0 0 7px rgba(130,205,255,.28)!important;
-        transform:none!important;
-      }
-      html body .stackup-home-template-v2 .stackup-chip-stack i:first-child{
-        margin-left:0!important;
-      }
-      html body .stackup-home-template-v2 .stackup-chip-stack-back{
-        right:2%!important;
-        bottom:34%!important;
-      }
-      html body .stackup-home-template-v2 .stackup-chip-stack-front{
-        right:7%!important;
-        bottom:4%!important;
-      }
       @media(max-width:520px){
         html body .stackup-home-template-v2 .stackup-hero-copy{
           width:44%!important;
@@ -112,23 +78,6 @@ export default function Home(){
           bottom:4%!important;
           width:38%!important;
           height:54%!important;
-        }
-        html body .stackup-home-template-v2 .stackup-chip-stack i{
-          flex-basis:42px!important;
-          width:42px!important;
-          height:42px!important;
-          margin-left:-14px!important;
-        }
-        html body .stackup-home-template-v2 .stackup-chip-stack i:first-child{
-          margin-left:0!important;
-        }
-        html body .stackup-home-template-v2 .stackup-chip-stack-back{
-          right:0!important;
-          bottom:36%!important;
-        }
-        html body .stackup-home-template-v2 .stackup-chip-stack-front{
-          right:6%!important;
-          bottom:5%!important;
         }
       }
     `}</style>
