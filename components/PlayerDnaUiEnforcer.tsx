@@ -3,15 +3,15 @@
 import {useEffect} from "react";
 
 const COMMAND_MAX_WIDTH="160px";
-const COMMAND_HEIGHT="44px";
+const COMMAND_HEIGHT="52px";
 const COMMAND_FONT_SIZE="14px";
 const SELECTED_BORDER="#F8FBFF";
 const NORMAL_BORDER="#238FDF";
-const COMMAND_BORDER="#238FDF";
 const COMMAND_TEXT="#F8FBFF";
-const COMMAND_BACKGROUND="linear-gradient(180deg,#0A2440,#04111F)";
+const SECONDARY_TEXT="#A9D8FF";
+const COMMAND_BACKGROUND="linear-gradient(180deg,#0A2440,#071A2D)";
 const COMMAND_PRIMARY_BACKGROUND="linear-gradient(180deg,#168EE8,#0B67C8)";
-const SELECTED_BACKGROUND="linear-gradient(180deg,#168EE8,#0B67C8)";
+const SELECTED_BACKGROUND=COMMAND_PRIMARY_BACKGROUND;
 
 function forceFooter(){
   const footer=document.querySelector<HTMLElement>(".player-dna-page .training-footer");
@@ -28,6 +28,7 @@ function forceFooter(){
   footer.querySelectorAll<HTMLButtonElement>(":scope > button").forEach((button,index)=>{
     const isPrimary=index===1&&!button.disabled;
     const background=isPrimary?COMMAND_PRIMARY_BACKGROUND:COMMAND_BACKGROUND;
+    const border=isPrimary?SELECTED_BORDER:NORMAL_BORDER;
     button.style.setProperty("display","inline-flex","important");
     button.style.setProperty("align-items","center","important");
     button.style.setProperty("justify-content","center","important");
@@ -40,7 +41,7 @@ function forceFooter(){
     button.style.setProperty("padding","0 10px","important");
     button.style.setProperty("margin","0","important");
     button.style.setProperty("box-sizing","border-box","important");
-    button.style.setProperty("border",`2px solid ${COMMAND_BORDER}`,"important");
+    button.style.setProperty("border",`2px solid ${border}`,"important");
     button.style.setProperty("border-radius","14px","important");
     button.style.setProperty("background",background,"important");
     button.style.setProperty("background-image",background,"important");
@@ -54,6 +55,7 @@ function forceFooter(){
     button.style.setProperty("justify-self","stretch","important");
     button.style.setProperty("flex","none","important");
     button.style.setProperty("overflow","hidden","important");
+    button.style.setProperty("box-shadow",isPrimary?`inset 0 0 0 1px ${SELECTED_BORDER}`:"none","important");
 
     button.querySelectorAll<HTMLElement>("*").forEach(child=>{
       child.style.setProperty("color",COMMAND_TEXT,"important");
@@ -80,10 +82,18 @@ function paintDepthSelection(selected:HTMLButtonElement|null){
     button.style.setProperty("color",COMMAND_TEXT,"important");
     button.style.setProperty("-webkit-text-fill-color",COMMAND_TEXT,"important");
     button.style.setProperty("box-shadow",active?`inset 0 0 0 1px ${SELECTED_BORDER}`:"none","important");
-    button.querySelectorAll<HTMLElement>("strong,span").forEach(child=>{
-      child.style.setProperty("color",COMMAND_TEXT,"important");
-      child.style.setProperty("-webkit-text-fill-color",COMMAND_TEXT,"important");
-    });
+
+    const strong=button.querySelector<HTMLElement>("strong");
+    if(strong){
+      strong.style.setProperty("color",COMMAND_TEXT,"important");
+      strong.style.setProperty("-webkit-text-fill-color",COMMAND_TEXT,"important");
+    }
+    const span=button.querySelector<HTMLElement>("span");
+    if(span){
+      const color=active?COMMAND_TEXT:SECONDARY_TEXT;
+      span.style.setProperty("color",color,"important");
+      span.style.setProperty("-webkit-text-fill-color",color,"important");
+    }
   });
 }
 
