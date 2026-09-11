@@ -20,6 +20,7 @@
   --app-command-text:#F8FBFF;
   --app-command-selected:#F8FBFF;
   --app-command-background:#071A2D;
+  --app-command-selected-background:linear-gradient(180deg,#168EE8,#0B67C8);
   --type-deep:#0B67C8;
   --type-action:#31A8FF;
   --type-support:#5BBCFF;
@@ -72,7 +73,7 @@ html body main.module-page small:not(#ui-a):not(#ui-b){
   -webkit-text-fill-color:var(--stackup-blue-300)!important;
 }
 
-/* CONTROLES: AZUL EM REPOUSO, BRANCO NO CLIQUE/SELEÇÃO. */
+/* CONTROLES: AZUL EM REPOUSO; FUNDO AZUL + BORDA BRANCA + TEXTO BRANCO NO CLIQUE/SELEÇÃO. */
 html body main.stackup-home .modules a:not(#ui-a):not(#ui-b),
 html body main.module-page button:not(#ui-a):not(#ui-b),
 html body main.module-page a.module-back:not(#ui-a):not(#ui-b),
@@ -118,10 +119,24 @@ html body main.module-page a.module-back:not(#ui-a):not(#ui-b){
   -webkit-text-fill-color:var(--stackup-white)!important;
   box-shadow:none!important;
 }
-html body main.module-page button:not(#ui-a):not(#ui-b):is(:active,:focus-visible),
+html body main.module-page button:not(#ui-a):not(#ui-b):active,
 html body main.module-page button[aria-pressed="true"]:not(#ui-a):not(#ui-b),
+html body main.module-page label:not(#ui-a):not(#ui-b):has(input:checked){
+  background:var(--app-command-selected-background)!important;
+  background-image:var(--app-command-selected-background)!important;
+  border-color:var(--stackup-white)!important;
+  color:var(--stackup-white)!important;
+  -webkit-text-fill-color:var(--stackup-white)!important;
+  box-shadow:inset 0 0 0 1px var(--stackup-white)!important;
+  outline-color:var(--stackup-white)!important;
+}
+html body main.module-page button[aria-pressed="true"]:not(#ui-a):not(#ui-b) *,
+html body main.module-page label:not(#ui-a):not(#ui-b):has(input:checked) *{
+  color:var(--stackup-white)!important;
+  -webkit-text-fill-color:var(--stackup-white)!important;
+}
+html body main.module-page button:not(#ui-a):not(#ui-b):focus-visible,
 html body main.module-page a.module-back:not(#ui-a):not(#ui-b):is(:active,:focus-visible),
-html body main.module-page label:not(#ui-a):not(#ui-b):has(input:checked),
 html body main.module-page :is(input,select,textarea):not(#ui-a):not(#ui-b):focus{
   border-color:var(--stackup-white)!important;
   outline-color:var(--stackup-white)!important;
