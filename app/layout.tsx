@@ -23,8 +23,8 @@ export const metadata: Metadata = {
   title: "STACKUP HOLD'EM HEROES",
   description: "AI POKER PERFORMANCE SYSTEM.",
   icons: {
-    icon: "/gemeo.stackup.holdem-heroes/stackup-heroes-logo.png",
-    apple: "/gemeo.stackup.holdem-heroes/stackup-heroes-logo.png",
+    icon: "/gemeo.stackup.holdem-heroes/stackup-heroes-logo-128-20260911.png",
+    apple: "/gemeo.stackup.holdem-heroes/stackup-heroes-logo-128-20260911.png",
   },
 };
 
