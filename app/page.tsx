@@ -1,17 +1,28 @@
 import Link from "next/link";
+import StackupAppHeader from "@/components/StackupAppHeader";
 import "./home-cards.css";
 
-const modules = [
-  {href:"/player-dna",line1:"PLAYER",line2:"DNA",description:"DESCUBRA SEU PERFIL DE DECISÕES EM DIFERENTES CENÁRIOS DE JOGO."},
-  {href:"/ai-hand-review",line1:"AI HAND",line2:"REVIEW",description:"IMPORTE, RECONSTRUA E ANALISE SUAS MÃOS COM IA."},
-  {href:"/poker-assistant",line1:"POKER",line2:"ASSISTANT",description:"TIRE DÚVIDAS SOBRE REGRAS, ESTRATÉGIAS, RANGES ETC..."},
-  {href:"/poker-math-lab",line1:"POKER",line2:"MATH LAB",description:"APRENDA E PRATIQUE ODDS, OUTS, SPR, EQUITY E MUITO MAIS..."},
+const modules=[
+  {href:"/player-dna",number:"01",title:"PLAYER DNA",description:"DESCUBRA SEU PERFIL TÉCNICO COM SPOTS DE TREINO VARIADOS."},
+  {href:"/poker-math-lab",number:"02",title:"MATEMÁTICA DO POKER",description:"APRENDA ODDS, POT ODDS, MDF, SPR E CONCEITOS ESSENCIAIS."},
+  {href:"/ai-hand-review",number:"03",title:"ANÁLISE DE MÃOS",description:"ENVIE CENÁRIOS COMPLETOS E RECEBA AVALIAÇÃO ESTRATÉGICA."},
+  {href:"/poker-assistant",number:"04",title:"PERGUNTE À IA",description:"TIRE DÚVIDAS SOBRE POKER, ESTRATÉGIA, RANGES E DECISÕES."},
 ];
 
 export default function Home(){
-  return <main>
-    <header className="topbar"><div><span className="brand">STACKUP HOLD&apos;EM HEROES</span></div><span className="status">● AI POKER PERFORMANCE SYSTEM</span></header>
-    <section className="hero"><p className="system-gradient" style={{display:"inline-block",width:"max-content",maxWidth:"100%"}}>AI POKER<br/>PERFORMANCE<br/>SYSTEM.</p><h1><span className="hero-lead">DESCUBRA. <em>ENTENDA.</em></span><br/><span className="hero-evolve">EVOLUA.</span></h1></section>
-    <nav className="modules" aria-label="MÓDULOS STACKUP">{modules.map(item=><Link key={item.href} href={item.href}><strong className="module-title"><span>{item.line1}</span><span>{item.line2}</span></strong><span className="module-description">{item.description}</span></Link>)}</nav>
+  return <main className="stackup-home">
+    <StackupAppHeader/>
+    <section className="stackup-home-intro">
+      <div className="stackup-home-kicker">MÓDULOS</div>
+      <h1 className="stackup-home-title">STACKUP HEROES</h1>
+      <p className="stackup-home-lead">INTELIGÊNCIA ARTIFICIAL, TREINO E ANÁLISE DE POKER PARA ELEVAR O SEU DESEMPENHO A UM NOVO NÍVEL.</p>
+    </section>
+    <nav className="modules" aria-label="MÓDULOS STACKUP">
+      {modules.map(item=><Link key={item.href} href={item.href}>
+        <span className="module-number">{item.number}</span>
+        <span className="module-copy"><strong className="module-title">{item.title}</strong><span className="module-description">{item.description}</span></span>
+        <span className="module-chevron" aria-hidden="true">›</span>
+      </Link>)}
+    </nav>
   </main>;
 }
