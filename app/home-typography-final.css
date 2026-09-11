@@ -1,7 +1,7 @@
 /* HOME TYPOGRAPHY — FINAL CONTRACT
  * LOVE YA LIKE A SISTER
- * Header title: 24px
- * Header subtitle: 14px
+ * STACKUP HOLD'EM HEROES: 24px
+ * AI POKER PERFORMANCE SYSTEM: 16px
  * TREINE / ENTENDA: 18px
  * EVOLUA: 24px
  * Home lead: 14px
@@ -17,7 +17,7 @@ html body .stackup-app-title > span:last-child{
 }
 
 html body .stackup-app-subtitle{
-  font-size:14px!important;
+  font-size:16px!important;
   line-height:1.2!important;
   letter-spacing:.08em!important;
   font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;
@@ -52,7 +52,7 @@ html body .stackup-home-template-v2 .stackup-hero-lead{
   html body .stackup-app-title > span,
   html body .stackup-app-title > span:first-child,
   html body .stackup-app-title > span:last-child{font-size:24px!important}
-  html body .stackup-app-subtitle{font-size:14px!important}
+  html body .stackup-app-subtitle{font-size:16px!important}
   html body .stackup-home-template-v2 .stackup-hero-title span:nth-child(1),
   html body .stackup-home-template-v2 .stackup-hero-title span:nth-child(2){font-size:18px!important}
   html body .stackup-home-template-v2 .stackup-hero-title span:nth-child(3){font-size:24px!important}
