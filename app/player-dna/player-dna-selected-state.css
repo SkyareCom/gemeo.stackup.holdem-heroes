@@ -1,0 +1,33 @@
+/* PLAYER DNA — ESTADO SELECIONADO PADRÃO
+ * Vale para CASH/TORNEIO/ALEATÓRIO, SPOTS, ações e sizings.
+ * Repouso: fundo escuro + borda azul.
+ * Selecionado/clicado: fundo azul + borda branca + texto branco.
+ */
+html body main.player-dna-page .mode-choices>label:not(#sel-a):not(#sel-b),
+html body main.player-dna-page .depth-choices>button:not(#sel-a):not(#sel-b),
+html body main.player-dna-page .training-session button:not(#sel-a):not(#sel-b){
+  border-color:#238FDF!important;
+  background:#071A2D!important;
+  background-image:none!important;
+  color:#F8FBFF!important;
+  -webkit-text-fill-color:#F8FBFF!important;
+}
+
+html body main.player-dna-page .mode-choices>label:not(#sel-a):not(#sel-b):has(input:checked),
+html body main.player-dna-page .depth-choices>button[aria-pressed="true"]:not(#sel-a):not(#sel-b),
+html body main.player-dna-page .training-session button[aria-pressed="true"]:not(#sel-a):not(#sel-b),
+html body main.player-dna-page .training-session button:not(#sel-a):not(#sel-b):active{
+  border:2px solid #F8FBFF!important;
+  background:linear-gradient(180deg,#168EE8,#0B67C8)!important;
+  background-image:linear-gradient(180deg,#168EE8,#0B67C8)!important;
+  color:#F8FBFF!important;
+  -webkit-text-fill-color:#F8FBFF!important;
+  box-shadow:inset 0 0 0 1px #F8FBFF!important;
+}
+
+html body main.player-dna-page .mode-choices>label:not(#sel-a):not(#sel-b):has(input:checked) *,
+html body main.player-dna-page .depth-choices>button[aria-pressed="true"]:not(#sel-a):not(#sel-b) *,
+html body main.player-dna-page .training-session button[aria-pressed="true"]:not(#sel-a):not(#sel-b) *{
+  color:#F8FBFF!important;
+  -webkit-text-fill-color:#F8FBFF!important;
+}
