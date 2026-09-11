@@ -1,18 +1,21 @@
 /* PLAYER DNA — FEEDBACK VISUAL DE SELEÇÃO DOS CARDS DE SPOTS.
- * O card selecionado usa superfície pastel clara e texto preto para contraste máximo.
+ * SOMENTE A BORDA MUDA NO CARD SELECIONADO. FUNDO E TEXTO PERMANECEM IGUAIS.
  */
 html body main.player-dna-page .depth-choices > button[aria-pressed="true"],
 html body main.player-dna-page .depth-choices > button:active{
-  background:#ede6db!important;
+  background:#0b1710!important;
   border-color:#ede6db!important;
-  box-shadow:inset 0 0 0 1px #ffffff,0 0 14px rgba(237,230,219,.32)!important;
-  color:#000000!important;
-  -webkit-text-fill-color:#000000!important;
+  box-shadow:inset 0 0 0 1px #ede6db!important;
+  color:#edf7f0!important;
+  -webkit-text-fill-color:#edf7f0!important;
 }
 html body main.player-dna-page .depth-choices > button[aria-pressed="true"] > strong,
+html body main.player-dna-page .depth-choices > button:active > strong{
+  color:#8cf0b2!important;
+  -webkit-text-fill-color:#8cf0b2!important;
+}
 html body main.player-dna-page .depth-choices > button[aria-pressed="true"] > span,
-html body main.player-dna-page .depth-choices > button:active > strong,
 html body main.player-dna-page .depth-choices > button:active > span{
-  color:#000000!important;
-  -webkit-text-fill-color:#000000!important;
+  color:#edf7f0!important;
+  -webkit-text-fill-color:#edf7f0!important;
 }
