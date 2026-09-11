@@ -1,0 +1,134 @@
+/* STACKUP HEROES — CONTRAST BLUE TUNING
+ * Somente cor/contraste. Não altera geometria nem a mesa do Player DNA.
+ */
+:root{
+  --su-navy-950:#020812;
+  --su-navy-900:#04111F;
+  --su-navy-850:#071A2D;
+  --su-navy-800:#0A2440;
+  --su-blue-700:#0B67C8;
+  --su-blue-600:#168EE8;
+  --su-blue-500:#31A8FF;
+  --su-blue-400:#5BBCFF;
+  --su-blue-300:#A9D8FF;
+  --su-white:#F8FBFF;
+  --su-gray-100:#EAF0F7;
+  --su-gray-300:#C4D0DD;
+  --su-gray-500:#8292A5;
+  --su-border:#238FDF;
+  --su-border-soft:#238FDF;
+}
+
+html,body,body.unified-background{
+  background:
+    radial-gradient(circle at 12% 0%,rgba(22,142,232,.28),transparent 30%),
+    radial-gradient(circle at 92% 22%,rgba(49,168,255,.16),transparent 33%),
+    linear-gradient(160deg,#020812 0%,#04111F 48%,#071A2D 100%)!important;
+}
+
+/* Toda borda já existente passa a ser azul real, sem adicionar novas bordas. */
+html body *:not(#stackup-border-override){
+  border-color:var(--su-border)!important;
+}
+
+/* Cabeçalho: mais profundidade e contraste azul. */
+html body .stackup-app-header{
+  border-bottom-color:var(--su-blue-500)!important;
+  background:
+    linear-gradient(115deg,#0A3970 0%,#061C36 48%,#04111F 100%),
+    radial-gradient(circle at 20% 18%,rgba(91,188,255,.22),transparent 34%)!important;
+  box-shadow:0 16px 38px rgba(0,0,0,.38),inset 0 -1px 0 rgba(169,216,255,.10)!important;
+}
+html body .stackup-logo{
+  border-color:var(--su-blue-300)!important;
+  background:radial-gradient(circle at 32% 25%,#0D4A86 0%,#082B50 55%,#020812 100%)!important;
+  box-shadow:0 0 0 5px rgba(49,168,255,.14),0 10px 24px rgba(0,0,0,.38),inset 0 0 0 2px #F8FBFF!important;
+}
+html body .stackup-app-subtitle{
+  color:var(--su-blue-300)!important;
+  -webkit-text-fill-color:var(--su-blue-300)!important;
+}
+html body .stackup-header-spade{
+  color:rgba(91,188,255,.14)!important;
+  -webkit-text-fill-color:rgba(91,188,255,.14)!important;
+}
+
+/* Home: cartões escuros com títulos brancos e contorno azul forte. */
+html body .modules a,
+html body .modules a:nth-child(n){
+  border-color:var(--su-border)!important;
+  background:linear-gradient(145deg,#0A2440 0%,#071A2D 55%,#04111F 100%)!important;
+  background-image:linear-gradient(145deg,#0A2440 0%,#071A2D 55%,#04111F 100%)!important;
+  color:var(--su-white)!important;
+  -webkit-text-fill-color:var(--su-white)!important;
+  box-shadow:0 12px 28px rgba(0,0,0,.32),inset 0 1px 0 rgba(169,216,255,.08)!important;
+}
+html body .module-number{
+  border-color:var(--su-blue-500)!important;
+  background:linear-gradient(145deg,#0B4A88,#04111F)!important;
+  color:var(--su-blue-300)!important;
+  -webkit-text-fill-color:var(--su-blue-300)!important;
+}
+html body .module-title,
+html body .module-title span{
+  color:var(--su-white)!important;
+  -webkit-text-fill-color:var(--su-white)!important;
+}
+html body .module-description{
+  color:var(--su-gray-300)!important;
+  -webkit-text-fill-color:var(--su-gray-300)!important;
+}
+html body .module-chevron{
+  color:var(--su-blue-400)!important;
+  -webkit-text-fill-color:var(--su-blue-400)!important;
+}
+
+/* Controles: azul claro/forte em repouso, branco no clique/seleção. */
+html body :where(button,a,[role="button"],label,input,select,textarea){
+  border-color:var(--su-border)!important;
+}
+html body :where(button,a,[role="button"],label):is(:active,:focus-visible),
+html body :where(button,[role="button"])[aria-pressed="true"],
+html body label:has(input:checked),
+html body :where(input,select,textarea):focus{
+  border-color:var(--su-white)!important;
+  outline-color:var(--su-white)!important;
+}
+
+html body main.module-page .module-navigation .module-back,
+html body main.module-page > .module-back{
+  border-color:var(--su-border)!important;
+  background:linear-gradient(180deg,#0A315C,#04111F)!important;
+  background-image:linear-gradient(180deg,#0A315C,#04111F)!important;
+  color:var(--su-white)!important;
+  -webkit-text-fill-color:var(--su-white)!important;
+}
+html body main.module-page .module-navigation .module-back:is(:hover,:focus-visible,:active),
+html body main.module-page > .module-back:is(:hover,:focus-visible,:active),
+html body .modules a:is(:hover,:focus-visible,:active){
+  border-color:var(--su-white)!important;
+  box-shadow:0 0 0 1px rgba(248,251,255,.32),0 12px 30px rgba(0,0,0,.36)!important;
+}
+
+html body .panel{
+  background:linear-gradient(160deg,rgba(4,17,31,.94),rgba(7,30,54,.88))!important;
+}
+html body :where(input,textarea,select){
+  background:#04111F!important;
+  color:var(--su-white)!important;
+  -webkit-text-fill-color:var(--su-white)!important;
+}
+html body button:not(:disabled){
+  color:var(--su-white)!important;
+  -webkit-text-fill-color:var(--su-white)!important;
+}
+html body .primary:not(:disabled){
+  border-color:var(--su-blue-500)!important;
+  background:linear-gradient(180deg,#168EE8,#0B67C8)!important;
+  background-image:linear-gradient(180deg,#168EE8,#0B67C8)!important;
+  color:#F8FBFF!important;
+  -webkit-text-fill-color:#F8FBFF!important;
+}
+html body .primary:not(:disabled):is(:active,:focus-visible){
+  border-color:#F8FBFF!important;
+}
