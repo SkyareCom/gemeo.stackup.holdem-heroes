@@ -2,6 +2,7 @@ import Link from "next/link";
 import PlayerDnaWorkspace from "@/components/PlayerDnaWorkspace";
 import PlayerDnaFixedActions from "@/components/PlayerDnaFixedActions";
 import "./player-dna-typography.css";
+import "./player-dna-selection-contrast.css";
 
 export default function PlayerDnaPage(){
   return <main className="module-page player-dna-page">
