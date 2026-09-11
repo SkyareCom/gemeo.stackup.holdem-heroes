@@ -1,0 +1,200 @@
+/* PLAYER DNA — CONTRATO VISUAL E RESPONSIVO FINAL
+ * Corrige: bordas externas, overflow horizontal, cores legadas e tipografia.
+ * A mesa permanece isolada no Shadow DOM e não é alterada.
+ */
+html body main.player-dna-page:not(#pd-a):not(#pd-b){
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  overflow-x:clip!important;
+  box-sizing:border-box!important;
+  background:transparent!important;
+}
+html body main.player-dna-page:not(#pd-a):not(#pd-b),
+html body main.player-dna-page:not(#pd-a):not(#pd-b) *{
+  font-family:inherit!important;
+  box-sizing:border-box!important;
+}
+
+/* Remove apenas bordas estruturais externas/secundárias. */
+html body main.player-dna-page section.panel.profile-panel:not(#pd-a):not(#pd-b),
+html body main.player-dna-page .saved-analysis-panel:not(#pd-a):not(#pd-b),
+html body main.player-dna-page .history-panel:not(#pd-a):not(#pd-b),
+html body main.player-dna-page .training-session>section:not(#pd-a):not(#pd-b){
+  border:0!important;
+  box-shadow:none!important;
+}
+html body main.player-dna-page section.panel.profile-panel:not(#pd-a):not(#pd-b){
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  padding-left:0!important;
+  padding-right:0!important;
+  background:transparent!important;
+}
+html body main.player-dna-page .saved-analysis-panel:not(#pd-a):not(#pd-b),
+html body main.player-dna-page .history-panel:not(#pd-a):not(#pd-b){
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  background:linear-gradient(160deg,rgba(4,17,31,.88),rgba(7,26,45,.76))!important;
+}
+
+/* Nenhum bloco da configuração pode ampliar o viewport. */
+html body main.player-dna-page .setup:not(#pd-a):not(#pd-b),
+html body main.player-dna-page .setup:not(#pd-a):not(#pd-b)>*,
+html body main.player-dna-page .mode-choices:not(#pd-a):not(#pd-b),
+html body main.player-dna-page .depth-choices:not(#pd-a):not(#pd-b),
+html body main.player-dna-page .saved-analysis-panel:not(#pd-a):not(#pd-b),
+html body main.player-dna-page .history-panel:not(#pd-a):not(#pd-b),
+html body main.player-dna-page .history-actions:not(#pd-a):not(#pd-b){
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+}
+html body main.player-dna-page .setup h2:not(#pd-a):not(#pd-b),
+html body main.player-dna-page .setup-intro:not(#pd-a):not(#pd-b),
+html body main.player-dna-page .saved-analysis-description:not(#pd-a):not(#pd-b),
+html body main.player-dna-page .history-description:not(#pd-a):not(#pd-b){
+  max-width:100%!important;
+  white-space:normal!important;
+  overflow-wrap:anywhere!important;
+  word-break:normal!important;
+}
+
+/* GRID RESPONSIVO: 3 COLUNAS QUE REALMENTE CABEM NA TELA. */
+html body main.player-dna-page .mode-choices:not(#pd-a):not(#pd-b),
+html body main.player-dna-page .depth-choices:not(#pd-a):not(#pd-b){
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:10px!important;
+  justify-content:stretch!important;
+}
+html body main.player-dna-page .mode-choices>label:not(#pd-a):not(#pd-b),
+html body main.player-dna-page .depth-choices>button:not(#pd-a):not(#pd-b){
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  justify-self:stretch!important;
+  overflow:hidden!important;
+  border-color:#238FDF!important;
+  background:#071A2D!important;
+  background-image:none!important;
+  box-shadow:none!important;
+}
+html body main.player-dna-page .mode-choices>label:not(#pd-a):not(#pd-b):has(input:checked),
+html body main.player-dna-page .depth-choices>button[aria-pressed="true"]:not(#pd-a):not(#pd-b){
+  border-color:#F8FBFF!important;
+  box-shadow:inset 0 0 0 1px #F8FBFF!important;
+}
+
+/* TIPOGRAFIA PADRÃO — 20 / 16 / 14 / 12 */
+html body main.player-dna-page section.panel.profile-panel h2:not(#pd-a):not(#pd-b),
+html body main.player-dna-page .training-session>section h4:not(#pd-a):not(#pd-b),
+html body main.player-dna-page .training-session [class*="blockTitle"]:not(#pd-a):not(#pd-b){
+  font-size:20px!important;
+  line-height:1.18!important;
+  color:#168EE8!important;
+  -webkit-text-fill-color:#168EE8!important;
+}
+html body main.player-dna-page section.panel.profile-panel .eyebrow:not(#pd-a):not(#pd-b),
+html body main.player-dna-page .saved-analysis-title:not(#pd-a):not(#pd-b),
+html body main.player-dna-page .history-eyebrow:not(#pd-a):not(#pd-b){
+  font-size:16px!important;
+  line-height:1.25!important;
+  color:#31A8FF!important;
+  -webkit-text-fill-color:#31A8FF!important;
+}
+html body main.player-dna-page .setup-intro:not(#pd-a):not(#pd-b),
+html body main.player-dna-page .saved-analysis-description:not(#pd-a):not(#pd-b),
+html body main.player-dna-page .history-description:not(#pd-a):not(#pd-b){
+  font-size:14px!important;
+  line-height:1.45!important;
+  color:#238FDF!important;
+  -webkit-text-fill-color:#238FDF!important;
+}
+html body main.player-dna-page .saved-analysis-status:not(#pd-a):not(#pd-b),
+html body main.player-dna-page .saved-analysis-status span:not(#pd-a):not(#pd-b),
+html body main.player-dna-page .history-count:not(#pd-a):not(#pd-b),
+html body main.player-dna-page .depth-choices>button>span:not(#pd-a):not(#pd-b),
+html body main.player-dna-page .training-session [class*="progressHead"] :is(span,strong):not(#pd-a):not(#pd-b),
+html body main.player-dna-page .players-header span:not(#pd-a):not(#pd-b){
+  font-size:12px!important;
+  line-height:1.3!important;
+  color:#A9D8FF!important;
+  -webkit-text-fill-color:#A9D8FF!important;
+}
+html body main.player-dna-page .mode-choices>label>strong:not(#pd-a):not(#pd-b),
+html body main.player-dna-page button:not(#pd-a):not(#pd-b),
+html body main.player-dna-page a.module-back:not(#pd-a):not(#pd-b){
+  font-size:14px!important;
+  color:#F8FBFF!important;
+  -webkit-text-fill-color:#F8FBFF!important;
+}
+html body main.player-dna-page .depth-choices>button>strong:not(#pd-a):not(#pd-b){
+  font-size:20px!important;
+  line-height:1!important;
+  color:#F8FBFF!important;
+  -webkit-text-fill-color:#F8FBFF!important;
+}
+
+/* Cores de controles: nenhum verde. */
+html body main.player-dna-page button:not(#pd-a):not(#pd-b),
+html body main.player-dna-page a.module-back:not(#pd-a):not(#pd-b),
+html body main.player-dna-page .training-session [class*="badge"]:not(#pd-a):not(#pd-b),
+html body main.player-dna-page .players-header:not(#pd-a):not(#pd-b){
+  border-color:#238FDF!important;
+}
+html body main.player-dna-page button:not(#pd-a):not(#pd-b):is(:active,:focus-visible),
+html body main.player-dna-page button[aria-pressed="true"]:not(#pd-a):not(#pd-b),
+html body main.player-dna-page a.module-back:not(#pd-a):not(#pd-b):is(:active,:focus-visible){
+  border-color:#F8FBFF!important;
+}
+html body main.player-dna-page .training-session [class*="label"]:not(#pd-a):not(#pd-b){
+  color:#31A8FF!important;
+  -webkit-text-fill-color:#31A8FF!important;
+}
+html body main.player-dna-page .training-session [class*="participants"]:not(#pd-a):not(#pd-b),
+html body main.player-dna-page .training-session [class*="badge"]:not(#pd-a):not(#pd-b){
+  color:#C4D0DD!important;
+  -webkit-text-fill-color:#C4D0DD!important;
+}
+html body main.player-dna-page [class*="track"]:not(#pd-a):not(#pd-b){background:#0A2440!important}
+html body main.player-dna-page [class*="track"] i:not(#pd-a):not(#pd-b){background:linear-gradient(90deg,#168EE8,#5BBCFF)!important}
+
+/* Botões de análises/histórico não podem forçar largura maior que o painel. */
+html body main.player-dna-page .saved-analysis-panel>div:last-child:not(#pd-a):not(#pd-b),
+html body main.player-dna-page .history-actions:not(#pd-a):not(#pd-b),
+html body main.player-dna-page nav.module-navigation.player-dna-navigation:not(#pd-a):not(#pd-b){
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:8px!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+}
+html body main.player-dna-page .saved-analysis-panel button:not(#pd-a):not(#pd-b),
+html body main.player-dna-page .history-panel button:not(#pd-a):not(#pd-b),
+html body main.player-dna-page nav.module-navigation.player-dna-navigation>a:not(#pd-a):not(#pd-b){
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  justify-self:stretch!important;
+}
+html body main.player-dna-page .saved-analysis-status:not(#pd-a):not(#pd-b){
+  flex-wrap:wrap!important;
+  min-width:0!important;
+}
+html body main.player-dna-page .saved-analysis-status span:not(#pd-a):not(#pd-b){
+  min-width:0!important;
+  max-width:100%!important;
+  white-space:normal!important;
+}
+
+@media(max-width:420px){
+  html body main.player-dna-page:not(#pd-a):not(#pd-b){padding-left:12px!important;padding-right:12px!important}
+  html body main.player-dna-page .mode-choices:not(#pd-a):not(#pd-b),
+  html body main.player-dna-page .depth-choices:not(#pd-a):not(#pd-b){gap:8px!important}
+  html body main.player-dna-page .mode-choices>label:not(#pd-a):not(#pd-b){padding:8px 4px!important}
+  html body main.player-dna-page .mode-choices>label>strong:not(#pd-a):not(#pd-b){font-size:12px!important}
+}
