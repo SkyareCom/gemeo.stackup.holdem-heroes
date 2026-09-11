@@ -1,0 +1,300 @@
+/* STACKUP HEROES — PLAYER DNA BLUE TEMPLATE
+ * A MESA É UM SHADOW DOM E NÃO É ALTERADA POR ESTE ARQUIVO.
+ */
+html body main.player-dna-page{
+  --pd-bg:#020812;
+  --pd-surface:#06172a;
+  --pd-surface-2:#092540;
+  --pd-border:#238fdf;
+  --pd-border-soft:#33516e;
+  --pd-blue:#31a8ff;
+  --pd-blue-soft:#8bd1ff;
+  --pd-white:#f7fbff;
+  --pd-silver:#b7c3d0;
+  --pd-ink:#061426;
+  background:transparent!important;
+  color:var(--pd-white)!important;
+  -webkit-text-fill-color:var(--pd-white)!important;
+}
+
+html body main.player-dna-page,
+html body main.player-dna-page *{
+  font-family:inherit!important;
+}
+
+html body main.player-dna-page .stackup-app-header *{font-family:inherit!important}
+
+/* CONFIGURAÇÃO / TÍTULOS */
+html body main.player-dna-page section.panel.profile-panel{
+  padding:18px!important;
+  border:1px solid rgba(49,168,255,.34)!important;
+  border-radius:24px!important;
+  background:linear-gradient(160deg,rgba(4,17,31,.90),rgba(6,27,48,.78))!important;
+  box-shadow:0 18px 42px rgba(0,0,0,.23),inset 0 1px 0 rgba(255,255,255,.025)!important;
+}
+html body main.player-dna-page section.panel.profile-panel .eyebrow,
+html body main.player-dna-page section.panel.profile-panel .saved-analysis-title,
+html body main.player-dna-page section.panel.profile-panel .history-eyebrow{
+  font-size:14px!important;
+  line-height:1.2!important;
+  letter-spacing:.18em!important;
+  color:var(--pd-blue)!important;
+  -webkit-text-fill-color:var(--pd-blue)!important;
+}
+html body main.player-dna-page section.panel.profile-panel h2{
+  margin:6px 0 9px!important;
+  font-size:28px!important;
+  line-height:1.08!important;
+  color:var(--pd-white)!important;
+  -webkit-text-fill-color:var(--pd-white)!important;
+}
+html body main.player-dna-page .setup-intro{
+  margin:0!important;
+  font-size:17px!important;
+  line-height:1.42!important;
+  color:var(--pd-silver)!important;
+  -webkit-text-fill-color:var(--pd-silver)!important;
+}
+
+/* MODALIDADE */
+html body main.player-dna-page .mode-choices{gap:10px!important}
+html body main.player-dna-page .mode-choices>label{
+  min-height:52px!important;
+  height:52px!important;
+  padding:0 12px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  border:1px solid var(--pd-border-soft)!important;
+  border-radius:15px!important;
+  background:linear-gradient(180deg,#09243f,#041526)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035)!important;
+}
+html body main.player-dna-page .mode-choices>label>strong{
+  font-size:16px!important;
+  line-height:1!important;
+  color:var(--pd-white)!important;
+  -webkit-text-fill-color:var(--pd-white)!important;
+}
+html body main.player-dna-page .mode-choices>label:has(input:checked){
+  border-color:var(--pd-white)!important;
+  box-shadow:inset 0 0 0 1px var(--pd-white)!important;
+}
+
+/* CARDS DE SPOTS — SOMENTE A BORDA MUDA QUANDO SELECIONADO */
+html body main.player-dna-page .depth-choices{gap:9px!important}
+html body main.player-dna-page .depth-choices>button{
+  min-height:68px!important;
+  padding:9px 10px!important;
+  border:1px solid var(--pd-border-soft)!important;
+  border-radius:14px!important;
+  background:#06172a!important;
+  background-image:none!important;
+  box-shadow:none!important;
+  color:var(--pd-white)!important;
+  -webkit-text-fill-color:var(--pd-white)!important;
+}
+html body main.player-dna-page .depth-choices>button>strong{
+  font-size:20px!important;
+  line-height:1.05!important;
+  color:var(--pd-white)!important;
+  -webkit-text-fill-color:var(--pd-white)!important;
+}
+html body main.player-dna-page .depth-choices>button>span{
+  font-size:12px!important;
+  line-height:1.1!important;
+  letter-spacing:.12em!important;
+  color:var(--pd-blue-soft)!important;
+  -webkit-text-fill-color:var(--pd-blue-soft)!important;
+}
+html body main.player-dna-page .depth-choices>button[aria-pressed="true"]{
+  border:2px solid var(--pd-white)!important;
+  background:#06172a!important;
+  background-image:none!important;
+  box-shadow:none!important;
+}
+
+/* ANÁLISES SALVAS / HISTÓRICO */
+html body main.player-dna-page .saved-analysis-panel,
+html body main.player-dna-page .history-panel{
+  height:auto!important;
+  min-height:150px!important;
+  padding:16px!important;
+  gap:10px!important;
+  border:1px solid rgba(49,168,255,.30)!important;
+  border-radius:18px!important;
+  background:linear-gradient(160deg,rgba(6,28,50,.82),rgba(3,15,28,.92))!important;
+}
+html body main.player-dna-page .saved-analysis-status,
+html body main.player-dna-page .saved-analysis-status span,
+html body main.player-dna-page .history-count{
+  font-size:14px!important;
+  line-height:1.25!important;
+  color:var(--pd-blue-soft)!important;
+  -webkit-text-fill-color:var(--pd-blue-soft)!important;
+}
+html body main.player-dna-page .saved-analysis-description,
+html body main.player-dna-page .history-description{
+  font-size:14px!important;
+  line-height:1.36!important;
+  color:var(--pd-silver)!important;
+  -webkit-text-fill-color:var(--pd-silver)!important;
+}
+html body main.player-dna-page [class*="track"]{background:#102439!important;border-radius:999px!important}
+html body main.player-dna-page [class*="track"] i{background:linear-gradient(90deg,var(--pd-blue),var(--pd-blue-soft))!important}
+
+/* TELA DE TREINO — A MESA NÃO É TOCADA */
+html body main.player-dna-page .training-session{gap:12px!important}
+html body main.player-dna-page .training-session>section{
+  padding:16px!important;
+  border:1px solid rgba(49,168,255,.34)!important;
+  border-radius:18px!important;
+  background:linear-gradient(160deg,rgba(5,22,39,.88),rgba(6,31,55,.76))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.025)!important;
+}
+html body main.player-dna-page .training-session>section h4,
+html body main.player-dna-page .training-session [class*="blockTitle"]{
+  margin:0 0 10px!important;
+  font-size:21px!important;
+  line-height:1.15!important;
+  color:var(--pd-white)!important;
+  -webkit-text-fill-color:var(--pd-white)!important;
+}
+html body main.player-dna-page .training-session [class*="progressHead"] span,
+html body main.player-dna-page .training-session [class*="progressHead"] strong{
+  font-size:12px!important;
+  line-height:1.2!important;
+  color:var(--pd-blue-soft)!important;
+  -webkit-text-fill-color:var(--pd-blue-soft)!important;
+}
+html body main.player-dna-page .training-session [class*="prompt"]{
+  margin:6px 0!important;
+  font-size:18px!important;
+  line-height:1.28!important;
+  color:var(--pd-white)!important;
+  -webkit-text-fill-color:var(--pd-white)!important;
+}
+html body main.player-dna-page .training-session [class*="label"]{
+  font-size:11px!important;
+  line-height:1.2!important;
+  color:var(--pd-blue)!important;
+  -webkit-text-fill-color:var(--pd-blue)!important;
+}
+html body main.player-dna-page .training-session [class*="value"],
+html body main.player-dna-page .training-session [class*="potValue"]{
+  font-size:14px!important;
+  color:var(--pd-white)!important;
+  -webkit-text-fill-color:var(--pd-white)!important;
+}
+html body main.player-dna-page .training-session [class*="participants"],
+html body main.player-dna-page .training-session [class*="badge"]{
+  font-size:12px!important;
+  color:var(--pd-silver)!important;
+  -webkit-text-fill-color:var(--pd-silver)!important;
+  border-color:var(--pd-border-soft)!important;
+}
+
+/* AÇÕES DO POKER: GEOMETRIA EXISTENTE PRESERVADA, SOMENTE TEMA/TIPO */
+html body main.player-dna-page .training-session [class*="actions"]>button,
+html body main.player-dna-page [class*="sizingActions"]>button,
+html body main.player-dna-page .player-dna-fixed-actions-v2>button{
+  border-color:var(--pd-border)!important;
+  background:linear-gradient(180deg,#092845,#041526)!important;
+  background-image:linear-gradient(180deg,#092845,#041526)!important;
+  color:var(--pd-white)!important;
+  -webkit-text-fill-color:var(--pd-white)!important;
+  font-size:16px!important;
+  font-weight:400!important;
+}
+html body main.player-dna-page .training-session [class*="actions"]>button[aria-pressed="true"],
+html body main.player-dna-page [class*="sizingActions"]>button[aria-pressed="true"]{
+  border-color:var(--pd-white)!important;
+  box-shadow:inset 0 0 0 1px var(--pd-white),0 0 14px rgba(49,168,255,.20)!important;
+}
+html body main.player-dna-page .training-session [class*="actions"]>button:disabled,
+html body main.player-dna-page [class*="sizingActions"]>button:disabled{color:var(--pd-gray-500,#7d8b9b)!important;-webkit-text-fill-color:var(--pd-gray-500,#7d8b9b)!important;border-color:#496078!important}
+
+/* AVALIAÇÃO / ANÁLISE */
+html body main.player-dna-page .training-session [class*="evaluation"],
+html body main.player-dna-page .training-session [class*="analysis"]{
+  border-color:rgba(49,168,255,.38)!important;
+}
+html body main.player-dna-page .training-session [class*="evaluation"] strong,
+html body main.player-dna-page .training-session [class*="analysis"] strong{
+  font-size:21px!important;
+  color:var(--pd-white)!important;
+  -webkit-text-fill-color:var(--pd-white)!important;
+}
+
+/* BOTÕES INFERIORES */
+html body main.player-dna-page .training-footer{
+  display:grid!important;
+  grid-template-columns:repeat(2,160px)!important;
+  justify-content:center!important;
+  gap:10px!important;
+  width:100%!important;
+}
+html body main.player-dna-page .training-footer>button{
+  width:160px!important;
+  min-width:160px!important;
+  max-width:160px!important;
+  height:44px!important;
+  min-height:44px!important;
+  max-height:44px!important;
+  border:2px solid var(--pd-border)!important;
+  border-radius:14px!important;
+  background:linear-gradient(180deg,#092845,#041526)!important;
+  background-image:linear-gradient(180deg,#092845,#041526)!important;
+  color:var(--pd-white)!important;
+  -webkit-text-fill-color:var(--pd-white)!important;
+  font-size:16px!important;
+  font-weight:400!important;
+  line-height:1!important;
+}
+html body main.player-dna-page .training-footer>button:last-child:not(:disabled){
+  background:linear-gradient(180deg,#eaf5ff,#9fd2ff)!important;
+  background-image:linear-gradient(180deg,#eaf5ff,#9fd2ff)!important;
+  color:var(--pd-ink)!important;
+  -webkit-text-fill-color:var(--pd-ink)!important;
+}
+html body main.player-dna-page .training-footer>button>*,
+html body main.player-dna-page .training-footer>button:last-child:not(:disabled)>*{
+  font-size:16px!important;
+  font-weight:400!important;
+  line-height:1!important;
+  color:inherit!important;
+  -webkit-text-fill-color:inherit!important;
+}
+
+/* CABEÇALHO DE JOGADORES FORA DA MESA */
+html body main.player-dna-page .players-header{
+  min-height:42px!important;
+  padding:10px 9px!important;
+  border-color:var(--pd-border-soft)!important;
+  border-radius:12px!important;
+  background:#081d32!important;
+  box-shadow:none!important;
+  color:var(--pd-blue-soft)!important;
+  -webkit-text-fill-color:var(--pd-blue-soft)!important;
+}
+html body main.player-dna-page .players-header span{
+  font-size:11px!important;
+  color:var(--pd-blue-soft)!important;
+  -webkit-text-fill-color:var(--pd-blue-soft)!important;
+}
+
+@media(max-width:620px){
+  html body main.player-dna-page section.panel.profile-panel{padding:12px!important;border-radius:18px!important}
+  html body main.player-dna-page section.panel.profile-panel h2{font-size:28px!important}
+  html body main.player-dna-page .setup-intro{font-size:16px!important}
+  html body main.player-dna-page .mode-choices>label>strong{font-size:14px!important}
+  html body main.player-dna-page .depth-choices>button>strong{font-size:20px!important}
+  html body main.player-dna-page .training-session [class*="actions"]>button,
+  html body main.player-dna-page [class*="sizingActions"]>button{font-size:14px!important}
+}
+
+@media(max-width:350px){
+  html body main.player-dna-page .training-footer{grid-template-columns:repeat(2,148px)!important}
+  html body main.player-dna-page .training-footer>button{width:148px!important;min-width:148px!important;max-width:148px!important;font-size:14px!important}
+  html body main.player-dna-page .training-footer>button>*{font-size:14px!important}
+}
