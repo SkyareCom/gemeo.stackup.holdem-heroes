@@ -5,6 +5,8 @@ import {useEffect} from "react";
 const COMMAND_MAX_WIDTH="160px";
 const COMMAND_HEIGHT="52px";
 const COMMAND_FONT_SIZE="14px";
+const TABLE_FONT_SIZE="10px";
+const TABLE_FONT_FAMILY='var(--font-love-ya-like-a-sister), "Love Ya Like A Sister", cursive';
 const SELECTED_BORDER="#F8FBFF";
 const NORMAL_BORDER="#238FDF";
 const COMMAND_TEXT="#F8FBFF";
@@ -70,6 +72,40 @@ function forceFooter(){
   });
 }
 
+function forcePokerTableTypography(){
+  document.querySelectorAll<HTMLElement>(".player-dna-page *").forEach(host=>{
+    const root=host.shadowRoot;
+    if(!root||!root.querySelector(".scene"))return;
+
+    const selectors=[
+      ".scene",
+      ".plate b",
+      ".stack",
+      ".levelinfo b",
+      ".levelinfo span",
+      ".pot",
+      ".sidepot",
+      ".street",
+      ".heroaction",
+      ".herostack",
+      ".heroplate b",
+      ".heroplate small",
+      ".action"
+    ].join(",");
+
+    root.querySelectorAll<HTMLElement>(selectors).forEach(element=>{
+      element.style.setProperty("font-family",TABLE_FONT_FAMILY,"important");
+      element.style.setProperty("font-size",TABLE_FONT_SIZE,"important");
+      element.style.setProperty("line-height","1.1","important");
+      element.style.setProperty("max-width","100%","important");
+    });
+
+    root.querySelectorAll<HTMLElement>(".action,.heroaction,.pot,.sidepot,.levelinfo,.plate,.stack,.street,.herostack,.heroplate").forEach(element=>{
+      element.style.setProperty("white-space","nowrap","important");
+    });
+  });
+}
+
 function paintDepthSelection(selected:HTMLButtonElement|null){
   document.querySelectorAll<HTMLButtonElement>(".player-dna-page .depth-choices > button").forEach(button=>{
     const active=button===selected;
@@ -103,6 +139,7 @@ export default function PlayerDnaUiEnforcer(){
 
     const apply=()=>{
       forceFooter();
+      forcePokerTableTypography();
       const selected=document.querySelector<HTMLButtonElement>('.player-dna-page .depth-choices > button[aria-pressed="true"]');
       if(selected)paintDepthSelection(selected);
     };
@@ -129,11 +166,13 @@ export default function PlayerDnaUiEnforcer(){
     document.addEventListener("click",onDepthClick,true);
     const observer=new MutationObserver(apply);
     observer.observe(document.body,{subtree:true,childList:true});
+    const typographyEnforcer=window.setInterval(forcePokerTableTypography,300);
     apply();
 
     return()=>{
       document.removeEventListener("click",onDepthClick,true);
       observer.disconnect();
+      window.clearInterval(typographyEnforcer);
       if(pendingStart!==undefined)window.clearTimeout(pendingStart);
     };
   },[]);
