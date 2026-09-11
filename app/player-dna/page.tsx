@@ -8,6 +8,7 @@ import "./player-dna-selection-contrast.css";
 import "./player-dna-footer-controls.css";
 import "./player-dna-blue-template.css";
 import "./player-dna-contrast-blue.css";
+import "./player-dna-ui-contract.css";
 
 export default function PlayerDnaPage(){
   return <main className="module-page player-dna-page">
