@@ -1,7 +1,6 @@
 import Link from "next/link";
 import StackupAppHeader from "@/components/StackupAppHeader";
 import PlayerDnaWorkspace from "@/components/PlayerDnaWorkspace";
-import PlayerDnaFixedActions from "@/components/PlayerDnaFixedActions";
 import PlayerDnaUiEnforcer from "@/components/PlayerDnaUiEnforcer";
 import "./player-dna-typography.css";
 import "./player-dna-selection-contrast.css";
@@ -21,7 +20,6 @@ export default function PlayerDnaPage(){
       <Link className="module-back player-dna-nav-button" href="/">⌂ MENU PRINCIPAL</Link>
     </nav>
     <section className="panel profile-panel">
-      <PlayerDnaFixedActions/>
       <PlayerDnaWorkspace/>
     </section>
   </main>;
