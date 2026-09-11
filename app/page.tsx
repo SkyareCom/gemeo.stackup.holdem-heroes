@@ -60,6 +60,21 @@ export default function Home(){
         width:38%!important;
         height:54%!important;
       }
+      html body .stackup-home-template-v2 .stackup-hero-medallion{
+        width:96px!important;
+        height:96px!important;
+        aspect-ratio:1/1!important;
+        right:14%!important;
+        bottom:8%!important;
+        border:7px solid #9ed6ff!important;
+        border-radius:50%!important;
+        clip-path:circle(50% at 50% 50%)!important;
+        overflow:hidden!important;
+        background:
+          radial-gradient(circle at 50% 50%,#0a3f72 0 48%,#071a31 49% 62%,#4aaeff 63% 70%,#071a31 71% 100%)!important;
+        box-shadow:inset 0 0 0 4px rgba(255,255,255,.16),inset 0 0 20px rgba(31,151,255,.34)!important;
+        filter:drop-shadow(0 8px 12px rgba(0,0,0,.38))!important;
+      }
       @media(max-width:520px){
         html body .stackup-home-template-v2 .stackup-hero-copy{
           width:44%!important;
@@ -78,6 +93,13 @@ export default function Home(){
           bottom:4%!important;
           width:38%!important;
           height:54%!important;
+        }
+        html body .stackup-home-template-v2 .stackup-hero-medallion{
+          width:86px!important;
+          height:86px!important;
+          right:14%!important;
+          bottom:8%!important;
+          border-width:6px!important;
         }
       }
     `}</style>
