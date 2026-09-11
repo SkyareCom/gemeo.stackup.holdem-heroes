@@ -9,11 +9,11 @@ const TABLE_FONT_SIZE="10px";
 const TABLE_FONT_FAMILY='var(--font-love-ya-like-a-sister), "Love Ya Like A Sister", cursive';
 const SELECTED_BORDER="#F8FBFF";
 const NORMAL_BORDER="#238FDF";
-const COMMAND_TEXT="#F8FBFF";
-const SECONDARY_TEXT="#A9D8FF";
-const COMMAND_BACKGROUND="linear-gradient(180deg,#0A2440,#071A2D)";
-const COMMAND_PRIMARY_BACKGROUND="linear-gradient(180deg,#168EE8,#0B67C8)";
-const SELECTED_BACKGROUND=COMMAND_PRIMARY_BACKGROUND;
+const NORMAL_TEXT="#238FDF";
+const SELECTED_TEXT="#F8FBFF";
+const SECONDARY_TEXT="#238FDF";
+const COMMAND_BACKGROUND="#071A2D";
+const SELECTED_BACKGROUND="#168EE8";
 
 function forceFooter(){
   const footer=document.querySelector<HTMLElement>(".player-dna-page .training-footer");
@@ -27,10 +27,12 @@ function forceFooter(){
   footer.style.setProperty("max-width","100%","important");
   footer.style.setProperty("min-width","0","important");
 
-  footer.querySelectorAll<HTMLButtonElement>(":scope > button").forEach((button,index)=>{
-    const isPrimary=index===1&&!button.disabled;
-    const background=isPrimary?COMMAND_PRIMARY_BACKGROUND:COMMAND_BACKGROUND;
-    const border=isPrimary?SELECTED_BORDER:NORMAL_BORDER;
+  footer.querySelectorAll<HTMLButtonElement>(":scope > button").forEach(button=>{
+    const selected=button.getAttribute("aria-pressed")==="true"||button.getAttribute("aria-selected")==="true"||button.classList.contains("active")||button.classList.contains("selected");
+    const background=selected?SELECTED_BACKGROUND:COMMAND_BACKGROUND;
+    const border=selected?SELECTED_BORDER:NORMAL_BORDER;
+    const text=selected?SELECTED_TEXT:NORMAL_TEXT;
+
     button.style.setProperty("display","inline-flex","important");
     button.style.setProperty("align-items","center","important");
     button.style.setProperty("justify-content","center","important");
@@ -46,9 +48,9 @@ function forceFooter(){
     button.style.setProperty("border",`2px solid ${border}`,"important");
     button.style.setProperty("border-radius","14px","important");
     button.style.setProperty("background",background,"important");
-    button.style.setProperty("background-image",background,"important");
-    button.style.setProperty("color",COMMAND_TEXT,"important");
-    button.style.setProperty("-webkit-text-fill-color",COMMAND_TEXT,"important");
+    button.style.setProperty("background-image","none","important");
+    button.style.setProperty("color",text,"important");
+    button.style.setProperty("-webkit-text-fill-color",text,"important");
     button.style.setProperty("font-size",COMMAND_FONT_SIZE,"important");
     button.style.setProperty("font-weight","400","important");
     button.style.setProperty("line-height","1","important");
@@ -57,11 +59,11 @@ function forceFooter(){
     button.style.setProperty("justify-self","stretch","important");
     button.style.setProperty("flex","none","important");
     button.style.setProperty("overflow","hidden","important");
-    button.style.setProperty("box-shadow",isPrimary?`inset 0 0 0 1px ${SELECTED_BORDER}`:"none","important");
+    button.style.setProperty("box-shadow",selected?`inset 0 0 0 1px ${SELECTED_BORDER}`:"none","important");
 
     button.querySelectorAll<HTMLElement>("*").forEach(child=>{
-      child.style.setProperty("color",COMMAND_TEXT,"important");
-      child.style.setProperty("-webkit-text-fill-color",COMMAND_TEXT,"important");
+      child.style.setProperty("color",text,"important");
+      child.style.setProperty("-webkit-text-fill-color",text,"important");
       child.style.setProperty("font-size",COMMAND_FONT_SIZE,"important");
       child.style.setProperty("font-weight","400","important");
       child.style.setProperty("line-height","1","important");
@@ -112,21 +114,22 @@ function paintDepthSelection(selected:HTMLButtonElement|null){
     const nextPressed=active?"true":"false";
     if(button.getAttribute("aria-pressed")!==nextPressed)button.setAttribute("aria-pressed",nextPressed);
 
+    const text=active?SELECTED_TEXT:NORMAL_TEXT;
     button.style.setProperty("border",`2px solid ${active?SELECTED_BORDER:NORMAL_BORDER}`,"important");
     button.style.setProperty("background",active?SELECTED_BACKGROUND:COMMAND_BACKGROUND,"important");
-    button.style.setProperty("background-image",active?SELECTED_BACKGROUND:COMMAND_BACKGROUND,"important");
-    button.style.setProperty("color",COMMAND_TEXT,"important");
-    button.style.setProperty("-webkit-text-fill-color",COMMAND_TEXT,"important");
+    button.style.setProperty("background-image","none","important");
+    button.style.setProperty("color",text,"important");
+    button.style.setProperty("-webkit-text-fill-color",text,"important");
     button.style.setProperty("box-shadow",active?`inset 0 0 0 1px ${SELECTED_BORDER}`:"none","important");
 
     const strong=button.querySelector<HTMLElement>("strong");
     if(strong){
-      strong.style.setProperty("color",COMMAND_TEXT,"important");
-      strong.style.setProperty("-webkit-text-fill-color",COMMAND_TEXT,"important");
+      strong.style.setProperty("color",text,"important");
+      strong.style.setProperty("-webkit-text-fill-color",text,"important");
     }
     const span=button.querySelector<HTMLElement>("span");
     if(span){
-      const color=active?COMMAND_TEXT:SECONDARY_TEXT;
+      const color=active?SELECTED_TEXT:SECONDARY_TEXT;
       span.style.setProperty("color",color,"important");
       span.style.setProperty("-webkit-text-fill-color",color,"important");
     }
@@ -165,7 +168,7 @@ export default function PlayerDnaUiEnforcer(){
 
     document.addEventListener("click",onDepthClick,true);
     const observer=new MutationObserver(apply);
-    observer.observe(document.body,{subtree:true,childList:true});
+    observer.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:["aria-pressed","aria-selected","class"]});
     const typographyEnforcer=window.setInterval(forcePokerTableTypography,300);
     apply();
 
