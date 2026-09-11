@@ -4,10 +4,16 @@ import { useEffect } from "react";
 
 const ATTRIBUTES = ["placeholder", "title", "aria-label", "alt"] as const;
 const SKIP_TAGS = new Set(["SCRIPT", "STYLE", "NOSCRIPT"]);
+const PRESERVE_CASE_SELECTOR = '[data-preserve-case="true"]';
+
+function shouldPreserveCase(node: Node) {
+  const element = node instanceof Element ? node : node.parentElement;
+  return Boolean(element?.closest(PRESERVE_CASE_SELECTOR));
+}
 
 function uppercaseTextNode(node: Node) {
   const parent = node.parentElement;
-  if (!parent || SKIP_TAGS.has(parent.tagName)) return;
+  if (!parent || SKIP_TAGS.has(parent.tagName) || shouldPreserveCase(node)) return;
   const value = node.nodeValue;
   if (!value) return;
   const upper = value.toLocaleUpperCase("pt-BR");
@@ -15,6 +21,8 @@ function uppercaseTextNode(node: Node) {
 }
 
 function lockElement(element: Element) {
+  if (shouldPreserveCase(element)) return;
+
   if (element instanceof HTMLElement) {
     element.style.setProperty("text-transform", "uppercase", "important");
   }
@@ -31,6 +39,8 @@ function lockElement(element: Element) {
 }
 
 function uppercaseTree(root: Node) {
+  if (shouldPreserveCase(root)) return;
+
   if (root.nodeType === Node.TEXT_NODE) {
     uppercaseTextNode(root);
     return;

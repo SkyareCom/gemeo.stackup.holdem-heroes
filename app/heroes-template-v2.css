@@ -1,0 +1,650 @@
+/* STACKUP HOLD'EM HEROES — TEMPLATE V2
+ * Referência visual: template azul/branco enviado em 2026-09-11.
+ * Escopo deliberado: identidade global, cabeçalho, navegação e home.
+ * Não altera a lógica do Player DNA, mesa, solver ou cards de avaliação.
+ */
+
+:root{
+  --heroes-navy:#020c1d;
+  --heroes-navy-2:#041a35;
+  --heroes-navy-3:#06284f;
+  --heroes-blue:#1198ff;
+  --heroes-blue-2:#59bbff;
+  --heroes-blue-3:#b9e1ff;
+  --heroes-ink:#071b43;
+  --heroes-copy:#3c5b86;
+  --heroes-paper:#f8fbff;
+}
+
+html body,
+html body.unified-background{
+  background:
+    radial-gradient(circle at 52% 14%,rgba(16,123,220,.16),transparent 28%),
+    radial-gradient(circle at 86% 46%,rgba(0,105,205,.12),transparent 24%),
+    linear-gradient(180deg,#031126 0%,#020b19 45%,#031126 100%)!important;
+}
+
+/* ===== GLOBAL HEROES HEADER ===== */
+html body .stackup-app-header{
+  position:relative!important;
+  isolation:isolate!important;
+  overflow:hidden!important;
+  min-height:184px!important;
+  margin:0 -18px 22px!important;
+  padding:22px clamp(24px,5vw,46px)!important;
+  border:0!important;
+  border-bottom:4px solid var(--heroes-blue)!important;
+  background:
+    radial-gradient(circle at 18% 20%,rgba(67,164,255,.28),transparent 28%),
+    linear-gradient(115deg,rgba(4,50,98,.98) 0%,rgba(2,20,43,.98) 56%,rgba(3,33,67,.99) 100%)!important;
+  box-shadow:0 16px 38px rgba(0,0,0,.38),inset 0 -1px 0 rgba(255,255,255,.12)!important;
+}
+
+html body .stackup-app-header::before{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  z-index:-2!important;
+  background:
+    linear-gradient(135deg,transparent 0 46%,rgba(72,166,255,.08) 47% 48%,transparent 49% 100%),
+    linear-gradient(45deg,rgba(255,255,255,.018) 25%,transparent 25% 75%,rgba(255,255,255,.018) 75%)!important;
+  background-size:160px 160px,22px 22px!important;
+  pointer-events:none!important;
+}
+
+html body .stackup-app-header::after{
+  content:""!important;
+  position:absolute!important;
+  width:420px!important;
+  height:260px!important;
+  right:-120px!important;
+  bottom:-165px!important;
+  z-index:-1!important;
+  border-radius:50%!important;
+  background:radial-gradient(circle,rgba(17,152,255,.26),rgba(17,152,255,0) 68%)!important;
+  pointer-events:none!important;
+}
+
+html body .stackup-brand-lockup{
+  position:relative!important;
+  z-index:4!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:20px!important;
+  width:max-content!important;
+  max-width:78%!important;
+  min-width:0!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  text-decoration:none!important;
+}
+
+html body .stackup-logo{
+  flex:0 0 112px!important;
+  width:112px!important;
+  height:112px!important;
+  display:grid!important;
+  place-items:center!important;
+  overflow:visible!important;
+  border:0!important;
+  border-radius:50%!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+
+html body .stackup-logo-image{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  object-fit:contain!important;
+  filter:drop-shadow(0 9px 12px rgba(0,0,0,.38)) drop-shadow(0 0 10px rgba(31,151,255,.22))!important;
+}
+
+html body .stackup-brand-copy{
+  display:grid!important;
+  gap:8px!important;
+  min-width:0!important;
+}
+
+html body .stackup-app-title{
+  display:grid!important;
+  gap:0!important;
+  font-family:Georgia,"Times New Roman",serif!important;
+  font-weight:900!important;
+  letter-spacing:.015em!important;
+  color:#f8fbff!important;
+  -webkit-text-fill-color:#f8fbff!important;
+  text-shadow:0 2px 0 rgba(0,0,0,.3),0 0 18px rgba(106,190,255,.12)!important;
+}
+
+html body .stackup-app-title>span:first-child{
+  font-size:31px!important;
+  line-height:.98!important;
+}
+
+html body .stackup-app-title>span:last-child{
+  font-size:54px!important;
+  line-height:.95!important;
+}
+
+html body .stackup-app-subtitle{
+  font-family:Arial,Helvetica,sans-serif!important;
+  font-size:15px!important;
+  font-weight:500!important;
+  line-height:1.15!important;
+  letter-spacing:.25em!important;
+  white-space:nowrap!important;
+  color:#cfe9ff!important;
+  -webkit-text-fill-color:#cfe9ff!important;
+  text-shadow:0 1px 5px rgba(0,0,0,.45)!important;
+}
+
+html body .stackup-header-deck{
+  position:absolute!important;
+  z-index:1!important;
+  right:26px!important;
+  top:15px!important;
+  width:210px!important;
+  height:155px!important;
+  pointer-events:none!important;
+  opacity:.72!important;
+}
+
+html body .stackup-header-card{
+  position:absolute!important;
+  display:flex!important;
+  align-items:flex-start!important;
+  justify-content:flex-start!important;
+  width:94px!important;
+  height:138px!important;
+  padding:14px!important;
+  border:2px solid rgba(66,166,255,.74)!important;
+  border-radius:18px!important;
+  background:
+    linear-gradient(155deg,rgba(8,71,132,.98),rgba(3,29,61,.98) 58%,rgba(2,20,43,.98))!important;
+  box-shadow:0 12px 26px rgba(0,0,0,.38),inset 0 0 22px rgba(29,143,242,.14)!important;
+  font-family:Georgia,"Times New Roman",serif!important;
+  font-size:24px!important;
+  font-weight:900!important;
+  color:#061326!important;
+  -webkit-text-fill-color:#061326!important;
+}
+
+html body .stackup-header-card::after{
+  content:"♠"!important;
+  position:absolute!important;
+  right:13px!important;
+  bottom:15px!important;
+  font-size:48px!important;
+  line-height:1!important;
+  color:rgba(0,8,20,.78)!important;
+  -webkit-text-fill-color:rgba(0,8,20,.78)!important;
+}
+
+html body .stackup-header-card-back{
+  right:68px!important;
+  top:23px!important;
+  transform:rotate(-15deg)!important;
+}
+
+html body .stackup-header-card-front{
+  right:5px!important;
+  top:0!important;
+  transform:rotate(-10deg)!important;
+}
+
+/* ===== MODULE NAVIGATION ===== */
+html body main.module-page nav.module-navigation{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:18px!important;
+  width:100%!important;
+  margin:0 0 30px!important;
+  padding:0!important;
+}
+
+html body main.module-page nav.module-navigation a.module-back,
+html body main.module-page>a.module-back{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:100%!important;
+  min-width:0!important;
+  height:64px!important;
+  min-height:64px!important;
+  max-height:64px!important;
+  margin:0!important;
+  padding:0 18px!important;
+  border:3px solid var(--heroes-blue)!important;
+  border-radius:22px!important;
+  background:linear-gradient(180deg,#082c54 0%,#031328 100%)!important;
+  background-image:linear-gradient(180deg,#082c54 0%,#031328 100%)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 8px 18px rgba(0,0,0,.22)!important;
+  color:#f4f9ff!important;
+  -webkit-text-fill-color:#f4f9ff!important;
+  font-family:Arial,Helvetica,sans-serif!important;
+  font-size:18px!important;
+  font-weight:700!important;
+  line-height:1!important;
+  letter-spacing:.02em!important;
+  text-decoration:none!important;
+}
+
+html body main.module-page nav.module-navigation a.module-back:hover,
+html body main.module-page nav.module-navigation a.module-back:focus-visible,
+html body main.module-page>a.module-back:hover,
+html body main.module-page>a.module-back:focus-visible{
+  border-color:#8fd0ff!important;
+  box-shadow:0 0 0 3px rgba(17,152,255,.18),0 10px 24px rgba(0,0,0,.28)!important;
+}
+
+/* ===== HOME HERO ===== */
+html body main.stackup-home.stackup-home-template-v2{
+  padding-bottom:38px!important;
+}
+
+html body .stackup-home-template-v2 .stackup-home-hero{
+  position:relative!important;
+  isolation:isolate!important;
+  overflow:hidden!important;
+  display:flex!important;
+  align-items:center!important;
+  min-height:365px!important;
+  margin:0 -18px 20px!important;
+  padding:34px clamp(34px,6vw,62px) 38px!important;
+  border:0!important;
+  border-bottom:1px solid rgba(17,152,255,.65)!important;
+  background:
+    radial-gradient(circle at 80% 58%,rgba(31,136,226,.22),transparent 25%),
+    linear-gradient(100deg,rgba(2,16,34,.98) 0%,rgba(3,25,51,.96) 48%,rgba(3,35,68,.88) 100%)!important;
+  box-shadow:inset 0 -28px 46px rgba(0,0,0,.28)!important;
+}
+
+html body .stackup-home-template-v2 .stackup-home-hero::before{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  z-index:-2!important;
+  opacity:.36!important;
+  background:
+    repeating-linear-gradient(130deg,rgba(255,255,255,.025) 0 1px,transparent 1px 14px),
+    radial-gradient(circle at 95% 50%,rgba(42,156,255,.2),transparent 35%)!important;
+  pointer-events:none!important;
+}
+
+html body .stackup-hero-copy{
+  position:relative!important;
+  z-index:4!important;
+  width:min(62%,560px)!important;
+}
+
+html body .stackup-hero-title{
+  display:grid!important;
+  gap:0!important;
+  margin:0 0 18px!important;
+  font-family:Georgia,"Times New Roman",serif!important;
+  font-size:64px!important;
+  font-weight:900!important;
+  line-height:.96!important;
+  letter-spacing:.005em!important;
+  color:#fbfdff!important;
+  -webkit-text-fill-color:#fbfdff!important;
+  text-shadow:0 4px 0 rgba(0,0,0,.3),0 0 18px rgba(93,185,255,.13)!important;
+}
+
+html body .stackup-hero-title span:nth-child(2){
+  color:#b8e0ff!important;
+  -webkit-text-fill-color:#b8e0ff!important;
+}
+
+html body .stackup-hero-title span:nth-child(3){
+  color:#49adff!important;
+  -webkit-text-fill-color:#49adff!important;
+}
+
+html body .stackup-hero-lead{
+  margin:0!important;
+  max-width:560px!important;
+  font-family:Arial,Helvetica,sans-serif!important;
+  font-size:19px!important;
+  font-weight:400!important;
+  line-height:1.5!important;
+  letter-spacing:.01em!important;
+  color:#c9def3!important;
+  -webkit-text-fill-color:#c9def3!important;
+  text-shadow:0 2px 6px rgba(0,0,0,.45)!important;
+}
+
+html body .stackup-hero-visual{
+  position:absolute!important;
+  z-index:2!important;
+  right:2.5%!important;
+  bottom:4%!important;
+  width:44%!important;
+  height:82%!important;
+  pointer-events:none!important;
+}
+
+html body .stackup-hero-medallion{
+  position:absolute!important;
+  z-index:4!important;
+  right:23%!important;
+  bottom:8%!important;
+  display:grid!important;
+  place-items:center!important;
+  width:156px!important;
+  height:156px!important;
+  border:13px solid #9ed6ff!important;
+  border-radius:50%!important;
+  background:
+    radial-gradient(circle at 36% 30%,#0d467d 0%,#062849 46%,#020d1d 100%)!important;
+  box-shadow:
+    0 12px 24px rgba(0,0,0,.45),
+    0 0 0 5px #163c61,
+    0 0 0 8px rgba(109,192,255,.9),
+    inset 0 0 0 4px rgba(255,255,255,.2),
+    inset 0 0 28px rgba(30,151,255,.32)!important;
+  font-family:Georgia,"Times New Roman",serif!important;
+  font-size:82px!important;
+  line-height:1!important;
+  color:#dff1ff!important;
+  -webkit-text-fill-color:#dff1ff!important;
+  transform:rotate(-5deg)!important;
+}
+
+html body .stackup-chip-stack{
+  position:absolute!important;
+  z-index:2!important;
+  display:grid!important;
+  gap:4px!important;
+  width:128px!important;
+}
+
+html body .stackup-chip-stack i{
+  display:block!important;
+  width:100%!important;
+  height:24px!important;
+  border:2px solid rgba(147,213,255,.58)!important;
+  border-radius:8px!important;
+  background:
+    repeating-linear-gradient(90deg,#07162a 0 18px,#a2d8ff 18px 31px,#0b3158 31px 50px),
+    linear-gradient(180deg,#0d3a68,#04172b)!important;
+  box-shadow:0 7px 12px rgba(0,0,0,.35),inset 0 2px 0 rgba(255,255,255,.12)!important;
+  transform:skewX(-5deg)!important;
+}
+
+html body .stackup-chip-stack-back{
+  right:3%!important;
+  bottom:24%!important;
+}
+
+html body .stackup-chip-stack-front{
+  right:8%!important;
+  bottom:4%!important;
+}
+
+/* ===== HOME MODULE CARDS ===== */
+html body .stackup-home-template-v2 .modules{
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  gap:14px!important;
+  margin:0 0 32px!important;
+  padding:0 2px!important;
+}
+
+html body .stackup-home-template-v2 .modules a,
+html body .stackup-home-template-v2 .modules a:nth-child(n){
+  position:relative!important;
+  display:grid!important;
+  grid-template-columns:92px minmax(0,1fr) 34px!important;
+  align-items:center!important;
+  gap:18px!important;
+  width:100%!important;
+  min-height:128px!important;
+  padding:14px 24px!important;
+  border:3px solid var(--heroes-blue)!important;
+  border-radius:29px!important;
+  background:linear-gradient(105deg,#ffffff 0%,#f3f8ff 50%,#d9ecff 100%)!important;
+  background-image:linear-gradient(105deg,#ffffff 0%,#f3f8ff 50%,#d9ecff 100%)!important;
+  box-shadow:
+    0 11px 24px rgba(0,0,0,.32),
+    inset 0 1px 0 rgba(255,255,255,.95),
+    inset 0 -1px 0 rgba(104,175,231,.25)!important;
+  text-decoration:none!important;
+  overflow:hidden!important;
+  color:var(--heroes-ink)!important;
+  -webkit-text-fill-color:var(--heroes-ink)!important;
+}
+
+html body .stackup-home-template-v2 .modules a::after{
+  content:""!important;
+  position:absolute!important;
+  inset:6px!important;
+  border:1px solid rgba(12,84,146,.13)!important;
+  border-radius:22px!important;
+  pointer-events:none!important;
+}
+
+html body .stackup-home-template-v2 .modules a:hover,
+html body .stackup-home-template-v2 .modules a:focus-visible{
+  transform:translateY(-2px)!important;
+  border-color:#69c0ff!important;
+  box-shadow:0 14px 30px rgba(0,0,0,.36),0 0 0 3px rgba(17,152,255,.16)!important;
+}
+
+html body .stackup-home-template-v2 .module-icon{
+  position:relative!important;
+  z-index:2!important;
+  display:grid!important;
+  place-items:center!important;
+  width:86px!important;
+  height:86px!important;
+  border:2px solid var(--heroes-blue)!important;
+  border-radius:20px!important;
+  background:linear-gradient(145deg,#082e58 0%,#031428 100%)!important;
+  box-shadow:inset 0 0 22px rgba(17,152,255,.16),0 5px 13px rgba(0,0,0,.2)!important;
+}
+
+html body .stackup-home-template-v2 .module-icon svg{
+  width:56px!important;
+  height:56px!important;
+  overflow:visible!important;
+  fill:#b9e1ff!important;
+  stroke:#b9e1ff!important;
+  stroke-width:0!important;
+  filter:drop-shadow(0 0 7px rgba(66,178,255,.3))!important;
+}
+
+html body .stackup-home-template-v2 .module-icon svg .icon-stroke{
+  fill:none!important;
+  stroke:#b9e1ff!important;
+  stroke-width:3.4!important;
+  stroke-linecap:round!important;
+  stroke-linejoin:round!important;
+}
+
+html body .stackup-home-template-v2 .module-copy{
+  position:relative!important;
+  z-index:2!important;
+  display:grid!important;
+  gap:7px!important;
+  min-width:0!important;
+}
+
+html body .stackup-home-template-v2 .module-title,
+html body .stackup-home-template-v2 .module-title span{
+  display:block!important;
+  margin:0!important;
+  font-family:Georgia,"Times New Roman",serif!important;
+  font-size:29px!important;
+  font-weight:900!important;
+  line-height:1.05!important;
+  letter-spacing:-.01em!important;
+  color:#071b43!important;
+  -webkit-text-fill-color:#071b43!important;
+}
+
+html body .stackup-home-template-v2 .module-description{
+  display:block!important;
+  max-width:650px!important;
+  font-family:Georgia,"Times New Roman",serif!important;
+  font-size:18px!important;
+  font-weight:400!important;
+  line-height:1.32!important;
+  color:#46648d!important;
+  -webkit-text-fill-color:#46648d!important;
+  text-transform:none!important;
+}
+
+html body .stackup-home-template-v2 .module-chevron{
+  position:relative!important;
+  z-index:2!important;
+  display:block!important;
+  font-family:Arial,Helvetica,sans-serif!important;
+  font-size:58px!important;
+  font-weight:300!important;
+  line-height:.8!important;
+  text-align:center!important;
+  color:#078eff!important;
+  -webkit-text-fill-color:#078eff!important;
+  transform:translateY(-2px)!important;
+}
+
+/* ===== HOME FOOTER ===== */
+html body .stackup-home-footer{
+  display:grid!important;
+  grid-template-columns:minmax(70px,1fr) auto minmax(70px,1fr)!important;
+  align-items:center!important;
+  gap:24px!important;
+  margin:10px 4px 0!important;
+  padding:10px 0!important;
+}
+
+html body .stackup-home-footer>span{
+  height:2px!important;
+  background:linear-gradient(90deg,transparent,var(--heroes-blue))!important;
+}
+
+html body .stackup-home-footer>span:last-child{
+  background:linear-gradient(90deg,var(--heroes-blue),transparent)!important;
+}
+
+html body .stackup-home-footer p{
+  margin:0!important;
+  font-family:Arial,Helvetica,sans-serif!important;
+  font-size:12px!important;
+  font-weight:500!important;
+  line-height:1!important;
+  letter-spacing:.3em!important;
+  white-space:nowrap!important;
+  color:#69bfff!important;
+  -webkit-text-fill-color:#69bfff!important;
+}
+
+@media(max-width:720px){
+  html body .stackup-app-header{
+    min-height:156px!important;
+    padding:18px 20px!important;
+  }
+  html body .stackup-brand-lockup{
+    gap:14px!important;
+    max-width:88%!important;
+  }
+  html body .stackup-logo{
+    flex-basis:92px!important;
+    width:92px!important;
+    height:92px!important;
+  }
+  html body .stackup-app-title>span:first-child{font-size:24px!important}
+  html body .stackup-app-title>span:last-child{font-size:43px!important}
+  html body .stackup-app-subtitle{font-size:12px!important;letter-spacing:.19em!important}
+  html body .stackup-header-deck{right:-4px!important;top:18px!important;transform:scale(.8);transform-origin:top right!important;opacity:.42!important}
+
+  html body .stackup-home-template-v2 .stackup-home-hero{
+    min-height:338px!important;
+    padding:32px 28px 30px!important;
+  }
+  html body .stackup-hero-title{font-size:52px!important}
+  html body .stackup-hero-lead{font-size:17px!important;max-width:64%!important}
+  html body .stackup-hero-visual{right:-3%!important;width:50%!important;height:78%!important}
+  html body .stackup-hero-medallion{width:132px!important;height:132px!important;border-width:11px!important;font-size:70px!important;right:22%!important}
+  html body .stackup-chip-stack{width:106px!important}
+  html body .stackup-chip-stack i{height:21px!important}
+
+  html body .stackup-home-template-v2 .modules a,
+  html body .stackup-home-template-v2 .modules a:nth-child(n){
+    grid-template-columns:78px minmax(0,1fr) 25px!important;
+    gap:14px!important;
+    min-height:116px!important;
+    padding:12px 18px!important;
+    border-radius:25px!important;
+  }
+  html body .stackup-home-template-v2 .module-icon{width:74px!important;height:74px!important;border-radius:18px!important}
+  html body .stackup-home-template-v2 .module-icon svg{width:48px!important;height:48px!important}
+  html body .stackup-home-template-v2 .module-title,
+  html body .stackup-home-template-v2 .module-title span{font-size:24px!important}
+  html body .stackup-home-template-v2 .module-description{font-size:16px!important}
+  html body .stackup-home-template-v2 .module-chevron{font-size:48px!important}
+
+  html body main.module-page nav.module-navigation{gap:10px!important;margin-bottom:24px!important}
+  html body main.module-page nav.module-navigation a.module-back,
+  html body main.module-page>a.module-back{height:56px!important;min-height:56px!important;max-height:56px!important;border-radius:18px!important;font-size:16px!important;padding:0 10px!important}
+
+  html body .stackup-home-footer{gap:14px!important}
+  html body .stackup-home-footer p{font-size:10px!important;letter-spacing:.21em!important}
+}
+
+@media(max-width:520px){
+  html body main{padding-left:14px!important;padding-right:14px!important}
+  html body .stackup-app-header{margin-left:-14px!important;margin-right:-14px!important;margin-bottom:18px!important;min-height:140px!important;padding:14px 15px!important}
+  html body .stackup-brand-lockup{gap:11px!important;max-width:94%!important}
+  html body .stackup-logo{flex-basis:80px!important;width:80px!important;height:80px!important}
+  html body .stackup-app-title>span:first-child{font-size:20px!important}
+  html body .stackup-app-title>span:last-child{font-size:36px!important}
+  html body .stackup-app-subtitle{font-size:10px!important;letter-spacing:.15em!important}
+  html body .stackup-header-deck{right:-26px!important;top:17px!important;transform:scale(.66)!important;opacity:.26!important}
+
+  html body .stackup-home-template-v2 .stackup-home-hero{margin-left:-14px!important;margin-right:-14px!important;min-height:318px!important;padding:28px 20px 26px!important}
+  html body .stackup-hero-copy{width:72%!important}
+  html body .stackup-hero-title{font-size:45px!important;margin-bottom:15px!important}
+  html body .stackup-hero-lead{font-size:15px!important;line-height:1.48!important;max-width:82%!important}
+  html body .stackup-hero-visual{right:-11%!important;width:55%!important;height:72%!important;opacity:.94!important}
+  html body .stackup-hero-medallion{width:108px!important;height:108px!important;border-width:9px!important;font-size:57px!important;right:28%!important;bottom:10%!important}
+  html body .stackup-chip-stack{width:88px!important;gap:3px!important}
+  html body .stackup-chip-stack i{height:18px!important}
+  html body .stackup-chip-stack-back{right:8%!important;bottom:28%!important}
+  html body .stackup-chip-stack-front{right:12%!important;bottom:5%!important}
+
+  html body .stackup-home-template-v2 .modules{gap:12px!important;padding:0!important}
+  html body .stackup-home-template-v2 .modules a,
+  html body .stackup-home-template-v2 .modules a:nth-child(n){
+    grid-template-columns:68px minmax(0,1fr) 20px!important;
+    gap:12px!important;
+    min-height:110px!important;
+    padding:11px 14px!important;
+    border-radius:22px!important;
+  }
+  html body .stackup-home-template-v2 .module-icon{width:64px!important;height:64px!important;border-radius:16px!important}
+  html body .stackup-home-template-v2 .module-icon svg{width:43px!important;height:43px!important}
+  html body .stackup-home-template-v2 .module-title,
+  html body .stackup-home-template-v2 .module-title span{font-size:20px!important;line-height:1.05!important}
+  html body .stackup-home-template-v2 .module-description{font-size:14px!important;line-height:1.28!important}
+  html body .stackup-home-template-v2 .module-chevron{font-size:42px!important}
+
+  html body .stackup-home-footer{grid-template-columns:42px 1fr 42px!important;gap:10px!important;margin-left:0!important;margin-right:0!important}
+  html body .stackup-home-footer p{font-size:8.5px!important;letter-spacing:.15em!important;white-space:normal!important;text-align:center!important;line-height:1.35!important}
+}
+
+@media(max-width:380px){
+  html body .stackup-logo{flex-basis:70px!important;width:70px!important;height:70px!important}
+  html body .stackup-app-title>span:first-child{font-size:17px!important}
+  html body .stackup-app-title>span:last-child{font-size:31px!important}
+  html body .stackup-app-subtitle{font-size:8.5px!important;letter-spacing:.11em!important}
+  html body .stackup-hero-title{font-size:39px!important}
+  html body .stackup-hero-lead{font-size:14px!important}
+  html body .stackup-home-template-v2 .module-title,
+  html body .stackup-home-template-v2 .module-title span{font-size:18px!important}
+  html body .stackup-home-template-v2 .module-description{font-size:13px!important}
+}
