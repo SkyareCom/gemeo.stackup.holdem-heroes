@@ -22,7 +22,7 @@ html body main.player-dna-page .training-footer > button{
   height:var(--app-command-button-height,44px)!important;
   min-height:var(--app-command-button-height,44px)!important;
   max-height:var(--app-command-button-height,44px)!important;
-  padding:0 8px!important;
+  padding:0 10px!important;
   margin:0!important;
   box-sizing:border-box!important;
   border:1px solid #255000!important;
@@ -31,12 +31,12 @@ html body main.player-dna-page .training-footer > button{
   background-image:none!important;
   color:#009929!important;
   -webkit-text-fill-color:#009929!important;
-  font-size:10px!important;
+  font-size:12px!important;
   font-weight:400!important;
   line-height:1!important;
   text-align:center!important;
   white-space:nowrap!important;
-  overflow:visible!important;
+  overflow:hidden!important;
   box-shadow:none!important;
   justify-self:center!important;
   flex:none!important;
@@ -45,12 +45,12 @@ html body main.player-dna-page .training-footer > button{
 html body main.player-dna-page .training-footer > button > strong{
   color:inherit!important;
   -webkit-text-fill-color:inherit!important;
-  font-size:10px!important;
+  font-size:12px!important;
   font-weight:400!important;
   line-height:1!important;
   white-space:nowrap!important;
-  overflow:visible!important;
-  text-overflow:clip!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
 }
 
 html body main.player-dna-page .training-footer > button:hover:not(:disabled),
