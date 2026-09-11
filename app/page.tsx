@@ -19,24 +19,53 @@ function ModuleIcon({type}:{type:(typeof modules)[number]["icon"]}){
 export default function Home(){
   return <main className="stackup-home stackup-home-template-v2">
     <style>{`
+      html body .stackup-home-template-v2 .stackup-home-hero{
+        position:relative!important;
+      }
       html body .stackup-home-template-v2 .stackup-hero-copy{
+        position:relative!important;
+        z-index:5!important;
+        width:44%!important;
+        padding-top:86px!important;
         text-align:left!important;
         align-items:flex-start!important;
       }
-      html body .stackup-home-template-v2 .stackup-hero-lead{
-        text-align:left!important;
+      html body .stackup-home-template-v2 .stackup-hero-lead.stackup-hero-lead-right{
+        position:absolute!important;
+        z-index:6!important;
+        top:22px!important;
+        right:22px!important;
+        width:54%!important;
+        margin:0!important;
+        text-align:right!important;
         font-size:14px!important;
+        line-height:1.32!important;
       }
       html body .stackup-home-template-v2 .stackup-hero-title{
         text-align:left!important;
         justify-items:start!important;
+        gap:4px!important;
       }
       html body .stackup-home-template-v2 .stackup-hero-title span:nth-child(1),
       html body .stackup-home-template-v2 .stackup-hero-title span:nth-child(2){
-        font-size:24px!important;
+        font-size:28px!important;
       }
       html body .stackup-home-template-v2 .stackup-hero-title span:nth-child(3){
-        font-size:32px!important;
+        font-size:36px!important;
+      }
+      @media(max-width:520px){
+        html body .stackup-home-template-v2 .stackup-hero-copy{
+          width:44%!important;
+          padding-top:96px!important;
+        }
+        html body .stackup-home-template-v2 .stackup-hero-lead.stackup-hero-lead-right{
+          top:18px!important;
+          right:18px!important;
+          width:56%!important;
+        }
+        html body .stackup-home-template-v2 .stackup-hero-title span:nth-child(1),
+        html body .stackup-home-template-v2 .stackup-hero-title span:nth-child(2){font-size:28px!important}
+        html body .stackup-home-template-v2 .stackup-hero-title span:nth-child(3){font-size:36px!important}
       }
     `}</style>
 
@@ -44,18 +73,18 @@ export default function Home(){
 
     <section className="stackup-home-hero" aria-labelledby="stackup-home-heading">
       <div className="stackup-hero-copy">
-        <p className="stackup-hero-lead" data-preserve-case="true">
-          Aprenda como você joga.<br/>
-          Descubra seus leaks.<br/>
-          Aprimore a estratégia e<br/>
-          consolide suas decisões.
-        </p>
         <h1 id="stackup-home-heading" className="stackup-hero-title">
           <span>TREINE.</span>
           <span>ENTENDA.</span>
           <span>EVOLUA</span>
         </h1>
       </div>
+      <p className="stackup-hero-lead stackup-hero-lead-right" data-preserve-case="true">
+        Aprenda como você joga.<br/>
+        Descubra seus leaks.<br/>
+        Aprimore a estratégia e<br/>
+        consolide suas decisões.
+      </p>
       <div className="stackup-hero-visual" aria-hidden="true">
         <span className="stackup-chip-stack stackup-chip-stack-back"><i/><i/><i/><i/></span>
         <span className="stackup-chip-stack stackup-chip-stack-front"><i/><i/><i/></span>
