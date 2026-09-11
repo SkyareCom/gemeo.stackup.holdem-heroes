@@ -9,6 +9,7 @@ import "./player-dna-footer-controls.css";
 import "./player-dna-blue-template.css";
 import "./player-dna-contrast-blue.css";
 import "./player-dna-ui-contract.css";
+import "./player-dna-training-cleanup.css";
 
 export default function PlayerDnaPage(){
   return <main className="module-page player-dna-page">
