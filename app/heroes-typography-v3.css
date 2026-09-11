@@ -1,0 +1,113 @@
+/* STACKUP HEROES — TYPOGRAPHY CONTRACT V3
+ * Google font: Love Ya Like A Sister
+ * Scale requested: titles 20px, subtitles 16px, main text 14px, secondary text 12px.
+ */
+
+html body,
+html body *,
+html body *::before,
+html body *::after{
+  font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;
+}
+
+/* TITLES — 20px */
+html body h1,
+html body h2,
+html body h3,
+html body h4,
+html body .stackup-app-title,
+html body .stackup-app-title span,
+html body .stackup-home-title,
+html body .module-title,
+html body .module-title span,
+html body .panel h1,
+html body .panel h2,
+html body .panel h3,
+html body .panel h4{
+  font-size:20px!important;
+  line-height:1.18!important;
+  font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;
+}
+
+/* SUBTITLES — 16px */
+html body .stackup-app-subtitle,
+html body .stackup-home-lead,
+html body .subtitle,
+html body .sub-title,
+html body .panel-subtitle,
+html body .section-subtitle{
+  font-size:16px!important;
+  line-height:1.32!important;
+  font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;
+}
+
+/* MAIN TEXT — 14px */
+html body p,
+html body li,
+html body label,
+html body input,
+html body textarea,
+html body select,
+html body button,
+html body a,
+html body .module-back,
+html body .primary,
+html body .secondary,
+html body .stackup-home-kicker{
+  font-size:14px!important;
+  line-height:1.42!important;
+  font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;
+}
+
+/* SECONDARY TEXT — 12px */
+html body small,
+html body .module-description,
+html body .eyebrow,
+html body .tag,
+html body .helper,
+html body .hint,
+html body .caption,
+html body .secondary-text,
+html body .stackup-home-footer{
+  font-size:12px!important;
+  line-height:1.36!important;
+  font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;
+}
+
+/* HEADER: keep requested scale even on small screens. */
+@media(max-width:620px){
+  html body .stackup-app-title,
+  html body .stackup-app-title span,
+  html body .stackup-home-title,
+  html body .module-title,
+  html body .module-title span{
+    font-size:20px!important;
+  }
+
+  html body .stackup-app-subtitle,
+  html body .stackup-home-lead{
+    font-size:16px!important;
+  }
+
+  html body p,
+  html body li,
+  html body label,
+  html body input,
+  html body textarea,
+  html body select,
+  html body button,
+  html body a,
+  html body .module-back{
+    font-size:14px!important;
+  }
+
+  html body small,
+  html body .module-description,
+  html body .eyebrow,
+  html body .tag,
+  html body .helper,
+  html body .hint,
+  html body .caption{
+    font-size:12px!important;
+  }
+}

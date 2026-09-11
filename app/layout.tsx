@@ -9,6 +9,7 @@ import "./stackup-blue-theme.css";
 import "./stackup-contrast-blue.css";
 import "./stackup-ui-contract.css";
 import "./heroes-template-v2.css";
+import "./heroes-typography-v3.css";
 
 const loveYaLikeASister = Love_Ya_Like_A_Sister({
   subsets:["latin"],
@@ -27,7 +28,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="pt-BR" className={loveYaLikeASister.className}>
+    <html lang="pt-BR" className={`${loveYaLikeASister.className} ${loveYaLikeASister.variable}`}>
       <head>
         <style>{`html body, html body *, html body *::before, html body *::after { text-transform: uppercase !important; } html body [data-preserve-case="true"], html body [data-preserve-case="true"] * { text-transform: none !important; }`}</style>
       </head>
