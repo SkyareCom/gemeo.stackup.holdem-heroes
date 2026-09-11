@@ -1,33 +1,214 @@
-/* PLAYER DNA — ESTADO SELECIONADO PADRÃO
- * Vale para CASH/TORNEIO/ALEATÓRIO, SPOTS, ações e sizings.
- * Repouso: fundo escuro + borda azul.
+/* PLAYER DNA — CONTRATO ÚNICO DE BOTÕES
+ * Repouso: fundo azul-marinho + borda azul.
  * Selecionado/clicado: fundo azul + borda branca + texto branco.
+ * Botões de comando compartilham a mesma geometria.
+ * CASH/TORNEIO/ALEATÓRIO e SPOTS preservam sua geometria de cards,
+ * mas usam exatamente os mesmos estados visuais.
  */
-html body main.player-dna-page .mode-choices>label:not(#sel-a):not(#sel-b),
-html body main.player-dna-page .depth-choices>button:not(#sel-a):not(#sel-b),
-html body main.player-dna-page .training-session button:not(#sel-a):not(#sel-b){
-  border-color:#238FDF!important;
-  background:#071A2D!important;
-  background-image:none!important;
-  color:#F8FBFF!important;
-  -webkit-text-fill-color:#F8FBFF!important;
+html body main.player-dna-page{
+  --pd-control-bg:#071A2D;
+  --pd-control-bg-2:#0A2440;
+  --pd-control-border:#238FDF;
+  --pd-control-selected:#168EE8;
+  --pd-control-selected-2:#0B67C8;
+  --pd-control-text:#F8FBFF;
+  --pd-command-height:52px;
+  --pd-command-radius:14px;
 }
 
-html body main.player-dna-page .mode-choices>label:not(#sel-a):not(#sel-b):has(input:checked),
-html body main.player-dna-page .depth-choices>button[aria-pressed="true"]:not(#sel-a):not(#sel-b),
-html body main.player-dna-page .training-session button[aria-pressed="true"]:not(#sel-a):not(#sel-b),
-html body main.player-dna-page .training-session button:not(#sel-a):not(#sel-b):active{
-  border:2px solid #F8FBFF!important;
-  background:linear-gradient(180deg,#168EE8,#0B67C8)!important;
-  background-image:linear-gradient(180deg,#168EE8,#0B67C8)!important;
-  color:#F8FBFF!important;
-  -webkit-text-fill-color:#F8FBFF!important;
-  box-shadow:inset 0 0 0 1px #F8FBFF!important;
+/* BASE VISUAL ÚNICA */
+html body main.player-dna-page .mode-choices>label,
+html body main.player-dna-page .depth-choices>button,
+html body main.player-dna-page .training-session [class*="actions"]>button,
+html body main.player-dna-page .training-session [class*="sizingActions"]>button,
+html body main.player-dna-page .saved-analysis-panel button,
+html body main.player-dna-page .history-panel button,
+html body main.player-dna-page .training-footer>button,
+html body main.player-dna-page .player-dna-nav-button{
+  box-sizing:border-box!important;
+  border:2px solid var(--pd-control-border)!important;
+  background:linear-gradient(180deg,var(--pd-control-bg-2),var(--pd-control-bg))!important;
+  background-image:linear-gradient(180deg,var(--pd-control-bg-2),var(--pd-control-bg))!important;
+  color:var(--pd-control-text)!important;
+  -webkit-text-fill-color:var(--pd-control-text)!important;
+  font-family:inherit!important;
+  font-size:14px!important;
+  font-weight:400!important;
+  line-height:1!important;
+  text-align:center!important;
+  box-shadow:none!important;
 }
 
-html body main.player-dna-page .mode-choices>label:not(#sel-a):not(#sel-b):has(input:checked) *,
-html body main.player-dna-page .depth-choices>button[aria-pressed="true"]:not(#sel-a):not(#sel-b) *,
-html body main.player-dna-page .training-session button[aria-pressed="true"]:not(#sel-a):not(#sel-b) *{
-  color:#F8FBFF!important;
-  -webkit-text-fill-color:#F8FBFF!important;
+html body main.player-dna-page .mode-choices>label *,
+html body main.player-dna-page .depth-choices>button *,
+html body main.player-dna-page .training-session [class*="actions"]>button *,
+html body main.player-dna-page .training-session [class*="sizingActions"]>button *,
+html body main.player-dna-page .saved-analysis-panel button *,
+html body main.player-dna-page .history-panel button *,
+html body main.player-dna-page .training-footer>button *{
+  color:inherit!important;
+  -webkit-text-fill-color:inherit!important;
+  font-family:inherit!important;
+  font-weight:400!important;
+  line-height:1!important;
+}
+
+/* BOTÕES DE COMANDO — MESMO TAMANHO */
+html body main.player-dna-page .saved-analysis-panel button,
+html body main.player-dna-page .history-panel button,
+html body main.player-dna-page .training-footer>button,
+html body main.player-dna-page .player-dna-nav-button{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-width:0!important;
+  height:var(--pd-command-height)!important;
+  min-height:var(--pd-command-height)!important;
+  max-height:var(--pd-command-height)!important;
+  padding:0 12px!important;
+  border-radius:var(--pd-command-radius)!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+html body main.player-dna-page .saved-analysis-panel button,
+html body main.player-dna-page .history-panel button,
+html body main.player-dna-page .player-dna-nav-button{
+  width:100%!important;
+  max-width:100%!important;
+}
+
+html body main.player-dna-page .training-footer{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,160px))!important;
+  justify-content:center!important;
+  gap:10px!important;
+  width:100%!important;
+  min-width:0!important;
+}
+html body main.player-dna-page .training-footer>button{
+  width:100%!important;
+  min-width:0!important;
+  max-width:160px!important;
+  justify-self:stretch!important;
+}
+
+/* CASH / TORNEIO / ALEATÓRIO */
+html body main.player-dna-page .mode-choices>label{
+  width:100%!important;
+  min-width:0!important;
+  min-height:52px!important;
+  height:52px!important;
+  padding:0 8px!important;
+  border-radius:14px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  overflow:hidden!important;
+}
+html body main.player-dna-page .mode-choices>label>strong{
+  font-size:14px!important;
+}
+
+/* CARDS DE SPOTS */
+html body main.player-dna-page .depth-choices>button{
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  min-height:68px!important;
+  padding:9px 8px!important;
+  border-radius:14px!important;
+  overflow:hidden!important;
+}
+html body main.player-dna-page .depth-choices>button>strong{
+  display:block!important;
+  font-size:20px!important;
+  color:var(--pd-control-text)!important;
+  -webkit-text-fill-color:var(--pd-control-text)!important;
+}
+html body main.player-dna-page .depth-choices>button>span{
+  display:block!important;
+  margin-top:4px!important;
+  font-size:12px!important;
+  color:#A9D8FF!important;
+  -webkit-text-fill-color:#A9D8FF!important;
+}
+
+/* AÇÕES E SIZINGS — TODOS PARTEM DO MESMO ESTADO VISUAL */
+html body main.player-dna-page .training-session [class*="actions"]>button,
+html body main.player-dna-page .training-session [class*="sizingActions"]>button{
+  min-width:0!important;
+  height:44px!important;
+  min-height:44px!important;
+  max-height:44px!important;
+  padding:0 6px!important;
+  border-radius:12px!important;
+  opacity:1!important;
+  cursor:pointer!important;
+}
+
+/* SELEÇÃO / CLIQUE — REGRA GLOBAL */
+html body main.player-dna-page .mode-choices>label:has(input:checked),
+html body main.player-dna-page .depth-choices>button[aria-pressed="true"],
+html body main.player-dna-page .training-session [class*="actions"]>button[aria-pressed="true"],
+html body main.player-dna-page .training-session [class*="sizingActions"]>button[aria-pressed="true"],
+html body main.player-dna-page .saved-analysis-panel button:active:not(:disabled),
+html body main.player-dna-page .saved-analysis-panel button:focus-visible:not(:disabled),
+html body main.player-dna-page .history-panel button:active:not(:disabled),
+html body main.player-dna-page .history-panel button:focus-visible:not(:disabled),
+html body main.player-dna-page .training-footer>button:active:not(:disabled),
+html body main.player-dna-page .training-footer>button:focus-visible:not(:disabled),
+html body main.player-dna-page .player-dna-nav-button:active,
+html body main.player-dna-page .player-dna-nav-button:focus-visible{
+  border-color:var(--pd-control-text)!important;
+  background:linear-gradient(180deg,var(--pd-control-selected),var(--pd-control-selected-2))!important;
+  background-image:linear-gradient(180deg,var(--pd-control-selected),var(--pd-control-selected-2))!important;
+  color:var(--pd-control-text)!important;
+  -webkit-text-fill-color:var(--pd-control-text)!important;
+  box-shadow:inset 0 0 0 1px var(--pd-control-text)!important;
+  outline:none!important;
+}
+
+/* Primários de referência: ACESSAR ANÁLISE / RELATÓRIO / PRÓXIMO */
+html body main.player-dna-page button.primary:not(:disabled),
+html body main.player-dna-page .training-footer>button:last-child:not(:disabled){
+  border-color:var(--pd-control-text)!important;
+  background:linear-gradient(180deg,var(--pd-control-selected),var(--pd-control-selected-2))!important;
+  background-image:linear-gradient(180deg,var(--pd-control-selected),var(--pd-control-selected-2))!important;
+  color:var(--pd-control-text)!important;
+  -webkit-text-fill-color:var(--pd-control-text)!important;
+  box-shadow:inset 0 0 0 1px var(--pd-control-text)!important;
+}
+
+/* Nenhuma ação do poker deve parecer indisponível e dar dica. */
+html body main.player-dna-page .training-session [class*="actions"]>button:disabled,
+html body main.player-dna-page .training-session [class*="sizingActions"]>button:disabled{
+  opacity:1!important;
+  cursor:pointer!important;
+  border-color:var(--pd-control-border)!important;
+  background:linear-gradient(180deg,var(--pd-control-bg-2),var(--pd-control-bg))!important;
+  color:var(--pd-control-text)!important;
+  -webkit-text-fill-color:var(--pd-control-text)!important;
+}
+
+/* Comandos realmente indisponíveis preservam geometria sem mudar de padrão. */
+html body main.player-dna-page .saved-analysis-panel button:disabled,
+html body main.player-dna-page .history-panel button:disabled,
+html body main.player-dna-page .training-footer>button:disabled{
+  opacity:.42!important;
+}
+
+@media(max-width:420px){
+  html body main.player-dna-page .training-footer{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  html body main.player-dna-page .training-footer>button{
+    max-width:none!important;
+    padding:0 8px!important;
+    font-size:13px!important;
+  }
+  html body main.player-dna-page .mode-choices>label>strong{
+    font-size:12px!important;
+  }
 }
