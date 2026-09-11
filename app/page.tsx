@@ -21,6 +21,7 @@ export default function Home(){
     <style>{`
       html body .stackup-home-template-v2 .stackup-home-hero{
         position:relative!important;
+        overflow:hidden!important;
       }
       html body .stackup-home-template-v2 .stackup-hero-copy{
         position:relative!important;
@@ -53,6 +54,12 @@ export default function Home(){
       html body .stackup-home-template-v2 .stackup-hero-title span:nth-child(3){
         font-size:36px!important;
       }
+      html body .stackup-home-template-v2 .stackup-hero-visual{
+        right:2%!important;
+        bottom:4%!important;
+        width:38%!important;
+        height:54%!important;
+      }
       @media(max-width:520px){
         html body .stackup-home-template-v2 .stackup-hero-copy{
           width:44%!important;
@@ -66,6 +73,12 @@ export default function Home(){
         html body .stackup-home-template-v2 .stackup-hero-title span:nth-child(1),
         html body .stackup-home-template-v2 .stackup-hero-title span:nth-child(2){font-size:28px!important}
         html body .stackup-home-template-v2 .stackup-hero-title span:nth-child(3){font-size:36px!important}
+        html body .stackup-home-template-v2 .stackup-hero-visual{
+          right:2%!important;
+          bottom:4%!important;
+          width:38%!important;
+          height:54%!important;
+        }
       }
     `}</style>
 
