@@ -32,13 +32,23 @@ function forceFooter(){
     button.style.setProperty("box-sizing","border-box","important");
     button.style.setProperty("border","1px solid #255000","important");
     button.style.setProperty("border-radius","12px","important");
+    button.style.setProperty("background","rgba(0,100,20,.07)","important");
+    button.style.setProperty("background-image","none","important");
+    button.style.setProperty("color","#009929","important");
+    button.style.setProperty("-webkit-text-fill-color","#009929","important");
     button.style.setProperty("font-size","10px","important");
+    button.style.setProperty("font-weight","400","important");
     button.style.setProperty("line-height","1","important");
+    button.style.setProperty("text-align","center","important");
+    button.style.setProperty("white-space","nowrap","important");
     button.style.setProperty("justify-self","center","important");
     button.style.setProperty("flex",`0 0 ${COMMAND_WIDTH}`,"important");
     button.style.setProperty("overflow","visible","important");
     button.querySelectorAll<HTMLElement>("*").forEach(child=>{
+      child.style.setProperty("color","#009929","important");
+      child.style.setProperty("-webkit-text-fill-color","#009929","important");
       child.style.setProperty("font-size","10px","important");
+      child.style.setProperty("font-weight","400","important");
       child.style.setProperty("line-height","1","important");
       child.style.setProperty("white-space","nowrap","important");
       child.style.setProperty("overflow","visible","important");
@@ -49,10 +59,12 @@ function forceFooter(){
 function paintDepthSelection(selected:HTMLButtonElement|null){
   document.querySelectorAll<HTMLButtonElement>(".player-dna-page .depth-choices > button").forEach(button=>{
     const active=button===selected;
-    button.setAttribute("aria-pressed",active?"true":"false");
+    const nextPressed=active?"true":"false";
+    if(button.getAttribute("aria-pressed")!==nextPressed)button.setAttribute("aria-pressed",nextPressed);
     button.style.setProperty("border",active?`2px solid ${SELECTED_BORDER}`:`1px solid ${NORMAL_BORDER}`,"important");
     button.style.setProperty("box-shadow",active?`inset 0 0 0 1px ${SELECTED_BORDER},0 0 12px rgba(237,230,219,.22)`:"none","important");
     button.style.setProperty("background",active?PASTEL:"#0b1710","important");
+    button.style.setProperty("background-color",active?PASTEL:"#0b1710","important");
     button.style.setProperty("color",active?"#000000":"#edf7f0","important");
     button.style.setProperty("-webkit-text-fill-color",active?"#000000":"#edf7f0","important");
     button.querySelectorAll<HTMLElement>("strong,span").forEach(child=>{
@@ -85,12 +97,12 @@ export default function PlayerDnaUiEnforcer(){
       pendingStart=window.setTimeout(()=>{
         target.dataset.playerDnaStartBypass="1";
         target.click();
-      },650);
+      },900);
     };
 
     document.addEventListener("click",onDepthClick,true);
     const observer=new MutationObserver(apply);
-    observer.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:["aria-pressed","class"]});
+    observer.observe(document.body,{subtree:true,childList:true});
     apply();
     return()=>{
       document.removeEventListener("click",onDepthClick,true);
