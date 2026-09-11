@@ -5,11 +5,12 @@ import {useEffect} from "react";
 const COMMAND_WIDTH="160px";
 const COMMAND_HEIGHT="44px";
 const COMMAND_FONT_SIZE="16px";
-const SELECTED_BORDER="#f7fbff";
-const NORMAL_BORDER="#33516e";
-const COMMAND_BORDER="#238fdf";
-const COMMAND_TEXT="#f7fbff";
-const COMMAND_BACKGROUND="linear-gradient(180deg,#092845,#041526)";
+const SELECTED_BORDER="#F7FBFF";
+const NORMAL_BORDER="#33516E";
+const COMMAND_BORDER="#8BD1FF";
+const COMMAND_TEXT="#F7FBFF";
+const COMMAND_BACKGROUND="linear-gradient(180deg,#0A2440,#04111F)";
+const COMMAND_PRIMARY_BACKGROUND="linear-gradient(180deg,#168EE8,#31A8FF)";
 
 function forceFooter(){
   const footer=document.querySelector<HTMLElement>(".player-dna-page .training-footer");
@@ -22,6 +23,8 @@ function forceFooter(){
   footer.style.setProperty("width","100%","important");
 
   footer.querySelectorAll<HTMLButtonElement>(":scope > button").forEach((button,index)=>{
+    const isPrimary=index===1&&!button.disabled;
+    const background=isPrimary?COMMAND_PRIMARY_BACKGROUND:COMMAND_BACKGROUND;
     button.style.setProperty("display","inline-flex","important");
     button.style.setProperty("align-items","center","important");
     button.style.setProperty("justify-content","center","important");
@@ -36,10 +39,10 @@ function forceFooter(){
     button.style.setProperty("box-sizing","border-box","important");
     button.style.setProperty("border",`2px solid ${COMMAND_BORDER}`,"important");
     button.style.setProperty("border-radius","14px","important");
-    button.style.setProperty("background",index===1&&!button.disabled?"linear-gradient(180deg,#eaf5ff,#9fd2ff)":COMMAND_BACKGROUND,"important");
-    button.style.setProperty("background-image",index===1&&!button.disabled?"linear-gradient(180deg,#eaf5ff,#9fd2ff)":COMMAND_BACKGROUND,"important");
-    button.style.setProperty("color",index===1&&!button.disabled?"#061426":COMMAND_TEXT,"important");
-    button.style.setProperty("-webkit-text-fill-color",index===1&&!button.disabled?"#061426":COMMAND_TEXT,"important");
+    button.style.setProperty("background",background,"important");
+    button.style.setProperty("background-image",background,"important");
+    button.style.setProperty("color",button.disabled?"#7D8B9B":COMMAND_TEXT,"important");
+    button.style.setProperty("-webkit-text-fill-color",button.disabled?"#7D8B9B":COMMAND_TEXT,"important");
     button.style.setProperty("font-size",COMMAND_FONT_SIZE,"important");
     button.style.setProperty("font-weight","400","important");
     button.style.setProperty("line-height","1","important");
@@ -50,7 +53,7 @@ function forceFooter(){
     button.style.setProperty("overflow","hidden","important");
 
     button.querySelectorAll<HTMLElement>("*").forEach(child=>{
-      const color=index===1&&!button.disabled?"#061426":COMMAND_TEXT;
+      const color=button.disabled?"#7D8B9B":COMMAND_TEXT;
       child.style.setProperty("color",color,"important");
       child.style.setProperty("-webkit-text-fill-color",color,"important");
       child.style.setProperty("font-size",COMMAND_FONT_SIZE,"important");
