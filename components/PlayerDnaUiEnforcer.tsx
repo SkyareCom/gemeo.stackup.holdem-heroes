@@ -2,25 +2,27 @@
 
 import {useEffect} from "react";
 
-const COMMAND_WIDTH="160px";
+const COMMAND_MAX_WIDTH="160px";
 const COMMAND_HEIGHT="44px";
-const COMMAND_FONT_SIZE="16px";
-const SELECTED_BORDER="#f7fbff";
-const NORMAL_BORDER="#238fdf";
-const COMMAND_BORDER="#238fdf";
-const COMMAND_TEXT="#f7fbff";
-const COMMAND_BACKGROUND="linear-gradient(180deg,#092845,#041526)";
-const COMMAND_PRIMARY_BACKGROUND="linear-gradient(180deg,#168ee8,#0b67c8)";
+const COMMAND_FONT_SIZE="14px";
+const SELECTED_BORDER="#F8FBFF";
+const NORMAL_BORDER="#238FDF";
+const COMMAND_BORDER="#238FDF";
+const COMMAND_TEXT="#F8FBFF";
+const COMMAND_BACKGROUND="linear-gradient(180deg,#0A2440,#04111F)";
+const COMMAND_PRIMARY_BACKGROUND="linear-gradient(180deg,#168EE8,#0B67C8)";
 
 function forceFooter(){
   const footer=document.querySelector<HTMLElement>(".player-dna-page .training-footer");
   if(!footer)return;
   footer.style.setProperty("display","grid","important");
-  footer.style.setProperty("grid-template-columns",`repeat(2,${COMMAND_WIDTH})`,"important");
+  footer.style.setProperty("grid-template-columns",`repeat(2,minmax(0,${COMMAND_MAX_WIDTH}))`,"important");
   footer.style.setProperty("justify-content","center","important");
   footer.style.setProperty("align-items","center","important");
   footer.style.setProperty("gap","10px","important");
   footer.style.setProperty("width","100%","important");
+  footer.style.setProperty("max-width","100%","important");
+  footer.style.setProperty("min-width","0","important");
 
   footer.querySelectorAll<HTMLButtonElement>(":scope > button").forEach((button,index)=>{
     const isPrimary=index===1&&!button.disabled;
@@ -28,9 +30,9 @@ function forceFooter(){
     button.style.setProperty("display","inline-flex","important");
     button.style.setProperty("align-items","center","important");
     button.style.setProperty("justify-content","center","important");
-    button.style.setProperty("width",COMMAND_WIDTH,"important");
-    button.style.setProperty("min-width",COMMAND_WIDTH,"important");
-    button.style.setProperty("max-width",COMMAND_WIDTH,"important");
+    button.style.setProperty("width","100%","important");
+    button.style.setProperty("min-width","0","important");
+    button.style.setProperty("max-width",COMMAND_MAX_WIDTH,"important");
     button.style.setProperty("height",COMMAND_HEIGHT,"important");
     button.style.setProperty("min-height",COMMAND_HEIGHT,"important");
     button.style.setProperty("max-height",COMMAND_HEIGHT,"important");
@@ -48,8 +50,8 @@ function forceFooter(){
     button.style.setProperty("line-height","1","important");
     button.style.setProperty("text-align","center","important");
     button.style.setProperty("white-space","nowrap","important");
-    button.style.setProperty("justify-self","center","important");
-    button.style.setProperty("flex",`0 0 ${COMMAND_WIDTH}`,"important");
+    button.style.setProperty("justify-self","stretch","important");
+    button.style.setProperty("flex","none","important");
     button.style.setProperty("overflow","hidden","important");
 
     button.querySelectorAll<HTMLElement>("*").forEach(child=>{
