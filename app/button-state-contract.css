@@ -1,0 +1,95 @@
+/* STACKUP HEROES — BUTTON STATE CONTRACT
+ * Normal: dark/normal background + blue border + blue text.
+ * Selected/clicked: blue background + white border + white text.
+ * Loaded last so legacy green/button rules cannot override it.
+ */
+
+:root{
+  --heroes-button-blue:#238FDF;
+  --heroes-button-blue-fill:#168EE8;
+  --heroes-button-normal-bg:#071A2D;
+  --heroes-button-white:#F8FBFF;
+}
+
+/* NORMAL STATE */
+html body button:not(:disabled),
+html body a.module-back,
+html body [role="button"]:not([aria-disabled="true"]),
+html body .player-dna-page .mode-choices>label{
+  background:var(--heroes-button-normal-bg)!important;
+  background-image:none!important;
+  border-color:var(--heroes-button-blue)!important;
+  color:var(--heroes-button-blue)!important;
+  -webkit-text-fill-color:var(--heroes-button-blue)!important;
+  box-shadow:none!important;
+}
+
+html body button:not(:disabled)>*,
+html body a.module-back>*,
+html body [role="button"]:not([aria-disabled="true"])>*,
+html body .player-dna-page .mode-choices>label>*{
+  color:inherit!important;
+  -webkit-text-fill-color:inherit!important;
+}
+
+/* SELECTED / CLICKED STATE */
+html body button:not(:disabled):active,
+html body button[aria-pressed="true"]:not(:disabled),
+html body button[aria-selected="true"]:not(:disabled),
+html body button.active:not(:disabled),
+html body button.selected:not(:disabled),
+html body [role="button"][aria-pressed="true"]:not([aria-disabled="true"]),
+html body [role="button"][aria-selected="true"]:not([aria-disabled="true"]),
+html body .player-dna-page .mode-choices>label:has(input:checked),
+html body .player-dna-page .depth-choices>button[aria-pressed="true"],
+html body .player-dna-page .training-session [class*="actions"]>button[aria-pressed="true"],
+html body .player-dna-page [class*="sizingActions"]>button[aria-pressed="true"]{
+  background:var(--heroes-button-blue-fill)!important;
+  background-image:none!important;
+  border-color:var(--heroes-button-white)!important;
+  color:var(--heroes-button-white)!important;
+  -webkit-text-fill-color:var(--heroes-button-white)!important;
+  box-shadow:inset 0 0 0 1px var(--heroes-button-white)!important;
+}
+
+html body button[aria-pressed="true"]>*,
+html body button[aria-selected="true"]>*,
+html body button.active>*,
+html body button.selected>*,
+html body [role="button"][aria-pressed="true"]>*,
+html body [role="button"][aria-selected="true"]>*,
+html body .player-dna-page .mode-choices>label:has(input:checked)>*,
+html body .player-dna-page .depth-choices>button[aria-pressed="true"]>*,
+html body .player-dna-page .training-session [class*="actions"]>button[aria-pressed="true"]>*,
+html body .player-dna-page [class*="sizingActions"]>button[aria-pressed="true"]>*{
+  color:var(--heroes-button-white)!important;
+  -webkit-text-fill-color:var(--heroes-button-white)!important;
+}
+
+/* Hover/focus must not look selected. It only keeps the normal state visible. */
+html body button:not(:disabled):hover:not([aria-pressed="true"]):not([aria-selected="true"]):not(.active):not(.selected),
+html body button:not(:disabled):focus-visible:not([aria-pressed="true"]):not([aria-selected="true"]):not(.active):not(.selected),
+html body a.module-back:hover,
+html body a.module-back:focus-visible{
+  background:var(--heroes-button-normal-bg)!important;
+  border-color:var(--heroes-button-blue)!important;
+  color:var(--heroes-button-blue)!important;
+  -webkit-text-fill-color:var(--heroes-button-blue)!important;
+  box-shadow:0 0 0 2px rgba(35,143,223,.18)!important;
+}
+
+/* Disabled stays clearly disabled and never resembles a selected state. */
+html body button:disabled,
+html body button[aria-disabled="true"]{
+  opacity:.42!important;
+  background:var(--heroes-button-normal-bg)!important;
+  border-color:var(--heroes-button-blue)!important;
+  color:var(--heroes-button-blue)!important;
+  -webkit-text-fill-color:var(--heroes-button-blue)!important;
+  box-shadow:none!important;
+}
+
+/* Keep poker cards and purely visual table elements outside this contract. */
+html body [class*="HandReviewWorkspace_card"]{
+  background:inherit!important;
+}
