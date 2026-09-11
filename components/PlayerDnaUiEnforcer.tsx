@@ -11,6 +11,7 @@ const COMMAND_BORDER="#238FDF";
 const COMMAND_TEXT="#F8FBFF";
 const COMMAND_BACKGROUND="linear-gradient(180deg,#0A2440,#04111F)";
 const COMMAND_PRIMARY_BACKGROUND="linear-gradient(180deg,#168EE8,#0B67C8)";
+const SELECTED_BACKGROUND="linear-gradient(180deg,#168EE8,#0B67C8)";
 
 function forceFooter(){
   const footer=document.querySelector<HTMLElement>(".player-dna-page .training-footer");
@@ -73,16 +74,15 @@ function paintDepthSelection(selected:HTMLButtonElement|null){
     const nextPressed=active?"true":"false";
     if(button.getAttribute("aria-pressed")!==nextPressed)button.setAttribute("aria-pressed",nextPressed);
 
-    // PADRÃO: SOMENTE A BORDA MUDA NO CARD SELECIONADO.
-    button.style.setProperty("border",`${active?"2px":"1px"} solid ${active?SELECTED_BORDER:NORMAL_BORDER}`,"important");
-    button.style.removeProperty("box-shadow");
-    button.style.removeProperty("background");
-    button.style.removeProperty("background-color");
-    button.style.removeProperty("color");
-    button.style.removeProperty("-webkit-text-fill-color");
+    button.style.setProperty("border",`2px solid ${active?SELECTED_BORDER:NORMAL_BORDER}`,"important");
+    button.style.setProperty("background",active?SELECTED_BACKGROUND:COMMAND_BACKGROUND,"important");
+    button.style.setProperty("background-image",active?SELECTED_BACKGROUND:COMMAND_BACKGROUND,"important");
+    button.style.setProperty("color",COMMAND_TEXT,"important");
+    button.style.setProperty("-webkit-text-fill-color",COMMAND_TEXT,"important");
+    button.style.setProperty("box-shadow",active?`inset 0 0 0 1px ${SELECTED_BORDER}`:"none","important");
     button.querySelectorAll<HTMLElement>("strong,span").forEach(child=>{
-      child.style.removeProperty("color");
-      child.style.removeProperty("-webkit-text-fill-color");
+      child.style.setProperty("color",COMMAND_TEXT,"important");
+      child.style.setProperty("-webkit-text-fill-color",COMMAND_TEXT,"important");
     });
   });
 }
