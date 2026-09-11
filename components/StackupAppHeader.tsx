@@ -9,7 +9,7 @@ export default function StackupAppHeader(){
         <img className="stackup-logo-image" src={HEROES_LOGO_SRC} alt="" width="128" height="128" />
       </span>
       <span className="stackup-brand-copy">
-        <strong className="stackup-app-title"><span>STACKUP HOLD&apos;EM</span><span>HEROES</span></strong>
+        <strong className="stackup-app-title">STACKUP HOLD&apos;EM HEROES</strong>
         <span className="stackup-app-subtitle">AI POKER PERFORMANCE SYSTEM</span>
       </span>
     </Link>
