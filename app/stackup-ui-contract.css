@@ -1,0 +1,135 @@
+/* STACKUP HEROES — CONTRATO VISUAL FINAL
+ * Paleta azul/branco/cinza, tipografia padronizada e estados funcionais.
+ * Não alcança a mesa do Player DNA, que vive em Shadow DOM.
+ */
+:root{
+  --stackup-bg:#020812;
+  --stackup-surface:#04111F;
+  --stackup-surface-2:#071A2D;
+  --stackup-surface-3:#0A2440;
+  --stackup-blue-700:#0B67C8;
+  --stackup-blue-600:#168EE8;
+  --stackup-blue-500:#31A8FF;
+  --stackup-blue-400:#5BBCFF;
+  --stackup-blue-300:#A9D8FF;
+  --stackup-border:#238FDF;
+  --stackup-white:#F8FBFF;
+  --stackup-gray:#C4D0DD;
+  --stackup-muted:#8292A5;
+  --app-command-border:#238FDF;
+  --app-command-text:#F8FBFF;
+  --app-command-selected:#F8FBFF;
+  --app-command-background:#071A2D;
+  --type-deep:#0B67C8;
+  --type-action:#31A8FF;
+  --type-support:#5BBCFF;
+  --type-highlight:#A9D8FF;
+  --type-reading:#238FDF;
+  --type-muted:#A9D8FF;
+}
+
+html,body{max-width:100%;overflow-x:hidden!important}
+
+/* TIPOGRAFIA — 20 / 16 / 14 / 12 */
+html body .stackup-app-title:not(#ui-a):not(#ui-b),
+html body main.stackup-home .stackup-home-title:not(#ui-a):not(#ui-b),
+html body main.module-page h1:not(#ui-a):not(#ui-b),
+html body main.module-page h2:not(#ui-a):not(#ui-b),
+html body main.module-page h3:not(#ui-a):not(#ui-b),
+html body main.module-page h4:not(#ui-a):not(#ui-b),
+html body main.stackup-home .module-title:not(#ui-a):not(#ui-b),
+html body main.stackup-home .module-title span:not(#ui-a):not(#ui-b){
+  font-size:20px!important;
+  line-height:1.18!important;
+  color:var(--stackup-blue-600)!important;
+  -webkit-text-fill-color:var(--stackup-blue-600)!important;
+}
+
+html body .stackup-home-kicker:not(#ui-a):not(#ui-b),
+html body main.module-page .eyebrow:not(#ui-a):not(#ui-b),
+html body main.module-page .tag:not(#ui-a):not(#ui-b){
+  font-size:16px!important;
+  line-height:1.25!important;
+  color:var(--stackup-blue-500)!important;
+  -webkit-text-fill-color:var(--stackup-blue-500)!important;
+}
+
+html body main.stackup-home .stackup-home-lead:not(#ui-a):not(#ui-b),
+html body main.stackup-home .module-description:not(#ui-a):not(#ui-b),
+html body main.module-page p:not(#ui-a):not(#ui-b),
+html body main.module-page li:not(#ui-a):not(#ui-b){
+  font-size:14px!important;
+  line-height:1.45!important;
+  color:var(--stackup-border)!important;
+  -webkit-text-fill-color:var(--stackup-border)!important;
+}
+
+html body .stackup-app-subtitle:not(#ui-a):not(#ui-b),
+html body main.module-page small:not(#ui-a):not(#ui-b){
+  font-size:12px!important;
+  line-height:1.35!important;
+  color:var(--stackup-blue-300)!important;
+  -webkit-text-fill-color:var(--stackup-blue-300)!important;
+}
+
+/* CONTROLES: AZUL EM REPOUSO, BRANCO NO CLIQUE/SELEÇÃO. */
+html body main.stackup-home .modules a:not(#ui-a):not(#ui-b),
+html body main.module-page button:not(#ui-a):not(#ui-b),
+html body main.module-page a.module-back:not(#ui-a):not(#ui-b),
+html body main.module-page label:not(#ui-a):not(#ui-b),
+html body main.module-page input:not(#ui-a):not(#ui-b),
+html body main.module-page select:not(#ui-a):not(#ui-b),
+html body main.module-page textarea:not(#ui-a):not(#ui-b){
+  border-color:var(--stackup-border)!important;
+}
+
+html body main.stackup-home .modules a:not(#ui-a):not(#ui-b){
+  background:linear-gradient(145deg,#0A2440 0%,#071A2D 58%,#04111F 100%)!important;
+  background-image:linear-gradient(145deg,#0A2440 0%,#071A2D 58%,#04111F 100%)!important;
+  color:var(--stackup-white)!important;
+  -webkit-text-fill-color:var(--stackup-white)!important;
+  box-shadow:0 12px 28px rgba(0,0,0,.30),inset 0 1px 0 rgba(169,216,255,.08)!important;
+}
+html body main.stackup-home .modules a:not(#ui-a):not(#ui-b):is(:hover,:focus-visible,:active){
+  border-color:var(--stackup-white)!important;
+  box-shadow:0 0 0 1px rgba(248,251,255,.35),0 12px 30px rgba(0,0,0,.34)!important;
+}
+html body main.stackup-home .module-title:not(#ui-a):not(#ui-b),
+html body main.stackup-home .module-title span:not(#ui-a):not(#ui-b){
+  color:var(--stackup-white)!important;
+  -webkit-text-fill-color:var(--stackup-white)!important;
+}
+html body main.stackup-home .module-description:not(#ui-a):not(#ui-b){
+  color:var(--stackup-gray)!important;
+  -webkit-text-fill-color:var(--stackup-gray)!important;
+}
+html body main.stackup-home .module-number:not(#ui-a):not(#ui-b){
+  border-color:var(--stackup-blue-500)!important;
+  background:linear-gradient(145deg,#0B4A88,#04111F)!important;
+  color:var(--stackup-blue-300)!important;
+  -webkit-text-fill-color:var(--stackup-blue-300)!important;
+}
+
+html body main.module-page button:not(#ui-a):not(#ui-b),
+html body main.module-page a.module-back:not(#ui-a):not(#ui-b){
+  background:#071A2D!important;
+  background-image:none!important;
+  color:var(--stackup-white)!important;
+  -webkit-text-fill-color:var(--stackup-white)!important;
+  box-shadow:none!important;
+}
+html body main.module-page button:not(#ui-a):not(#ui-b):is(:active,:focus-visible),
+html body main.module-page button[aria-pressed="true"]:not(#ui-a):not(#ui-b),
+html body main.module-page a.module-back:not(#ui-a):not(#ui-b):is(:active,:focus-visible),
+html body main.module-page label:not(#ui-a):not(#ui-b):has(input:checked),
+html body main.module-page :is(input,select,textarea):not(#ui-a):not(#ui-b):focus{
+  border-color:var(--stackup-white)!important;
+  outline-color:var(--stackup-white)!important;
+}
+
+html body main.module-page .primary:not(#ui-a):not(#ui-b):not(:disabled){
+  background:linear-gradient(180deg,#168EE8,#0B67C8)!important;
+  background-image:linear-gradient(180deg,#168EE8,#0B67C8)!important;
+  color:var(--stackup-white)!important;
+  -webkit-text-fill-color:var(--stackup-white)!important;
+}
