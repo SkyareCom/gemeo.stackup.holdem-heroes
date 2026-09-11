@@ -1,0 +1,33 @@
+/* PLAYER DNA — TRAINING CLEANUP
+ * Remove o card externo de nível e impede dicas visuais nos botões de ação.
+ */
+html body main.player-dna-page .training-session [class*="levelSection"]{
+  display:none!important;
+}
+
+html body main.player-dna-page .training-session [class*="actions"]>button,
+html body main.player-dna-page [class*="sizingActions"]>button{
+  opacity:1!important;
+  pointer-events:auto!important;
+  cursor:pointer!important;
+  border-color:#238FDF!important;
+  background:linear-gradient(180deg,#0A2440,#04111F)!important;
+  background-image:linear-gradient(180deg,#0A2440,#04111F)!important;
+  color:#F8FBFF!important;
+  -webkit-text-fill-color:#F8FBFF!important;
+  filter:none!important;
+}
+
+html body main.player-dna-page .training-session [class*="actions"]>button[aria-disabled="true"],
+html body main.player-dna-page [class*="sizingActions"]>button[aria-disabled="true"]{
+  opacity:1!important;
+  pointer-events:auto!important;
+  color:#F8FBFF!important;
+  -webkit-text-fill-color:#F8FBFF!important;
+}
+
+html body main.player-dna-page .training-session [class*="actions"]>button[aria-pressed="true"],
+html body main.player-dna-page [class*="sizingActions"]>button[aria-pressed="true"]{
+  border-color:#F8FBFF!important;
+  box-shadow:inset 0 0 0 1px #F8FBFF!important;
+}
