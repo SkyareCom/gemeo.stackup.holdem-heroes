@@ -1,12 +1,12 @@
 import Link from "next/link";
 
-const HEROES_LOGO_SRC = "/gemeo.stackup.holdem-heroes/stackup-heroes-logo.png";
+const HEROES_LOGO_SRC = "/gemeo.stackup.holdem-heroes/stackup-heroes-logo-v2.svg?v=20260911-0949";
 
 export default function StackupAppHeader(){
   return <header className="stackup-app-header" aria-label="STACKUP HOLD'EM HEROES">
     <Link className="stackup-brand-lockup" href="/" aria-label="STACKUP HOLD'EM HEROES — INÍCIO">
       <span className="stackup-logo" aria-hidden="true">
-        <img className="stackup-logo-image" src={HEROES_LOGO_SRC} alt="" />
+        <img className="stackup-logo-image" src={HEROES_LOGO_SRC} alt="" width="128" height="128" />
       </span>
       <span className="stackup-brand-copy">
         <strong className="stackup-app-title"><span>STACKUP HOLD&apos;EM</span><span>HEROES</span></strong>
