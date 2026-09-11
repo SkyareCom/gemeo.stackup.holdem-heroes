@@ -5,6 +5,7 @@ import { useEffect } from "react";
 const ATTRIBUTES = ["placeholder", "title", "aria-label", "alt"] as const;
 const SKIP_TAGS = new Set(["SCRIPT", "STYLE", "NOSCRIPT"]);
 const PRESERVE_CASE_SELECTOR = '[data-preserve-case="true"]';
+const FONT_FAMILY = 'var(--font-love-ya-like-a-sister), "Love Ya Like A Sister", cursive';
 
 function shouldPreserveCase(node: Node) {
   const element = node instanceof Element ? node : node.parentElement;
@@ -20,27 +21,35 @@ function uppercaseTextNode(node: Node) {
   if (upper !== value) node.nodeValue = upper;
 }
 
-function lockElement(element: Element) {
-  if (shouldPreserveCase(element)) return;
+function applyGlobalFont(element: Element) {
+  if (element instanceof HTMLElement || element instanceof SVGElement) {
+    element.style.setProperty("font-family", FONT_FAMILY, "important");
+  }
+}
 
-  if (element instanceof HTMLElement) {
+function lockElement(element: Element) {
+  // Font is global, including content that preserves its original letter case.
+  // Inline !important intentionally wins over legacy/local module CSS declarations.
+  applyGlobalFont(element);
+
+  if (!shouldPreserveCase(element) && element instanceof HTMLElement) {
     element.style.setProperty("text-transform", "uppercase", "important");
   }
 
-  for (const attribute of ATTRIBUTES) {
-    const value = element.getAttribute(attribute);
-    if (value) {
-      const upper = value.toLocaleUpperCase("pt-BR");
-      if (upper !== value) element.setAttribute(attribute, upper);
+  if (!shouldPreserveCase(element)) {
+    for (const attribute of ATTRIBUTES) {
+      const value = element.getAttribute(attribute);
+      if (value) {
+        const upper = value.toLocaleUpperCase("pt-BR");
+        if (upper !== value) element.setAttribute(attribute, upper);
+      }
     }
   }
 
-  if (element.shadowRoot) uppercaseTree(element.shadowRoot);
+  if (element.shadowRoot) enforceTree(element.shadowRoot);
 }
 
-function uppercaseTree(root: Node) {
-  if (shouldPreserveCase(root)) return;
-
+function enforceTree(root: Node) {
   if (root.nodeType === Node.TEXT_NODE) {
     uppercaseTextNode(root);
     return;
@@ -61,7 +70,10 @@ function uppercaseTree(root: Node) {
 
 export default function UppercaseGuard() {
   useEffect(() => {
-    uppercaseTree(document.body);
+    // Lock the Google font on the whole rendered app, after all module CSS is loaded.
+    document.documentElement.style.setProperty("font-family", FONT_FAMILY, "important");
+    document.body.style.setProperty("font-family", FONT_FAMILY, "important");
+    enforceTree(document.body);
 
     const observer = new MutationObserver((mutations) => {
       for (const mutation of mutations) {
@@ -73,7 +85,7 @@ export default function UppercaseGuard() {
           lockElement(mutation.target);
           continue;
         }
-        for (const addedNode of mutation.addedNodes) uppercaseTree(addedNode);
+        for (const addedNode of mutation.addedNodes) enforceTree(addedNode);
       }
     });
 
@@ -85,7 +97,8 @@ export default function UppercaseGuard() {
       attributeFilter: [...ATTRIBUTES],
     });
 
-    const enforce = window.setInterval(() => uppercaseTree(document.body), 500);
+    // Reapply periodically because some interactive modules inject inline styles at runtime.
+    const enforce = window.setInterval(() => enforceTree(document.body), 500);
 
     return () => {
       observer.disconnect();
