@@ -4,9 +4,9 @@ import {useEffect} from "react";
 
 const COMMAND_WIDTH="160px";
 const COMMAND_HEIGHT="44px";
+const COMMAND_FONT_SIZE="12px";
 const SELECTED_BORDER="#ede6db";
 const NORMAL_BORDER="#183426";
-const PASTEL="#ede6db";
 
 function forceFooter(){
   const footer=document.querySelector<HTMLElement>(".player-dna-page .training-footer");
@@ -17,6 +17,7 @@ function forceFooter(){
   footer.style.setProperty("align-items","center","important");
   footer.style.setProperty("gap","8px","important");
   footer.style.setProperty("width","100%","important");
+
   footer.querySelectorAll<HTMLButtonElement>(":scope > button").forEach(button=>{
     button.style.setProperty("display","inline-flex","important");
     button.style.setProperty("align-items","center","important");
@@ -27,7 +28,7 @@ function forceFooter(){
     button.style.setProperty("height",COMMAND_HEIGHT,"important");
     button.style.setProperty("min-height",COMMAND_HEIGHT,"important");
     button.style.setProperty("max-height",COMMAND_HEIGHT,"important");
-    button.style.setProperty("padding","0 8px","important");
+    button.style.setProperty("padding","0 10px","important");
     button.style.setProperty("margin","0","important");
     button.style.setProperty("box-sizing","border-box","important");
     button.style.setProperty("border","1px solid #255000","important");
@@ -36,22 +37,24 @@ function forceFooter(){
     button.style.setProperty("background-image","none","important");
     button.style.setProperty("color","#009929","important");
     button.style.setProperty("-webkit-text-fill-color","#009929","important");
-    button.style.setProperty("font-size","10px","important");
+    button.style.setProperty("font-size",COMMAND_FONT_SIZE,"important");
     button.style.setProperty("font-weight","400","important");
     button.style.setProperty("line-height","1","important");
     button.style.setProperty("text-align","center","important");
     button.style.setProperty("white-space","nowrap","important");
     button.style.setProperty("justify-self","center","important");
     button.style.setProperty("flex",`0 0 ${COMMAND_WIDTH}`,"important");
-    button.style.setProperty("overflow","visible","important");
+    button.style.setProperty("overflow","hidden","important");
+
     button.querySelectorAll<HTMLElement>("*").forEach(child=>{
       child.style.setProperty("color","#009929","important");
       child.style.setProperty("-webkit-text-fill-color","#009929","important");
-      child.style.setProperty("font-size","10px","important");
+      child.style.setProperty("font-size",COMMAND_FONT_SIZE,"important");
       child.style.setProperty("font-weight","400","important");
       child.style.setProperty("line-height","1","important");
       child.style.setProperty("white-space","nowrap","important");
-      child.style.setProperty("overflow","visible","important");
+      child.style.setProperty("overflow","hidden","important");
+      child.style.setProperty("text-overflow","ellipsis","important");
     });
   });
 }
@@ -61,15 +64,17 @@ function paintDepthSelection(selected:HTMLButtonElement|null){
     const active=button===selected;
     const nextPressed=active?"true":"false";
     if(button.getAttribute("aria-pressed")!==nextPressed)button.setAttribute("aria-pressed",nextPressed);
-    button.style.setProperty("border",active?`2px solid ${SELECTED_BORDER}`:`1px solid ${NORMAL_BORDER}`,"important");
-    button.style.setProperty("box-shadow",active?`inset 0 0 0 1px ${SELECTED_BORDER},0 0 12px rgba(237,230,219,.22)`:"none","important");
-    button.style.setProperty("background",active?PASTEL:"#0b1710","important");
-    button.style.setProperty("background-color",active?PASTEL:"#0b1710","important");
-    button.style.setProperty("color",active?"#000000":"#edf7f0","important");
-    button.style.setProperty("-webkit-text-fill-color",active?"#000000":"#edf7f0","important");
+
+    // PADRÃO: SOMENTE A BORDA MUDA NO CARD SELECIONADO.
+    button.style.setProperty("border",`1px solid ${active?SELECTED_BORDER:NORMAL_BORDER}`,"important");
+    button.style.removeProperty("box-shadow");
+    button.style.removeProperty("background");
+    button.style.removeProperty("background-color");
+    button.style.removeProperty("color");
+    button.style.removeProperty("-webkit-text-fill-color");
     button.querySelectorAll<HTMLElement>("strong,span").forEach(child=>{
-      child.style.setProperty("color",active?"#000000":"#edf7f0","important");
-      child.style.setProperty("-webkit-text-fill-color",active?"#000000":"#edf7f0","important");
+      child.style.removeProperty("color");
+      child.style.removeProperty("-webkit-text-fill-color");
     });
   });
 }
@@ -77,6 +82,7 @@ function paintDepthSelection(selected:HTMLButtonElement|null){
 export default function PlayerDnaUiEnforcer(){
   useEffect(()=>{
     let pendingStart:number|undefined;
+
     const apply=()=>{
       forceFooter();
       const selected=document.querySelector<HTMLButtonElement>('.player-dna-page .depth-choices > button[aria-pressed="true"]');
@@ -90,9 +96,11 @@ export default function PlayerDnaUiEnforcer(){
         delete target.dataset.playerDnaStartBypass;
         return;
       }
+
       event.preventDefault();
       event.stopPropagation();
       paintDepthSelection(target);
+
       if(pendingStart!==undefined)window.clearTimeout(pendingStart);
       pendingStart=window.setTimeout(()=>{
         target.dataset.playerDnaStartBypass="1";
@@ -104,11 +112,13 @@ export default function PlayerDnaUiEnforcer(){
     const observer=new MutationObserver(apply);
     observer.observe(document.body,{subtree:true,childList:true});
     apply();
+
     return()=>{
       document.removeEventListener("click",onDepthClick,true);
       observer.disconnect();
       if(pendingStart!==undefined)window.clearTimeout(pendingStart);
     };
   },[]);
+
   return null;
 }
