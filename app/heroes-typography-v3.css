@@ -1,13 +1,45 @@
-/* STACKUP HEROES — TYPOGRAPHY CONTRACT V3
+/* STACKUP HEROES — TYPOGRAPHY CONTRACT V4
  * Google font: Love Ya Like A Sister
- * Scale requested: titles 20px, subtitles 16px, main text 14px, secondary text 12px.
+ * Scale: titles 20px, subtitles 16px, main text 14px, secondary text 12px.
+ * Also prevents the wider handwritten font from overflowing cards, panels and viewport.
  */
+
+html,
+body{
+  max-width:100%!important;
+  overflow-x:hidden!important;
+}
 
 html body,
 html body *,
 html body *::before,
 html body *::after{
+  box-sizing:border-box!important;
   font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;
+}
+
+html body main,
+html body section,
+html body article,
+html body nav,
+html body form,
+html body .panel,
+html body .profile-panel,
+html body .training-session,
+html body .modules{
+  max-width:100%!important;
+  min-width:0!important;
+}
+
+html body img,
+html body svg,
+html body canvas,
+html body video,
+html body input,
+html body textarea,
+html body select,
+html body button{
+  max-width:100%!important;
 }
 
 /* TITLES — 20px */
@@ -15,30 +47,45 @@ html body h1,
 html body h2,
 html body h3,
 html body h4,
+html body h5,
+html body h6,
 html body .stackup-app-title,
 html body .stackup-app-title span,
 html body .stackup-home-title,
+html body .stackup-hero-title,
+html body .stackup-hero-title span,
 html body .module-title,
 html body .module-title span,
-html body .panel h1,
-html body .panel h2,
-html body .panel h3,
-html body .panel h4{
+html body [class*="title"],
+html body [class*="heading"],
+html body [class*="prompt"],
+html body [class*="question"]{
   font-size:20px!important;
   line-height:1.18!important;
   font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;
+  overflow-wrap:anywhere!important;
+  word-break:normal!important;
+  white-space:normal!important;
 }
 
 /* SUBTITLES — 16px */
 html body .stackup-app-subtitle,
 html body .stackup-home-lead,
+html body .stackup-hero-lead,
 html body .subtitle,
 html body .sub-title,
 html body .panel-subtitle,
-html body .section-subtitle{
+html body .section-subtitle,
+html body [class*="subtitle"],
+html body [class*="lead"],
+html body [class*="status"],
+html body [class*="count"]{
   font-size:16px!important;
   line-height:1.32!important;
   font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;
+  overflow-wrap:anywhere!important;
+  word-break:normal!important;
+  white-space:normal!important;
 }
 
 /* MAIN TEXT — 14px */
@@ -50,12 +97,13 @@ html body textarea,
 html body select,
 html body button,
 html body a,
+html body strong,
+html body b,
 html body .module-back,
 html body .primary,
-html body .secondary,
-html body .stackup-home-kicker{
+html body .secondary{
   font-size:14px!important;
-  line-height:1.42!important;
+  line-height:1.4!important;
   font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;
 }
 
@@ -68,24 +116,83 @@ html body .helper,
 html body .hint,
 html body .caption,
 html body .secondary-text,
-html body .stackup-home-footer{
+html body .stackup-home-footer,
+html body .stackup-home-kicker,
+html body [class*="description"],
+html body [class*="helper"],
+html body [class*="hint"],
+html body [class*="caption"],
+html body [class*="eyebrow"],
+html body [class*="meta"],
+html body [class*="participants"],
+html body [class*="label"]{
   font-size:12px!important;
   line-height:1.36!important;
   font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;
 }
 
-/* HEADER: keep requested scale even on small screens. */
+/* Text containers may wrap instead of escaping their cards/panels. */
+html body h1,
+html body h2,
+html body h3,
+html body h4,
+html body h5,
+html body h6,
+html body p,
+html body small,
+html body label,
+html body button,
+html body a,
+html body strong,
+html body .stackup-app-subtitle,
+html body .module-title,
+html body .module-description,
+html body .stackup-home-footer p,
+html body [class*="description"],
+html body [class*="prompt"],
+html body [class*="question"]{
+  max-width:100%!important;
+  min-width:0!important;
+  overflow-wrap:anywhere!important;
+  word-break:normal!important;
+  white-space:normal!important;
+}
+
+/* The old template used max-content/nowrap here; both overflow with the new font. */
+html body .stackup-brand-lockup{
+  width:100%!important;
+  min-width:0!important;
+}
+
+html body .stackup-brand-copy{
+  min-width:0!important;
+  max-width:100%!important;
+}
+
+html body .stackup-app-subtitle{
+  white-space:normal!important;
+  letter-spacing:.08em!important;
+}
+
+html body .stackup-home-footer p{
+  white-space:normal!important;
+  text-align:center!important;
+}
+
 @media(max-width:620px){
   html body .stackup-app-title,
   html body .stackup-app-title span,
   html body .stackup-home-title,
+  html body .stackup-hero-title,
+  html body .stackup-hero-title span,
   html body .module-title,
   html body .module-title span{
     font-size:20px!important;
   }
 
   html body .stackup-app-subtitle,
-  html body .stackup-home-lead{
+  html body .stackup-home-lead,
+  html body .stackup-hero-lead{
     font-size:16px!important;
   }
 
@@ -107,7 +214,8 @@ html body .stackup-home-footer{
   html body .tag,
   html body .helper,
   html body .hint,
-  html body .caption{
+  html body .caption,
+  html body .stackup-home-kicker{
     font-size:12px!important;
   }
 }
