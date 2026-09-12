@@ -1,0 +1,1 @@
+Homepage background assets are mirrored at public root for GitHub Pages basePath compatibility.
