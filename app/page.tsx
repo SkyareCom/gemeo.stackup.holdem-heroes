@@ -5,9 +5,9 @@ import Link from "next/link";
 import {useRouter} from "next/navigation";
 
 const BACKGROUND_PARTS = [
-  "/gemeo.stackup.holdem-heroes/stackup-heroes-home-v4-432.part0",
-  "/gemeo.stackup.holdem-heroes/stackup-heroes-home-v4-432.part1",
-  "/gemeo.stackup.holdem-heroes/stackup-heroes-home-v4-432.part2",
+  "./stackup-heroes-home-v4-432.part0",
+  "./stackup-heroes-home-v4-432.part1",
+  "./stackup-heroes-home-v4-432.part2",
 ] as const;
 
 const modules = [
@@ -46,8 +46,8 @@ export default function Home(){
 
     Promise.all(
       BACKGROUND_PARTS.map(async (url) => {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`Failed to load ${url}`);
+        const response = await fetch(url, {cache:"force-cache"});
+        if (!response.ok) throw new Error(`Failed to load ${url}: ${response.status}`);
         return (await response.text()).trim();
       }),
     )
@@ -222,6 +222,7 @@ export default function Home(){
           -webkit-background-clip:text!important;
           background-clip:text!important;
           color:transparent!important;
+          -webkit-text-fill-color:transparent!important;
           text-shadow:none!important;
           filter:drop-shadow(0 2px 5px rgba(0,77,150,.55))!important;
         }
@@ -276,13 +277,13 @@ export default function Home(){
           font-weight:400!important;
         }
         .heroesExactFooter {
-          left:20.6%!important;
+          left:8%!important;
           top:95.22%!important;
-          width:60%!important;
-          font-size:min(1.74vw,15px)!important;
+          width:84%!important;
+          font-size:min(1.55vw,13.4px)!important;
           line-height:1!important;
           color:#7fa8d6!important;
-          letter-spacing:min(.52vw,4.5px)!important;
+          letter-spacing:min(.38vw,3.3px)!important;
           white-space:nowrap!important;
           text-align:center!important;
           font-weight:400!important;
