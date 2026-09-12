@@ -1,0 +1,3 @@
+STACKUP HEROES HOME ARTWORK
+Expected root parts: 16000 / 16000 / 10116 base64 characters.
+The three files concatenate to the 432x768 WebP used by the main page.
