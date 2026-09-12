@@ -3,11 +3,14 @@
 import Link from "next/link";
 import {useEffect, useState} from "react";
 
-const ASSET_VERSION = "20260912-hero-copy-v8-no-blue-overlays";
+const ASSET_VERSION = "20260912-clean-art-v9-no-overlays";
 const PART_NAMES = [
-  "stackup-heroes-home-v4-432.part0",
-  "stackup-heroes-home-v4-432.part1",
-  "stackup-heroes-home-v4-432.part2",
+  "home-clean-v9.part0",
+  "home-clean-v9.part1",
+  "home-clean-v9.part2",
+  "home-clean-v9.part3",
+  "home-clean-v9.part4",
+  "home-clean-v9.part5",
 ] as const;
 
 const modules = [
@@ -45,7 +48,7 @@ export default function Home(){
     Promise.all(PART_NAMES.map(fetchPart))
       .then(parts=>{
         const base64 = parts.join("").replace(/\s+/g,"");
-        if(base64.length < 40000) throw new Error(`incomplete homepage artwork: ${base64.length}`);
+        if(base64.length < 35000) throw new Error(`incomplete homepage artwork: ${base64.length}`);
         if(!cancelled) setBackgroundSrc(`data:image/webp;base64,${base64}`);
       })
       .catch(error=>console.error("STACKUP HEROES HOME ARTWORK LOAD FAILED",error));
@@ -61,21 +64,6 @@ export default function Home(){
         .hxViewport{width:100%!important;min-height:100vh!important;display:flex!important;justify-content:center!important;align-items:flex-start!important;overflow-x:hidden!important;background:#031a31!important;font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important}
         .hxScreen{position:relative!important;width:min(100vw,864px)!important;aspect-ratio:864/1536!important;line-height:1!important;background:#031a31!important;overflow:hidden!important;flex:0 0 auto!important;isolation:isolate!important}
         .hxArt{position:absolute!important;inset:0!important;z-index:0!important;display:block!important;width:100%!important;height:100%!important;object-fit:contain!important;pointer-events:none!important;border:0!important;margin:0!important;padding:0!important}
-
-        /* Limpeza dos antigos botões sem fundo azul: só desfoca o conteúdo original. */
-        #homeNavEraseLeft,#homeNavEraseRight{position:absolute!important;top:15.55%!important;height:7.1%!important;z-index:55!important;pointer-events:none!important;background-color:transparent!important;background-image:none!important;-webkit-backdrop-filter:blur(24px) saturate(.92)!important;backdrop-filter:blur(24px) saturate(.92)!important;border-radius:min(4vw,30px)!important;box-shadow:none!important;opacity:1!important}
-        #homeNavEraseLeft{left:4.6%!important;width:44.5%!important}
-        #homeNavEraseRight{left:51.6%!important;width:43.7%!important}
-
-        /* Limpeza do texto antigo sem qualquer faixa/fundo sólido. */
-        #homeHeroCleanTop,#homeHeroCleanCopy{position:absolute!important;z-index:55!important;pointer-events:none!important;background-color:transparent!important;background-image:none!important;box-shadow:none!important;opacity:1!important;-webkit-backdrop-filter:blur(18px) saturate(.94)!important;backdrop-filter:blur(18px) saturate(.94)!important}
-        #homeHeroCleanTop{left:2.5%!important;top:22.45%!important;width:55%!important;height:15.1%!important;border-radius:0 min(5vw,38px) min(5vw,38px) 0!important;-webkit-mask-image:linear-gradient(90deg,#000 0%,#000 78%,transparent 100%)!important;mask-image:linear-gradient(90deg,#000 0%,#000 78%,transparent 100%)!important}
-        #homeHeroCleanCopy{left:2.5%!important;top:37.25%!important;width:86%!important;height:7.35%!important;border-radius:0 min(5vw,38px) min(5vw,38px) 0!important;-webkit-mask-image:linear-gradient(90deg,#000 0%,#000 56%,rgba(0,0,0,.45) 76%,transparent 100%)!important;mask-image:linear-gradient(90deg,#000 0%,#000 56%,rgba(0,0,0,.45) 76%,transparent 100%)!important}
-
-        /* Limpa apenas os traços inferiores, também sem fundo azul. */
-        #homeFooterEraseLeft,#homeFooterEraseRight{position:absolute!important;top:94.05%!important;height:2.65%!important;z-index:55!important;pointer-events:none!important;background-color:transparent!important;background-image:none!important;-webkit-backdrop-filter:blur(14px) saturate(.92)!important;backdrop-filter:blur(14px) saturate(.92)!important;border-radius:999px!important;box-shadow:none!important;opacity:1!important}
-        #homeFooterEraseLeft{left:4.7%!important;width:17.2%!important}
-        #homeFooterEraseRight{left:78.3%!important;width:17.2%!important}
 
         .txt{position:absolute!important;z-index:70!important;margin:0!important;padding:0!important;font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;font-weight:400!important;font-style:normal!important}
         .brand{left:30.7%!important;top:2.85%!important;width:68%!important;font-size:min(6.552vw,56.64px)!important;line-height:1.02!important;color:#fff!important;white-space:nowrap!important;text-align:left!important;text-shadow:0 1px 2px rgba(0,0,0,.3)!important}
@@ -94,13 +82,6 @@ export default function Home(){
 
       <main className="hxScreen" aria-label="STACKUP HOLD’EM HEROES — menu de treinamento">
         {backgroundSrc && <img className="hxArt" src={backgroundSrc} alt="" width="432" height="768" draggable="false"/>}
-
-        <div id="homeNavEraseLeft" aria-hidden="true"/>
-        <div id="homeNavEraseRight" aria-hidden="true"/>
-        <div id="homeHeroCleanTop" aria-hidden="true"/>
-        <div id="homeHeroCleanCopy" aria-hidden="true"/>
-        <div id="homeFooterEraseLeft" aria-hidden="true"/>
-        <div id="homeFooterEraseRight" aria-hidden="true"/>
 
         <div className="txt brand">STACKUP HOLD’EM</div>
         <div className="txt heroes">HEROES</div>
