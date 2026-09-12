@@ -4,7 +4,7 @@ import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {useEffect, useState} from "react";
 
-const ASSET_VERSION = "20260912-1506";
+const ASSET_VERSION = "20260912-1344-screenfit";
 const PART_NAMES = [
   "stackup-heroes-home-v4-432.part0",
   "stackup-heroes-home-v4-432.part1",
@@ -81,12 +81,12 @@ export default function Home(){
         .heroTitle{left:5.5%!important;width:56%!important;text-align:left!important;color:#fff!important;text-shadow:0 2px 4px rgba(0,0,0,.42)!important}
         .line1{top:23.65%!important;font-size:min(7.41vw,64px)!important;line-height:.98!important}
         .line2{top:28.05%!important;font-size:min(7.41vw,64px)!important;line-height:.98!important}
-        .line3{top:32.55%!important;font-size:min(9.49vw,82px)!important;line-height:.94!important;background:linear-gradient(180deg,#fff 0%,#7bdcff 44%,#11a8ff 100%)!important;-webkit-background-clip:text!important;background-clip:text!important;color:#28b7ff!important;-webkit-text-fill-color:transparent!important;text-shadow:none!important;filter:drop-shadow(0 2px 5px rgba(0,77,150,.55))!important}
-        .heroCopy{left:5.6%!important;top:39.45%!important;width:59%!important;font-size:min(2.55vw,22px)!important;line-height:1.35!important;color:#f3f3f3!important;text-align:left!important;text-shadow:0 1px 3px rgba(0,0,0,.4)!important}
+        .line3{top:32.55%!important;font-size:min(9.49vw,82px)!important;line-height:.94!important;color:#23b8ff!important;-webkit-text-fill-color:#23b8ff!important;text-shadow:0 1px 0 #dff7ff,0 0 8px rgba(0,166,255,.75),0 2px 5px rgba(0,77,150,.65)!important}
+        .heroCopy{left:5.6%!important;top:39.45%!important;width:88%!important;font-size:min(2.55vw,22px)!important;line-height:1.35!important;color:#f3f3f3!important;text-align:left!important;text-shadow:0 1px 3px rgba(0,0,0,.4)!important;white-space:nowrap!important}
         .moduleCard{position:absolute!important;z-index:4!important;left:5.21%!important;width:89.58%!important;height:10.94%!important;display:block!important;margin:0!important;padding:0!important;border:0!important;background:transparent!important;text-decoration:none!important;color:inherit!important;font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;box-shadow:none!important}
         .card1{top:45.83%!important}.card2{top:57.75%!important}.card3{top:69.34%!important}.card4{top:81.12%!important}
-        .cardTitle{left:27.1%!important;top:12%!important;width:63%!important;font-size:min(4.28vw,37px)!important;line-height:1!important;color:#08134c!important;white-space:nowrap!important;text-align:left!important;font-weight:400!important}
-        .cardCopy{left:27.4%!important;top:44%!important;width:62%!important;font-size:min(3.01vw,26px)!important;line-height:1.18!important;color:#26355e!important;text-align:left!important;font-weight:400!important}
+        .cardTitle{left:27.1%!important;top:12%!important;width:66%!important;font-size:min(4.28vw,37px)!important;line-height:1!important;color:#08134c!important;white-space:nowrap!important;text-align:left!important;font-weight:400!important}
+        .cardCopy{left:27.4%!important;top:44%!important;width:68%!important;font-size:min(3.01vw,26px)!important;line-height:1.18!important;color:#26355e!important;text-align:left!important;font-weight:400!important;white-space:nowrap!important}
         .footer{left:8%!important;top:95.22%!important;width:84%!important;font-size:min(1.55vw,13.4px)!important;line-height:1!important;color:#7fa8d6!important;letter-spacing:min(.38vw,3.3px)!important;white-space:nowrap!important;text-align:center!important;font-weight:400!important}
       `}</style>
 
