@@ -3,7 +3,7 @@
 import Link from "next/link";
 import {useEffect, useState} from "react";
 
-const ASSET_VERSION = "20260912-1350-no-nav-buttons";
+const ASSET_VERSION = "20260912-hero-type-v2";
 const PART_NAMES = [
   "stackup-heroes-home-v4-432.part0",
   "stackup-heroes-home-v4-432.part1",
@@ -62,41 +62,43 @@ export default function Home(){
         .hxScreen{position:relative!important;width:min(100vw,864px)!important;aspect-ratio:864/1536!important;line-height:1!important;background:#031a31!important;overflow:hidden!important;flex:0 0 auto!important;isolation:isolate!important}
         .hxArt{position:absolute!important;inset:0!important;z-index:0!important;display:block!important;width:100%!important;height:100%!important;object-fit:contain!important;pointer-events:none!important;border:0!important;margin:0!important;padding:0!important}
         .navErase{position:absolute!important;left:0!important;top:14.85%!important;width:100%!important;height:8.05%!important;z-index:1!important;pointer-events:none!important;background:radial-gradient(circle at 72% 38%,rgba(7,38,66,.62) 0%,rgba(3,26,49,.86) 34%,rgba(2,22,42,.98) 72%),linear-gradient(180deg,#04213d 0%,#031a31 48%,#02172c 100%)!important;box-shadow:inset 0 10px 18px rgba(1,13,26,.18),inset 0 -12px 18px rgba(1,13,26,.18)!important}
+        .footerErase{position:absolute!important;left:0!important;top:92.2%!important;width:100%!important;height:7.8%!important;z-index:1!important;pointer-events:none!important;background:linear-gradient(180deg,rgba(3,26,49,.72) 0%,#031a31 32%,#02172c 100%)!important}
         .txt{position:absolute!important;z-index:2!important;margin:0!important;padding:0!important;font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;font-weight:400!important;font-style:normal!important}
-        .brand{left:30.7%!important;top:3.10%!important;width:49%!important;font-size:min(5.46vw,47.2px)!important;line-height:1.05!important;color:#fff!important;white-space:nowrap!important;text-align:left!important;text-shadow:0 1px 2px rgba(0,0,0,.3)!important}
-        .heroes{left:30.6%!important;top:6.20%!important;width:49%!important;font-size:min(9.83vw,85px)!important;line-height:.95!important;color:#fff!important;white-space:nowrap!important;text-align:left!important;text-shadow:0 2px 3px rgba(0,0,0,.28)!important}
-        .sub{left:30.4%!important;top:11.85%!important;width:49%!important;font-size:min(2.325vw,20.1px)!important;line-height:1!important;color:#d7dbe5!important;white-space:nowrap!important;letter-spacing:min(.62vw,5.35px)!important;text-align:left!important}
-        .heroTitle{left:5.5%!important;width:56%!important;text-align:left!important;color:#fff!important;text-shadow:0 2px 4px rgba(0,0,0,.42)!important}
-        .line1{top:23.65%!important;font-size:min(7.41vw,64px)!important;line-height:.98!important}
-        .line2{top:28.05%!important;font-size:min(7.41vw,64px)!important;line-height:.98!important}
-        .line3{top:32.55%!important;font-size:min(9.49vw,82px)!important;line-height:.94!important;color:#23b8ff!important;-webkit-text-fill-color:#23b8ff!important;text-shadow:0 1px 0 #dff7ff,0 0 8px rgba(0,166,255,.75),0 2px 5px rgba(0,77,150,.65)!important}
+        .brand{left:30.7%!important;top:2.85%!important;width:64%!important;font-size:min(6.552vw,56.64px)!important;line-height:1.02!important;color:#fff!important;white-space:nowrap!important;text-align:left!important;text-shadow:0 1px 2px rgba(0,0,0,.3)!important}
+        .heroes{left:30.6%!important;top:6.05%!important;width:64%!important;font-size:min(13.2705vw,114.75px)!important;line-height:.90!important;color:#23b8ff!important;-webkit-text-fill-color:#23b8ff!important;white-space:nowrap!important;text-align:left!important;text-shadow:0 1px 0 #dff7ff,0 0 8px rgba(0,166,255,.72),0 2px 4px rgba(0,55,110,.55)!important}
+        .sub{left:30.4%!important;top:13.05%!important;width:66%!important;font-size:min(2.325vw,20.1px)!important;line-height:1!important;color:#d7dbe5!important;white-space:nowrap!important;letter-spacing:min(.62vw,5.35px)!important;text-align:left!important}
+        .heroTopRow{position:absolute!important;z-index:2!important;left:5.5%!important;top:23.55%!important;width:89%!important;display:flex!important;align-items:baseline!important;gap:min(3.4vw,29px)!important;white-space:nowrap!important;font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;color:#fff!important;text-shadow:0 2px 4px rgba(0,0,0,.42)!important}
+        .heroTopWord{display:block!important;margin:0!important;padding:0!important;font-weight:400!important;font-style:normal!important;line-height:.96!important}
+        .entenda{font-size:min(8.892vw,76.8px)!important}
+        .treine{font-size:min(9.2625vw,80px)!important}
+        .evolua{left:5.5%!important;top:29.45%!important;width:70%!important;font-size:min(13.286vw,114.8px)!important;line-height:.90!important;color:#23b8ff!important;-webkit-text-fill-color:#23b8ff!important;text-align:left!important;white-space:nowrap!important;text-shadow:0 1px 0 #dff7ff,0 0 10px rgba(0,166,255,.78),0 2px 6px rgba(0,77,150,.68)!important}
         .heroCopy{left:5.6%!important;top:39.45%!important;width:88%!important;font-size:min(2.55vw,22px)!important;line-height:1.35!important;color:#f3f3f3!important;text-align:left!important;text-shadow:0 1px 3px rgba(0,0,0,.4)!important;white-space:nowrap!important}
         .moduleCard{position:absolute!important;z-index:4!important;left:5.21%!important;width:89.58%!important;height:10.94%!important;display:block!important;margin:0!important;padding:0!important;border:0!important;background:transparent!important;text-decoration:none!important;color:inherit!important;font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;box-shadow:none!important}
         .card1{top:45.83%!important}.card2{top:57.75%!important}.card3{top:69.34%!important}.card4{top:81.12%!important}
         .cardTitle{left:27.1%!important;top:12%!important;width:66%!important;font-size:min(4.28vw,37px)!important;line-height:1!important;color:#08134c!important;white-space:nowrap!important;text-align:left!important;font-weight:400!important}
         .cardCopy{left:27.4%!important;top:44%!important;width:68%!important;font-size:min(3.01vw,26px)!important;line-height:1.18!important;color:#26355e!important;text-align:left!important;font-weight:400!important;white-space:nowrap!important}
-        .footer{left:8%!important;top:95.22%!important;width:84%!important;font-size:min(1.55vw,13.4px)!important;line-height:1!important;color:#7fa8d6!important;letter-spacing:min(.38vw,3.3px)!important;white-space:nowrap!important;text-align:center!important;font-weight:400!important}
       `}</style>
 
       <main className="hxScreen" aria-label="STACKUP HOLD’EM HEROES — menu de treinamento">
         {backgroundSrc && <img className="hxArt" src={backgroundSrc} alt="" width="432" height="768" draggable="false"/>}
         <div className="navErase" aria-hidden="true"/>
+        <div className="footerErase" aria-hidden="true"/>
 
         <div className="txt brand">STACKUP HOLD’EM</div>
         <div className="txt heroes">HEROES</div>
         <div className="txt sub">AI POKER PERFORMANCE SYSTEM</div>
 
-        <div className="txt heroTitle line1">TREINE.</div>
-        <div className="txt heroTitle line2">ENTENDA.</div>
-        <div className="txt heroTitle line3">EVOLUA.</div>
+        <div className="heroTopRow">
+          <span className="heroTopWord entenda">ENTENDA.</span>
+          <span className="heroTopWord treine">TREINE.</span>
+        </div>
+        <div className="txt evolua">EVOLUA.</div>
         <div className="txt heroCopy" data-preserve-case="true">Aprenda como você joga. Descubra seus leaks.<br/>Aprimore a estratégia e consolide suas decisões.</div>
 
         {modules.map(item=><Link key={item.href} className={`moduleCard ${item.className}`} href={item.href} aria-label={item.title}>
           <div className="txt cardTitle">{item.title}</div>
           <div className="txt cardCopy" data-preserve-case="true">{item.copy}</div>
         </Link>)}
-
-        <div className="txt footer">EVOLUA SEU JOGO. UMA DECISÃO DE CADA VEZ.</div>
       </main>
     </div>
   );
