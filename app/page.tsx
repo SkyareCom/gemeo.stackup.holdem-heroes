@@ -3,10 +3,11 @@
 import Link from "next/link";
 import {useEffect, useState} from "react";
 
-const ASSET_VERSION = "20260912-clean-art-v9-no-overlays";
+const ASSET_VERSION = "20260912-clean-art-v10-integrity";
+const EXPECTED_BASE64_LENGTH = 38700;
 const PART_NAMES = [
   "home-clean-v9.part0",
-  "home-clean-v9.part1",
+  // part1 is intentionally excluded: it duplicates the second half of part0.
   "home-clean-v9.part2",
   "home-clean-v9.part3",
   "home-clean-v9.part4",
@@ -48,7 +49,9 @@ export default function Home(){
     Promise.all(PART_NAMES.map(fetchPart))
       .then(parts=>{
         const base64 = parts.join("").replace(/\s+/g,"");
-        if(base64.length < 35000) throw new Error(`incomplete homepage artwork: ${base64.length}`);
+        if(base64.length !== EXPECTED_BASE64_LENGTH){
+          throw new Error(`invalid homepage artwork length: ${base64.length}; expected ${EXPECTED_BASE64_LENGTH}`);
+        }
         if(!cancelled) setBackgroundSrc(`data:image/webp;base64,${base64}`);
       })
       .catch(error=>console.error("STACKUP HEROES HOME ARTWORK LOAD FAILED",error));
