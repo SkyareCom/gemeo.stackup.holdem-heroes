@@ -1,10 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import {useRouter} from "next/navigation";
 import {useEffect, useState} from "react";
 
-const ASSET_VERSION = "20260912-1344-screenfit";
+const ASSET_VERSION = "20260912-1344-no-nav";
 const PART_NAMES = [
   "stackup-heroes-home-v4-432.part0",
   "stackup-heroes-home-v4-432.part1",
@@ -39,7 +38,6 @@ async function fetchPart(name:string){
 }
 
 export default function Home(){
-  const router = useRouter();
   const [backgroundSrc,setBackgroundSrc] = useState("");
 
   useEffect(()=>{
@@ -54,12 +52,6 @@ export default function Home(){
     return()=>{cancelled=true};
   },[]);
 
-  const goBack=(event:React.MouseEvent<HTMLAnchorElement>)=>{
-    event.preventDefault();
-    if(window.history.length>1) router.back();
-    else router.push("/");
-  };
-
   return (
     <div className="hxViewport">
       <style>{`
@@ -69,15 +61,11 @@ export default function Home(){
         .hxViewport{width:100%!important;min-height:100vh!important;display:flex!important;justify-content:center!important;align-items:flex-start!important;overflow-x:hidden!important;background:#031a31!important;font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important}
         .hxScreen{position:relative!important;width:min(100vw,864px)!important;aspect-ratio:864/1536!important;line-height:1!important;background:#031a31!important;overflow:hidden!important;flex:0 0 auto!important;isolation:isolate!important}
         .hxArt{position:absolute!important;inset:0!important;z-index:0!important;display:block!important;width:100%!important;height:100%!important;object-fit:contain!important;pointer-events:none!important;border:0!important;margin:0!important;padding:0!important}
+        .navErase{position:absolute!important;left:0!important;top:15.15%!important;width:100%!important;height:7.15%!important;z-index:1!important;pointer-events:none!important;background:linear-gradient(180deg,#031b33 0%,#02182e 58%,#031a31 100%)!important}
         .txt{position:absolute!important;z-index:2!important;margin:0!important;padding:0!important;font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;font-weight:400!important;font-style:normal!important}
         .brand{left:30.7%!important;top:3.10%!important;width:49%!important;font-size:min(5.46vw,47.2px)!important;line-height:1.05!important;color:#fff!important;white-space:nowrap!important;text-align:left!important;text-shadow:0 1px 2px rgba(0,0,0,.3)!important}
         .heroes{left:30.6%!important;top:6.20%!important;width:49%!important;font-size:min(9.83vw,85px)!important;line-height:.95!important;color:#fff!important;white-space:nowrap!important;text-align:left!important;text-shadow:0 2px 3px rgba(0,0,0,.28)!important}
         .sub{left:30.4%!important;top:11.85%!important;width:49%!important;font-size:min(2.325vw,20.1px)!important;line-height:1!important;color:#d7dbe5!important;white-space:nowrap!important;letter-spacing:min(.62vw,5.35px)!important;text-align:left!important}
-        .hot{position:absolute!important;z-index:4!important;display:block!important;margin:0!important;padding:0!important;border:0!important;background:transparent!important;cursor:pointer!important;text-decoration:none!important;touch-action:manipulation!important;appearance:none!important;-webkit-appearance:none!important;outline:none!important;font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;color:#fff!important;box-shadow:none!important}
-        .hot:focus-visible{outline:2px solid rgba(255,255,255,.95)!important;outline-offset:-5px!important;border-radius:18px!important}
-        .back{left:5.21%!important;top:15.95%!important;width:43.52%!important;height:5.73%!important}
-        .home{left:51.04%!important;top:15.95%!important;width:44.10%!important;height:5.73%!important}
-        .navLabel{position:absolute!important;left:50%!important;top:50%!important;transform:translate(-50%,-50%)!important;font-size:min(3.47vw,30px)!important;line-height:1!important;white-space:nowrap!important;color:#fff!important;text-shadow:0 1px 2px rgba(0,0,0,.4)!important;text-align:center!important;font-weight:400!important}
         .heroTitle{left:5.5%!important;width:56%!important;text-align:left!important;color:#fff!important;text-shadow:0 2px 4px rgba(0,0,0,.42)!important}
         .line1{top:23.65%!important;font-size:min(7.41vw,64px)!important;line-height:.98!important}
         .line2{top:28.05%!important;font-size:min(7.41vw,64px)!important;line-height:.98!important}
@@ -92,13 +80,11 @@ export default function Home(){
 
       <main className="hxScreen" aria-label="STACKUP HOLD’EM HEROES — menu de treinamento">
         {backgroundSrc && <img className="hxArt" src={backgroundSrc} alt="" width="432" height="768" draggable="false"/>}
+        <div className="navErase" aria-hidden="true"/>
 
         <div className="txt brand">STACKUP HOLD’EM</div>
         <div className="txt heroes">HEROES</div>
         <div className="txt sub">AI POKER PERFORMANCE SYSTEM</div>
-
-        <a className="hot back" href="/" aria-label="Anterior" onClick={goBack}><span className="navLabel">ANTERIOR</span></a>
-        <Link className="hot home" href="/" aria-label="Menu principal"><span className="navLabel">MENU PRINCIPAL</span></Link>
 
         <div className="txt heroTitle line1">TREINE.</div>
         <div className="txt heroTitle line2">ENTENDA.</div>
