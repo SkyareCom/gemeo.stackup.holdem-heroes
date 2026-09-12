@@ -1,1 +1,0 @@
-asset paths are kept at public root for GitHub Pages basePath deployment
