@@ -1,144 +1,339 @@
-import Link from "next/link";
-import StackupAppHeader from "@/components/StackupAppHeader";
-import "./home-cards.css";
+"use client";
 
-const modules=[
-  {href:"/player-dna",icon:"dna",title:"PLAYER DNA",description:"Descubra seu perfil técnico com spots de treino variados."},
-  {href:"/poker-math-lab",icon:"math",title:"MATEMÁTICA DO POKER",description:"Aprenda odds, pot odds, MDF, SPR e conceitos essenciais."},
-  {href:"/ai-hand-review",icon:"cards",title:"ANÁLISE DE MÃOS",description:"Envie cenários completos e receba avaliação estratégica."},
-  {href:"/poker-assistant",icon:"ai",title:"PERGUNTE À IA",description:"Tire dúvidas sobre poker, estratégia, ranges e decisões."},
+import {useEffect, useState} from "react";
+import Link from "next/link";
+import {useRouter} from "next/navigation";
+
+const BACKGROUND_PARTS = [
+  "/gemeo.stackup.holdem-heroes/stackup-heroes-home-v4-432.part0",
+  "/gemeo.stackup.holdem-heroes/stackup-heroes-home-v4-432.part1",
+  "/gemeo.stackup.holdem-heroes/stackup-heroes-home-v4-432.part2",
 ] as const;
 
-function ModuleIcon({type}:{type:(typeof modules)[number]["icon"]}){
-  if(type==="dna") return <svg viewBox="0 0 64 64" role="img" aria-hidden="true"><circle cx="22" cy="18" r="9"/><path d="M8 49c0-10 6-17 14-17s14 7 14 17v3H8z"/><path className="icon-stroke" d="M40 14c12 6 12 28 0 35M53 14c-12 6-12 28 0 35M42 19h9M39 27h15M39 36h15M42 44h9"/></svg>;
-  if(type==="math") return <svg viewBox="0 0 64 64" role="img" aria-hidden="true"><rect x="9" y="35" width="10" height="18" rx="2"/><rect x="27" y="25" width="10" height="28" rx="2"/><rect x="45" y="12" width="10" height="41" rx="2"/></svg>;
-  if(type==="cards") return <svg viewBox="0 0 64 64" role="img" aria-hidden="true"><rect className="icon-stroke" x="12" y="12" width="29" height="39" rx="4" transform="rotate(-10 26.5 31.5)"/><rect className="icon-stroke" x="25" y="14" width="28" height="39" rx="4" transform="rotate(8 39 33.5)"/><path d="M40 26c-4 5-8 8-8 12a6 6 0 0 0 11 3c0 4-2 7-5 9h9c-3-2-5-5-5-9a6 6 0 0 0 11-3c0-4-5-7-13-12z"/></svg>;
-  return <svg viewBox="0 0 64 64" role="img" aria-hidden="true"><path className="icon-stroke" d="M32 8v8M28 8a4 4 0 1 1 8 0"/><rect className="icon-stroke" x="12" y="18" width="40" height="32" rx="10"/><circle cx="24" cy="33" r="4"/><circle cx="40" cy="33" r="4"/><path className="icon-stroke" d="M23 42h18M12 28H7v14h5M52 28h5v14h-5"/></svg>;
-}
+const modules = [
+  {
+    href: "/player-dna",
+    className: "heroesExactCard1",
+    title: "PLAYER DNA",
+    copy: <><span>Descubra seu perfil técnico</span><br/><span>com spots de treino variados.</span></>,
+  },
+  {
+    href: "/poker-math-lab",
+    className: "heroesExactCard2",
+    title: "MATEMÁTICA DO POKER",
+    copy: <><span>Aprenda odds, pot odds, MDF,</span><br/><span>SPR e conceitos essenciais.</span></>,
+  },
+  {
+    href: "/ai-hand-review",
+    className: "heroesExactCard3",
+    title: "ANÁLISE DE MÃOS",
+    copy: <><span>Envie cenários completos e</span><br/><span>receba avaliação estratégica.</span></>,
+  },
+  {
+    href: "/poker-assistant",
+    className: "heroesExactCard4",
+    title: "PERGUNTE À IA",
+    copy: <><span>Tire dúvidas sobre poker,</span><br/><span>estratégia, ranges e decisões.</span></>,
+  },
+] as const;
 
 export default function Home(){
-  return <main className="stackup-home stackup-home-template-v2">
-    <style>{`
-      html body .stackup-home-template-v2 .stackup-home-hero{
-        position:relative!important;
-        overflow:hidden!important;
-      }
-      html body .stackup-home-template-v2 .stackup-hero-copy{
-        position:relative!important;
-        z-index:5!important;
-        width:44%!important;
-        padding-top:86px!important;
-        text-align:left!important;
-        align-items:flex-start!important;
-      }
-      html body .stackup-home-template-v2 .stackup-hero-lead.stackup-hero-lead-right{
-        position:absolute!important;
-        z-index:6!important;
-        top:22px!important;
-        right:22px!important;
-        width:54%!important;
-        margin:0!important;
-        text-align:right!important;
-        font-size:14px!important;
-        line-height:1.32!important;
-      }
-      html body .stackup-home-template-v2 .stackup-hero-title{
-        text-align:left!important;
-        justify-items:start!important;
-        gap:4px!important;
-      }
-      html body .stackup-home-template-v2 .stackup-hero-title span:nth-child(1),
-      html body .stackup-home-template-v2 .stackup-hero-title span:nth-child(2){
-        font-size:28px!important;
-      }
-      html body .stackup-home-template-v2 .stackup-hero-title span:nth-child(3){
-        font-size:36px!important;
-      }
-      html body .stackup-home-template-v2 .stackup-hero-visual{
-        right:2%!important;
-        bottom:4%!important;
-        width:38%!important;
-        height:54%!important;
-      }
-      html body .stackup-home-template-v2 .stackup-hero-medallion{
-        width:96px!important;
-        height:96px!important;
-        aspect-ratio:1/1!important;
-        right:14%!important;
-        bottom:8%!important;
-        border:7px solid #9ed6ff!important;
-        border-radius:50%!important;
-        clip-path:circle(50% at 50% 50%)!important;
-        overflow:hidden!important;
-        background:
-          radial-gradient(circle at 50% 50%,#0a3f72 0 48%,#071a31 49% 62%,#4aaeff 63% 70%,#071a31 71% 100%)!important;
-        box-shadow:inset 0 0 0 4px rgba(255,255,255,.16),inset 0 0 20px rgba(31,151,255,.34)!important;
-        filter:drop-shadow(0 8px 12px rgba(0,0,0,.38))!important;
-      }
-      @media(max-width:520px){
-        html body .stackup-home-template-v2 .stackup-hero-copy{
-          width:44%!important;
-          padding-top:96px!important;
+  const router = useRouter();
+  const [backgroundSrc, setBackgroundSrc] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+
+    Promise.all(
+      BACKGROUND_PARTS.map(async (url) => {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`Failed to load ${url}`);
+        return (await response.text()).trim();
+      }),
+    )
+      .then((parts) => {
+        if (!cancelled) setBackgroundSrc(`data:image/webp;base64,${parts.join("")}`);
+      })
+      .catch((error) => {
+        console.error("Failed to load STACKUP HEROES home artwork", error);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const goBack = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    if (window.history.length > 1) router.back();
+    else router.push("/");
+  };
+
+  return (
+    <div className="heroesExactViewport">
+      <style>{`
+        html, body { margin:0!important; min-height:100%!important; background:#031a31!important; }
+        body { overflow-x:hidden!important; -webkit-tap-highlight-color:transparent!important; }
+        .heroesExactViewport,
+        .heroesExactViewport * { box-sizing:border-box!important; }
+        .heroesExactViewport {
+          width:100%!important;
+          min-height:100vh!important;
+          display:flex!important;
+          justify-content:center!important;
+          align-items:flex-start!important;
+          overflow-x:hidden!important;
+          background:#031a31!important;
+          font-family:var(--font-love-ya-like-a-sister), "Love Ya Like A Sister", cursive!important;
         }
-        html body .stackup-home-template-v2 .stackup-hero-lead.stackup-hero-lead-right{
-          top:18px!important;
-          right:18px!important;
+        .heroesExactScreen {
+          position:relative!important;
+          width:min(100vw,864px)!important;
+          aspect-ratio:864/1536!important;
+          line-height:1!important;
+          background:#031a31!important;
+          user-select:none!important;
+          -webkit-user-select:none!important;
+          overflow:hidden!important;
+          flex:0 0 auto!important;
+        }
+        .heroesExactArt {
+          position:absolute!important;
+          inset:0!important;
+          display:block!important;
+          width:100%!important;
+          height:100%!important;
+          object-fit:contain!important;
+          pointer-events:none!important;
+          border:0!important;
+          margin:0!important;
+          padding:0!important;
+        }
+        .heroesExactTxt {
+          position:absolute!important;
+          margin:0!important;
+          padding:0!important;
+          font-family:var(--font-love-ya-like-a-sister), "Love Ya Like A Sister", cursive!important;
+          font-weight:400!important;
+          font-style:normal!important;
+        }
+        .heroesExactHeaderBrand {
+          left:30.7%!important;
+          top:3.10%!important;
+          width:49%!important;
+          font-size:min(5.46vw,47.2px)!important;
+          line-height:1.05!important;
+          color:#fff!important;
+          white-space:nowrap!important;
+          text-align:left!important;
+          text-shadow:0 1px 2px rgba(0,0,0,.3)!important;
+        }
+        .heroesExactHeaderHeroes {
+          left:30.6%!important;
+          top:6.20%!important;
+          width:49%!important;
+          font-size:min(9.83vw,85px)!important;
+          line-height:.95!important;
+          color:#fff!important;
+          white-space:nowrap!important;
+          text-align:left!important;
+          text-shadow:0 2px 3px rgba(0,0,0,.28)!important;
+        }
+        .heroesExactHeaderSub {
+          left:30.4%!important;
+          top:11.85%!important;
+          width:49%!important;
+          font-size:min(2.325vw,20.1px)!important;
+          line-height:1!important;
+          color:#d7dbe5!important;
+          white-space:nowrap!important;
+          letter-spacing:min(.62vw,5.35px)!important;
+          text-align:left!important;
+        }
+        .heroesExactHot {
+          position:absolute!important;
+          display:block!important;
+          margin:0!important;
+          padding:0!important;
+          border:0!important;
+          background:transparent!important;
+          cursor:pointer!important;
+          text-decoration:none!important;
+          touch-action:manipulation!important;
+          appearance:none!important;
+          -webkit-appearance:none!important;
+          outline:none!important;
+          font-family:var(--font-love-ya-like-a-sister), "Love Ya Like A Sister", cursive!important;
+          color:#fff!important;
+          box-shadow:none!important;
+        }
+        .heroesExactHot:focus-visible {
+          outline:2px solid rgba(255,255,255,.95)!important;
+          outline-offset:-5px!important;
+          border-radius:18px!important;
+        }
+        .heroesExactBack {
+          left:5.21%!important;
+          top:15.95%!important;
+          width:43.52%!important;
+          height:5.73%!important;
+        }
+        .heroesExactHome {
+          left:51.04%!important;
+          top:15.95%!important;
+          width:44.10%!important;
+          height:5.73%!important;
+        }
+        .heroesExactNavLabel {
+          position:absolute!important;
+          left:50%!important;
+          top:50%!important;
+          transform:translate(-50%,-50%)!important;
+          font-size:min(3.47vw,30px)!important;
+          line-height:1!important;
+          white-space:nowrap!important;
+          color:#fff!important;
+          text-shadow:0 1px 2px rgba(0,0,0,.4)!important;
+          text-align:center!important;
+          font-weight:400!important;
+        }
+        .heroesExactHeroTitle {
+          left:5.5%!important;
           width:56%!important;
+          text-align:left!important;
+          color:#fff!important;
+          text-shadow:0 2px 4px rgba(0,0,0,.42)!important;
         }
-        html body .stackup-home-template-v2 .stackup-hero-title span:nth-child(1),
-        html body .stackup-home-template-v2 .stackup-hero-title span:nth-child(2){font-size:28px!important}
-        html body .stackup-home-template-v2 .stackup-hero-title span:nth-child(3){font-size:36px!important}
-        html body .stackup-home-template-v2 .stackup-hero-visual{
-          right:2%!important;
-          bottom:4%!important;
-          width:38%!important;
-          height:54%!important;
+        .heroesExactLine1 {
+          top:23.65%!important;
+          font-size:min(7.41vw,64px)!important;
+          line-height:.98!important;
         }
-        html body .stackup-home-template-v2 .stackup-hero-medallion{
-          width:86px!important;
-          height:86px!important;
-          right:14%!important;
-          bottom:8%!important;
-          border-width:6px!important;
+        .heroesExactLine2 {
+          top:28.05%!important;
+          font-size:min(7.41vw,64px)!important;
+          line-height:.98!important;
         }
-      }
-    `}</style>
+        .heroesExactLine3 {
+          top:32.55%!important;
+          font-size:min(9.49vw,82px)!important;
+          line-height:.94!important;
+          background:linear-gradient(180deg,#ffffff 0%,#7bdcff 44%,#11a8ff 100%)!important;
+          -webkit-background-clip:text!important;
+          background-clip:text!important;
+          color:transparent!important;
+          text-shadow:none!important;
+          filter:drop-shadow(0 2px 5px rgba(0,77,150,.55))!important;
+        }
+        .heroesExactHeroCopy {
+          left:5.6%!important;
+          top:39.45%!important;
+          width:59%!important;
+          font-size:min(2.55vw,22px)!important;
+          line-height:1.35!important;
+          color:#f3f3f3!important;
+          text-align:left!important;
+          text-shadow:0 1px 3px rgba(0,0,0,.4)!important;
+        }
+        .heroesExactCard {
+          position:absolute!important;
+          left:5.21%!important;
+          width:89.58%!important;
+          height:10.94%!important;
+          display:block!important;
+          margin:0!important;
+          padding:0!important;
+          border:0!important;
+          background:transparent!important;
+          text-decoration:none!important;
+          color:inherit!important;
+          font-family:var(--font-love-ya-like-a-sister), "Love Ya Like A Sister", cursive!important;
+          box-shadow:none!important;
+        }
+        .heroesExactCard1 { top:45.83%!important; }
+        .heroesExactCard2 { top:57.75%!important; }
+        .heroesExactCard3 { top:69.34%!important; }
+        .heroesExactCard4 { top:81.12%!important; }
+        .heroesExactCardTitle {
+          left:27.1%!important;
+          top:12%!important;
+          width:63%!important;
+          font-size:min(4.28vw,37px)!important;
+          line-height:1!important;
+          color:#08134c!important;
+          white-space:nowrap!important;
+          text-align:left!important;
+          font-weight:400!important;
+        }
+        .heroesExactCardCopy {
+          left:27.4%!important;
+          top:44%!important;
+          width:62%!important;
+          font-size:min(3.01vw,26px)!important;
+          line-height:1.18!important;
+          color:#26355e!important;
+          text-align:left!important;
+          font-weight:400!important;
+        }
+        .heroesExactFooter {
+          left:20.6%!important;
+          top:95.22%!important;
+          width:60%!important;
+          font-size:min(1.74vw,15px)!important;
+          line-height:1!important;
+          color:#7fa8d6!important;
+          letter-spacing:min(.52vw,4.5px)!important;
+          white-space:nowrap!important;
+          text-align:center!important;
+          font-weight:400!important;
+        }
+      `}</style>
 
-    <StackupAppHeader/>
+      <main className="heroesExactScreen" aria-label="STACKUP HOLD’EM HEROES — menu de treinamento">
+        {backgroundSrc ? (
+          <img
+            className="heroesExactArt"
+            src={backgroundSrc}
+            alt=""
+            width="432"
+            height="768"
+            draggable="false"
+          />
+        ) : null}
 
-    <section className="stackup-home-hero" aria-labelledby="stackup-home-heading">
-      <div className="stackup-hero-copy">
-        <h1 id="stackup-home-heading" className="stackup-hero-title">
-          <span>TREINE.</span>
-          <span>ENTENDA.</span>
-          <span>EVOLUA</span>
-        </h1>
-      </div>
-      <p className="stackup-hero-lead stackup-hero-lead-right" data-preserve-case="true">
-        Aprenda como você joga.<br/>
-        Descubra seus leaks.<br/>
-        Aprimore a estratégia e<br/>
-        consolide suas decisões.
-      </p>
-      <div className="stackup-hero-visual" aria-hidden="true">
-        <span className="stackup-chip-stack stackup-chip-stack-back"><i/><i/><i/><i/></span>
-        <span className="stackup-chip-stack stackup-chip-stack-front"><i/><i/><i/></span>
-        <span className="stackup-hero-medallion">♠</span>
-      </div>
-    </section>
+        <div className="heroesExactTxt heroesExactHeaderBrand">STACKUP HOLD’EM</div>
+        <div className="heroesExactTxt heroesExactHeaderHeroes">HEROES</div>
+        <div className="heroesExactTxt heroesExactHeaderSub">AI POKER PERFORMANCE SYSTEM</div>
 
-    <nav className="modules stackup-home-modules" aria-label="MÓDULOS STACKUP">
-      {modules.map(item=><Link key={item.href} href={item.href}>
-        <span className="module-icon" aria-hidden="true"><ModuleIcon type={item.icon}/></span>
-        <span className="module-copy"><strong className="module-title">{item.title}</strong><span className="module-description" data-preserve-case="true">{item.description}</span></span>
-        <span className="module-chevron" aria-hidden="true">›</span>
-      </Link>)}
-    </nav>
+        <a className="heroesExactHot heroesExactBack" href="/" aria-label="Anterior" onClick={goBack}>
+          <span className="heroesExactNavLabel">ANTERIOR</span>
+        </a>
+        <Link className="heroesExactHot heroesExactHome" href="/" aria-label="Menu principal">
+          <span className="heroesExactNavLabel">MENU PRINCIPAL</span>
+        </Link>
 
-    <footer className="stackup-home-footer" aria-label="STACKUP HOLD'EM HEROES">
-      <span aria-hidden="true"/>
-      <p>EVOLUA SEU JOGO. UMA DECISÃO DE CADA VEZ.</p>
-      <span aria-hidden="true"/>
-    </footer>
-  </main>;
+        <div className="heroesExactTxt heroesExactHeroTitle heroesExactLine1">TREINE.</div>
+        <div className="heroesExactTxt heroesExactHeroTitle heroesExactLine2">ENTENDA.</div>
+        <div className="heroesExactTxt heroesExactHeroTitle heroesExactLine3">EVOLUA.</div>
+        <div className="heroesExactTxt heroesExactHeroCopy" data-preserve-case="true">
+          Aprenda como você joga. Descubra seus leaks.<br/>
+          Aprimore a estratégia e consolide suas decisões.
+        </div>
+
+        {modules.map((item) => (
+          <Link
+            key={item.href}
+            className={`heroesExactCard ${item.className}`}
+            href={item.href}
+            aria-label={item.title}
+          >
+            <div className="heroesExactTxt heroesExactCardTitle">{item.title}</div>
+            <div className="heroesExactTxt heroesExactCardCopy" data-preserve-case="true">{item.copy}</div>
+          </Link>
+        ))}
+
+        <div className="heroesExactTxt heroesExactFooter">EVOLUA SEU JOGO. UMA DECISÃO DE CADA VEZ.</div>
+      </main>
+    </div>
+  );
 }
