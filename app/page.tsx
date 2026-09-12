@@ -3,7 +3,7 @@
 import Link from "next/link";
 import {useEffect, useState} from "react";
 
-const ASSET_VERSION = "20260912-clean-layout-v4";
+const ASSET_VERSION = "20260912-hero-copy-v5";
 const PART_NAMES = [
   "stackup-heroes-home-v4-432.part0",
   "stackup-heroes-home-v4-432.part1",
@@ -62,35 +62,18 @@ export default function Home(){
         .hxScreen{position:relative!important;width:min(100vw,864px)!important;aspect-ratio:864/1536!important;line-height:1!important;background:#031a31!important;overflow:hidden!important;flex:0 0 auto!important;isolation:isolate!important}
         .hxArt{position:absolute!important;inset:0!important;z-index:0!important;display:block!important;width:100%!important;height:100%!important;object-fit:contain!important;pointer-events:none!important;border:0!important;margin:0!important;padding:0!important}
 
-        /* Os dois botões fazem parte da arte original. Esta faixa opaca os remove por inteiro:
-           caixa, borda, brilho, seta e ícone de casa. */
         .navErase{position:absolute!important;left:0!important;top:15.0%!important;width:100%!important;height:7.65%!important;z-index:50!important;pointer-events:none!important;background:linear-gradient(180deg,#031a31 0%,#041d36 48%,#03192f 100%)!important;box-shadow:none!important;opacity:1!important}
-
-        /* Remove também a frase e os dois traços decorativos inferiores embutidos na arte. */
         .footerErase{position:absolute!important;left:0!important;top:92.05%!important;width:100%!important;height:7.95%!important;z-index:50!important;pointer-events:none!important;background:linear-gradient(180deg,#031a31 0%,#03182e 45%,#02172c 100%)!important;box-shadow:none!important;opacity:1!important}
 
         .txt{position:absolute!important;z-index:2!important;margin:0!important;padding:0!important;font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;font-weight:400!important;font-style:normal!important}
-
-        /* +20% em relação ao tamanho-base anterior */
         .brand{left:30.7%!important;top:2.85%!important;width:68%!important;font-size:min(6.552vw,56.64px)!important;line-height:1.02!important;color:#fff!important;white-space:nowrap!important;text-align:left!important;text-shadow:0 1px 2px rgba(0,0,0,.3)!important}
-
-        /* +35%, em azul */
         .heroes{left:30.6%!important;top:6.05%!important;width:68%!important;font-size:min(13.2705vw,114.75px)!important;line-height:.90!important;color:#23b8ff!important;-webkit-text-fill-color:#23b8ff!important;white-space:nowrap!important;text-align:left!important;text-shadow:0 1px 0 #dff7ff,0 0 8px rgba(0,166,255,.72),0 2px 4px rgba(0,55,110,.55)!important}
-
-        /* Mantém o subtítulo inteiro dentro da tela no mobile. */
         .sub{left:30.4%!important;top:13.05%!important;width:68.5%!important;font-size:min(2.325vw,20.1px)!important;line-height:1!important;color:#d7dbe5!important;white-space:nowrap!important;letter-spacing:min(.30vw,2.6px)!important;text-align:left!important}
 
-        .heroTopRow{position:absolute!important;z-index:2!important;left:5.5%!important;top:23.55%!important;width:89%!important;display:flex!important;align-items:baseline!important;gap:min(2.2vw,19px)!important;white-space:nowrap!important;font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;color:#fff!important;text-shadow:0 2px 4px rgba(0,0,0,.42)!important}
-        .heroTopWord{display:block!important;margin:0!important;padding:0!important;font-weight:400!important;font-style:normal!important;line-height:.96!important}
+        .heroMessage{position:absolute!important;z-index:4!important;left:5.5%!important;top:23.45%!important;width:89%!important;margin:0!important;padding:0!important;font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;font-size:min(4.45vw,38.45px)!important;line-height:1.27!important;font-weight:400!important;font-style:normal!important;color:#fff!important;text-align:left!important;text-transform:none!important;text-shadow:0 2px 4px rgba(0,0,0,.42)!important}
+        .heroMessage span{display:block!important;white-space:nowrap!important;margin:0!important;padding:0!important}
+        .heroMessage .finalLine{color:#23b8ff!important;-webkit-text-fill-color:#23b8ff!important;text-shadow:0 1px 0 #dff7ff,0 0 8px rgba(0,166,255,.72),0 2px 4px rgba(0,55,110,.55)!important}
 
-        /* ENTENDA +20%; TREINE +25% */
-        .entenda{font-size:min(8.892vw,76.8px)!important}
-        .treine{font-size:min(9.2625vw,80px)!important}
-
-        /* EVOLUA +40%, azul, em linha separada */
-        .evolua{left:5.5%!important;top:29.45%!important;width:78%!important;font-size:min(13.286vw,114.8px)!important;line-height:.90!important;color:#23b8ff!important;-webkit-text-fill-color:#23b8ff!important;text-align:left!important;white-space:nowrap!important;text-shadow:0 1px 0 #dff7ff,0 0 10px rgba(0,166,255,.78),0 2px 6px rgba(0,77,150,.68)!important}
-
-        .heroCopy{left:5.6%!important;top:39.45%!important;width:88%!important;font-size:min(2.55vw,22px)!important;line-height:1.35!important;color:#f3f3f3!important;text-align:left!important;text-shadow:0 1px 3px rgba(0,0,0,.4)!important;white-space:nowrap!important}
         .moduleCard{position:absolute!important;z-index:4!important;left:5.21%!important;width:89.58%!important;height:10.94%!important;display:block!important;margin:0!important;padding:0!important;border:0!important;background:transparent!important;text-decoration:none!important;color:inherit!important;font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;box-shadow:none!important}
         .card1{top:45.83%!important}.card2{top:57.75%!important}.card3{top:69.34%!important}.card4{top:81.12%!important}
         .cardTitle{left:27.1%!important;top:12%!important;width:66%!important;font-size:min(4.28vw,37px)!important;line-height:1!important;color:#08134c!important;white-space:nowrap!important;text-align:left!important;font-weight:400!important}
@@ -106,12 +89,13 @@ export default function Home(){
         <div className="txt heroes">HEROES</div>
         <div className="txt sub">AI POKER PERFORMANCE SYSTEM</div>
 
-        <div className="heroTopRow">
-          <span className="heroTopWord entenda">ENTENDA.</span>
-          <span className="heroTopWord treine">TREINE.</span>
+        <div className="heroMessage" data-preserve-case="true">
+          <span>Conheça o seu jogo.</span>
+          <span>Descubra leaks.</span>
+          <span>Aprimore estratégias.</span>
+          <span>Consolide decisões.</span>
+          <span className="finalLine">E domine a mesa.</span>
         </div>
-        <div className="txt evolua">EVOLUA.</div>
-        <div className="txt heroCopy" data-preserve-case="true">Aprenda como você joga. Descubra seus leaks.<br/>Aprimore a estratégia e consolide suas decisões.</div>
 
         {modules.map(item=><Link key={item.href} className={`moduleCard ${item.className}`} href={item.href} aria-label={item.title}>
           <div className="txt cardTitle">{item.title}</div>
