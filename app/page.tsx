@@ -3,7 +3,7 @@
 import Link from "next/link";
 import {useEffect, useState} from "react";
 
-const ASSET_VERSION = "20260912-1344-no-nav";
+const ASSET_VERSION = "20260912-1350-no-nav-buttons";
 const PART_NAMES = [
   "stackup-heroes-home-v4-432.part0",
   "stackup-heroes-home-v4-432.part1",
@@ -61,7 +61,7 @@ export default function Home(){
         .hxViewport{width:100%!important;min-height:100vh!important;display:flex!important;justify-content:center!important;align-items:flex-start!important;overflow-x:hidden!important;background:#031a31!important;font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important}
         .hxScreen{position:relative!important;width:min(100vw,864px)!important;aspect-ratio:864/1536!important;line-height:1!important;background:#031a31!important;overflow:hidden!important;flex:0 0 auto!important;isolation:isolate!important}
         .hxArt{position:absolute!important;inset:0!important;z-index:0!important;display:block!important;width:100%!important;height:100%!important;object-fit:contain!important;pointer-events:none!important;border:0!important;margin:0!important;padding:0!important}
-        .navErase{position:absolute!important;left:0!important;top:15.15%!important;width:100%!important;height:7.15%!important;z-index:1!important;pointer-events:none!important;background:linear-gradient(180deg,#031b33 0%,#02182e 58%,#031a31 100%)!important}
+        .navErase{position:absolute!important;left:0!important;top:14.85%!important;width:100%!important;height:8.05%!important;z-index:1!important;pointer-events:none!important;background:radial-gradient(circle at 72% 38%,rgba(7,38,66,.62) 0%,rgba(3,26,49,.86) 34%,rgba(2,22,42,.98) 72%),linear-gradient(180deg,#04213d 0%,#031a31 48%,#02172c 100%)!important;box-shadow:inset 0 10px 18px rgba(1,13,26,.18),inset 0 -12px 18px rgba(1,13,26,.18)!important}
         .txt{position:absolute!important;z-index:2!important;margin:0!important;padding:0!important;font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;font-weight:400!important;font-style:normal!important}
         .brand{left:30.7%!important;top:3.10%!important;width:49%!important;font-size:min(5.46vw,47.2px)!important;line-height:1.05!important;color:#fff!important;white-space:nowrap!important;text-align:left!important;text-shadow:0 1px 2px rgba(0,0,0,.3)!important}
         .heroes{left:30.6%!important;top:6.20%!important;width:49%!important;font-size:min(9.83vw,85px)!important;line-height:.95!important;color:#fff!important;white-space:nowrap!important;text-align:left!important;text-shadow:0 2px 3px rgba(0,0,0,.28)!important}
