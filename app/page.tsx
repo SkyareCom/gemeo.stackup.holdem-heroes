@@ -3,7 +3,7 @@
 import Link from "next/link";
 import {useEffect, useState} from "react";
 
-const ASSET_VERSION = "20260912-hero-copy-v5";
+const ASSET_VERSION = "20260912-hero-copy-v6-hard-mask";
 const PART_NAMES = [
   "stackup-heroes-home-v4-432.part0",
   "stackup-heroes-home-v4-432.part1",
@@ -62,15 +62,24 @@ export default function Home(){
         .hxScreen{position:relative!important;width:min(100vw,864px)!important;aspect-ratio:864/1536!important;line-height:1!important;background:#031a31!important;overflow:hidden!important;flex:0 0 auto!important;isolation:isolate!important}
         .hxArt{position:absolute!important;inset:0!important;z-index:0!important;display:block!important;width:100%!important;height:100%!important;object-fit:contain!important;pointer-events:none!important;border:0!important;margin:0!important;padding:0!important}
 
-        .navErase{position:absolute!important;left:0!important;top:15.0%!important;width:100%!important;height:7.65%!important;z-index:50!important;pointer-events:none!important;background:linear-gradient(180deg,#031a31 0%,#041d36 48%,#03192f 100%)!important;box-shadow:none!important;opacity:1!important}
-        .footerErase{position:absolute!important;left:0!important;top:92.05%!important;width:100%!important;height:7.95%!important;z-index:50!important;pointer-events:none!important;background:linear-gradient(180deg,#031a31 0%,#03182e 45%,#02172c 100%)!important;box-shadow:none!important;opacity:1!important}
+        /* IDs são intencionais: vencem a regra global que força backgrounds transparentes. */
+        #homeNavErase{position:absolute!important;left:0!important;top:14.65%!important;width:100%!important;height:8.35%!important;z-index:90!important;pointer-events:none!important;background-color:#031a31!important;background-image:linear-gradient(180deg,#031a31 0%,#041d36 48%,#03192f 100%)!important;box-shadow:none!important;opacity:1!important}
+        #homeFooterErase{position:absolute!important;left:0!important;top:91.7%!important;width:100%!important;height:8.3%!important;z-index:90!important;pointer-events:none!important;background-color:#031a31!important;background-image:linear-gradient(180deg,#031a31 0%,#03182e 45%,#02172c 100%)!important;box-shadow:none!important;opacity:1!important}
+
+        /* Apaga da arte-base o slogan antigo e o parágrafo antigo antes de desenhar o novo texto. */
+        #homeHeroErase1,#homeHeroErase2,#homeHeroErase3,#homeHeroErase4,#homeHeroErase5{position:absolute!important;z-index:60!important;pointer-events:none!important;background-color:#031a31!important;background-image:linear-gradient(90deg,#031a31 0%,#041d36 78%,#031a31 100%)!important;box-shadow:none!important;opacity:1!important}
+        #homeHeroErase1{left:3.8%!important;top:22.8%!important;width:47%!important;height:4.55%!important}
+        #homeHeroErase2{left:3.8%!important;top:27.25%!important;width:49%!important;height:4.75%!important}
+        #homeHeroErase3{left:3.8%!important;top:31.65%!important;width:55%!important;height:5.15%!important}
+        #homeHeroErase4{left:3.8%!important;top:38.35%!important;width:92.5%!important;height:3.05%!important;background-image:linear-gradient(90deg,#031a31 0%,#041d36 62%,rgba(3,26,49,.96) 100%)!important}
+        #homeHeroErase5{left:3.8%!important;top:41.05%!important;width:92.5%!important;height:3.15%!important;background-image:linear-gradient(90deg,#031a31 0%,#041d36 62%,rgba(3,26,49,.96) 100%)!important}
 
         .txt{position:absolute!important;z-index:2!important;margin:0!important;padding:0!important;font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;font-weight:400!important;font-style:normal!important}
         .brand{left:30.7%!important;top:2.85%!important;width:68%!important;font-size:min(6.552vw,56.64px)!important;line-height:1.02!important;color:#fff!important;white-space:nowrap!important;text-align:left!important;text-shadow:0 1px 2px rgba(0,0,0,.3)!important}
         .heroes{left:30.6%!important;top:6.05%!important;width:68%!important;font-size:min(13.2705vw,114.75px)!important;line-height:.90!important;color:#23b8ff!important;-webkit-text-fill-color:#23b8ff!important;white-space:nowrap!important;text-align:left!important;text-shadow:0 1px 0 #dff7ff,0 0 8px rgba(0,166,255,.72),0 2px 4px rgba(0,55,110,.55)!important}
         .sub{left:30.4%!important;top:13.05%!important;width:68.5%!important;font-size:min(2.325vw,20.1px)!important;line-height:1!important;color:#d7dbe5!important;white-space:nowrap!important;letter-spacing:min(.30vw,2.6px)!important;text-align:left!important}
 
-        .heroMessage{position:absolute!important;z-index:4!important;left:5.5%!important;top:23.45%!important;width:89%!important;margin:0!important;padding:0!important;font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;font-size:min(4.45vw,38.45px)!important;line-height:1.27!important;font-weight:400!important;font-style:normal!important;color:#fff!important;text-align:left!important;text-transform:none!important;text-shadow:0 2px 4px rgba(0,0,0,.42)!important}
+        .heroMessage{position:absolute!important;z-index:70!important;left:5.5%!important;top:23.15%!important;width:89%!important;margin:0!important;padding:0!important;font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;font-size:min(4.45vw,38.45px)!important;line-height:1.27!important;font-weight:400!important;font-style:normal!important;color:#fff!important;text-align:left!important;text-transform:none!important;text-shadow:0 2px 4px rgba(0,0,0,.42)!important}
         .heroMessage span{display:block!important;white-space:nowrap!important;margin:0!important;padding:0!important}
         .heroMessage .finalLine{color:#23b8ff!important;-webkit-text-fill-color:#23b8ff!important;text-shadow:0 1px 0 #dff7ff,0 0 8px rgba(0,166,255,.72),0 2px 4px rgba(0,55,110,.55)!important}
 
@@ -82,8 +91,14 @@ export default function Home(){
 
       <main className="hxScreen" aria-label="STACKUP HOLD’EM HEROES — menu de treinamento">
         {backgroundSrc && <img className="hxArt" src={backgroundSrc} alt="" width="432" height="768" draggable="false"/>}
-        <div className="navErase" aria-hidden="true"/>
-        <div className="footerErase" aria-hidden="true"/>
+
+        <div id="homeNavErase" aria-hidden="true"/>
+        <div id="homeFooterErase" aria-hidden="true"/>
+        <div id="homeHeroErase1" aria-hidden="true"/>
+        <div id="homeHeroErase2" aria-hidden="true"/>
+        <div id="homeHeroErase3" aria-hidden="true"/>
+        <div id="homeHeroErase4" aria-hidden="true"/>
+        <div id="homeHeroErase5" aria-hidden="true"/>
 
         <div className="txt brand">STACKUP HOLD’EM</div>
         <div className="txt heroes">HEROES</div>
