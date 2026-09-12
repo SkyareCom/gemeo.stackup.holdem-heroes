@@ -3,7 +3,6 @@ import { Love_Ya_Like_A_Sister } from "next/font/google";
 import UppercaseGuard from "@/components/UppercaseGuard";
 import "./globals.css";
 import "./button-standard.css";
-import "./scenario-standard.css";
 import "./unified-background.css";
 import "./stackup-blue-theme.css";
 import "./stackup-contrast-blue.css";
