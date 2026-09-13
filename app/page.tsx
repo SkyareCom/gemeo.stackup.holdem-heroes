@@ -3,7 +3,7 @@
 import Link from "next/link";
 import {useEffect, useState} from "react";
 
-const ASSET_VERSION = "20260913-hero-type-v13-cache-fix";
+const ASSET_VERSION = "20260913-hero-type-v14-absolute-assets";
 const EXPECTED_BASE64_LENGTH = 38700;
 const PART_NAMES = [
   "home-clean-v9.part0",
@@ -23,8 +23,8 @@ const modules = [
 
 async function fetchPart(name:string){
   const candidates = [
-    `./${name}?v=${ASSET_VERSION}`,
-    `./gemeo.stackup.holdem-heroes/${name}?v=${ASSET_VERSION}`,
+    `/gemeo.stackup.holdem-heroes/${name}?v=${ASSET_VERSION}`,
+    `/${name}?v=${ASSET_VERSION}`,
   ];
   let lastError:unknown;
   for(const url of candidates){
