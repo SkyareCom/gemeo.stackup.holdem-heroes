@@ -3,7 +3,7 @@
 import Link from "next/link";
 import {useEffect, useState} from "react";
 
-const ASSET_VERSION = "20260912-clean-art-v10-integrity";
+const ASSET_VERSION = "20260913-hero-type-v11";
 const EXPECTED_BASE64_LENGTH = 38700;
 const PART_NAMES = [
   "home-clean-v9.part0",
@@ -69,13 +69,13 @@ export default function Home(){
         .hxArt{position:absolute!important;inset:0!important;z-index:0!important;display:block!important;width:100%!important;height:100%!important;object-fit:contain!important;pointer-events:none!important;border:0!important;margin:0!important;padding:0!important}
 
         .txt{position:absolute!important;z-index:70!important;margin:0!important;padding:0!important;font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;font-weight:400!important;font-style:normal!important}
-        .brand{left:30.7%!important;top:2.85%!important;width:68%!important;font-size:min(6.552vw,56.64px)!important;line-height:1.02!important;color:#fff!important;white-space:nowrap!important;text-align:left!important;text-shadow:0 1px 2px rgba(0,0,0,.3)!important}
-        .heroes{left:30.6%!important;top:6.05%!important;width:68%!important;font-size:min(13.2705vw,114.75px)!important;line-height:.90!important;color:#23b8ff!important;-webkit-text-fill-color:#23b8ff!important;white-space:nowrap!important;text-align:left!important;text-shadow:0 1px 0 #dff7ff,0 0 8px rgba(0,166,255,.72),0 2px 4px rgba(0,55,110,.55)!important}
+        .brand{left:30.7%!important;top:2.65%!important;width:68%!important;font-size:min(7.5348vw,65.136px)!important;line-height:1.02!important;color:#fff!important;-webkit-text-fill-color:#fff!important;white-space:nowrap!important;text-align:left!important;text-shadow:0 1px 2px rgba(0,0,0,.3)!important}
+        .heroes{left:30.6%!important;top:5.65%!important;width:68%!important;font-size:min(15.9246vw,137.7px)!important;line-height:.88!important;color:#23b8ff!important;-webkit-text-fill-color:#23b8ff!important;white-space:nowrap!important;text-align:left!important;text-shadow:0 1px 0 #dff7ff,0 0 8px rgba(0,166,255,.72),0 2px 4px rgba(0,55,110,.55)!important}
         .sub{left:30.4%!important;top:11.95%!important;width:67.5%!important;font-size:min(2.05vw,17.7px)!important;line-height:1.05!important;color:#d7dbe5!important;white-space:nowrap!important;letter-spacing:min(.20vw,1.7px)!important;text-align:left!important;z-index:95!important;text-shadow:0 1px 2px rgba(0,0,0,.32)!important}
 
-        .heroMessage{position:absolute!important;z-index:80!important;left:5.5%!important;top:23.15%!important;width:89%!important;margin:0!important;padding:0!important;font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;font-size:min(4.45vw,38.45px)!important;line-height:1.27!important;font-weight:400!important;font-style:normal!important;color:#fff!important;text-align:left!important;text-transform:none!important;text-shadow:0 2px 4px rgba(0,0,0,.42)!important}
-        .heroMessage span{display:block!important;white-space:nowrap!important;margin:0!important;padding:0!important}
-        .heroMessage .finalLine{color:#23b8ff!important;-webkit-text-fill-color:#23b8ff!important;text-shadow:0 1px 0 #dff7ff,0 0 8px rgba(0,166,255,.72),0 2px 4px rgba(0,55,110,.55)!important}
+        .heroMessage{position:absolute!important;z-index:80!important;left:5.5%!important;top:22.95%!important;width:89%!important;margin:0!important;padding:0!important;font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;font-size:min(5.1175vw,44.22px)!important;line-height:1.20!important;font-weight:400!important;font-style:normal!important;color:#fff!important;text-align:left!important;text-transform:none!important;text-shadow:0 2px 4px rgba(0,0,0,.42)!important}
+        .heroMessage span{display:block!important;white-space:nowrap!important;margin:0!important;padding:0!important;color:#fff!important;-webkit-text-fill-color:#fff!important}
+        .heroMessage .finalLine{font-size:min(5.34vw,46.14px)!important;line-height:1.22!important;color:#23b8ff!important;-webkit-text-fill-color:#23b8ff!important;text-shadow:0 1px 0 #dff7ff,0 0 8px rgba(0,166,255,.72),0 2px 4px rgba(0,55,110,.55)!important}
 
         .moduleCard{position:absolute!important;z-index:90!important;left:5.21%!important;width:89.58%!important;height:10.94%!important;display:block!important;margin:0!important;padding:0!important;border:0!important;background:transparent!important;text-decoration:none!important;color:inherit!important;font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;box-shadow:none!important}
         .card1{top:45.83%!important}.card2{top:57.75%!important}.card3{top:69.34%!important}.card4{top:81.12%!important}
@@ -91,11 +91,11 @@ export default function Home(){
         <div className="txt sub">AI POKER PERFORMANCE SYSTEM</div>
 
         <div className="heroMessage" data-preserve-case="true">
-          <span>Conheça o seu jogo.</span>
+          <span>Conheça seu jogo.</span>
           <span>Descubra leaks.</span>
           <span>Aprimore estratégias.</span>
           <span>Consolide decisões.</span>
-          <span className="finalLine">E domine a mesa.</span>
+          <span className="finalLine">Domine a mesa.</span>
         </div>
 
         {modules.map(item=><Link key={item.href} className={`moduleCard ${item.className}`} href={item.href} aria-label={item.title}>
