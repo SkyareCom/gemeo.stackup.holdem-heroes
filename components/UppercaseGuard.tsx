@@ -5,6 +5,7 @@ import { useEffect } from "react";
 const ATTRIBUTES = ["placeholder", "title", "aria-label", "alt"] as const;
 const SKIP_TAGS = new Set(["SCRIPT", "STYLE", "NOSCRIPT"]);
 const PRESERVE_CASE_SELECTOR = '[data-preserve-case="true"]';
+const MANUAL_TYPE_SCALE_SELECTOR = '[data-manual-type-scale="true"]';
 const FONT_FAMILY = 'var(--font-love-ya-like-a-sister), "Love Ya Like A Sister", cursive';
 
 const TITLE_RE = /(^|[\s_-])(title|heading|prompt|question)([\s_-]|$)/i;
@@ -15,6 +16,10 @@ const TEXT_RE = /(^|[\s_-])(title|heading|prompt|question|subtitle|lead|status|c
 function shouldPreserveCase(node: Node) {
   const element = node instanceof Element ? node : node.parentElement;
   return Boolean(element?.closest(PRESERVE_CASE_SELECTOR));
+}
+
+function hasManualTypeScale(element: Element) {
+  return Boolean(element.closest(MANUAL_TYPE_SCALE_SELECTOR));
 }
 
 function uppercaseTextNode(node: Node) {
@@ -34,6 +39,7 @@ function applyGlobalFont(element: Element) {
 
 function getTypeScale(element: HTMLElement) {
   if (element.closest('[aria-hidden="true"]')) return null;
+  if (hasManualTypeScale(element)) return null;
 
   const tag = element.tagName;
   const className = element.getAttribute("class") ?? "";
