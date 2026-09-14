@@ -1,244 +1,223 @@
-import Link from "next/link";
+"use client";
 
-const HEROES_LOGO_SRC = "/gemeo.stackup.holdem-heroes/stackup-heroes-logo-128-valid-20260911.png";
+import Link from "next/link";
+import {useEffect, useState} from "react";
+
+const ASSET_VERSION = "20260914-secondary-home-header-v1";
+const EXPECTED_BASE64_LENGTH = 38700;
+const PART_NAMES = [
+  "home-clean-v9.part0",
+  "home-clean-v9.part2",
+  "home-clean-v9.part3",
+  "home-clean-v9.part4",
+  "home-clean-v9.part5",
+] as const;
+
+const HOME_BACKGROUND = "#031a31";
+const HIGHLIGHT_BLUE = "#23b8ff";
+const HIGHLIGHT_SHADOW = "0 2px 2px rgba(0,10,35,.90),0 0 5px rgba(35,184,255,.70)";
+
+async function fetchPart(name:string){
+  const candidates = [
+    `/gemeo.stackup.holdem-heroes/${name}?v=${ASSET_VERSION}`,
+    `/${name}?v=${ASSET_VERSION}`,
+  ];
+  let lastError:unknown;
+  for(const url of candidates){
+    try{
+      const response = await fetch(url,{cache:"no-store"});
+      if(!response.ok) throw new Error(`${response.status} ${response.statusText}`);
+      const text = (await response.text()).trim();
+      if(!text || text.length < 1000) throw new Error(`asset fragment too short: ${text.length}`);
+      return text;
+    }catch(error){
+      lastError = error;
+    }
+  }
+  throw lastError ?? new Error(`Unable to load ${name}`);
+}
 
 export default function StackupAppHeader(){
+  const [backgroundSrc,setBackgroundSrc] = useState("");
+
+  useEffect(()=>{
+    let cancelled = false;
+    Promise.all(PART_NAMES.map(fetchPart))
+      .then(parts=>{
+        const base64 = parts.join("").replace(/\s+/g,"");
+        if(base64.length !== EXPECTED_BASE64_LENGTH){
+          throw new Error(`invalid secondary header artwork length: ${base64.length}; expected ${EXPECTED_BASE64_LENGTH}`);
+        }
+        if(!cancelled) setBackgroundSrc(`data:image/webp;base64,${base64}`);
+      })
+      .catch(error=>console.error("STACKUP HEROES SECONDARY HEADER ARTWORK LOAD FAILED",error));
+    return()=>{cancelled=true};
+  },[]);
+
+  useEffect(()=>{
+    const html = document.documentElement;
+    const body = document.body;
+    const modulePages = Array.from(document.querySelectorAll<HTMLElement>("main.module-page"));
+
+    html.style.setProperty("background",HOME_BACKGROUND,"important");
+    html.style.setProperty("background-image","none","important");
+    body.style.setProperty("background",HOME_BACKGROUND,"important");
+    body.style.setProperty("background-image","none","important");
+    modulePages.forEach(page=>{
+      page.style.setProperty("min-height","100vh","important");
+      page.style.setProperty("background",HOME_BACKGROUND,"important");
+      page.style.setProperty("background-color",HOME_BACKGROUND,"important");
+      page.style.setProperty("background-image","none","important");
+    });
+
+    return()=>{
+      html.style.removeProperty("background");
+      html.style.removeProperty("background-image");
+      body.style.removeProperty("background");
+      body.style.removeProperty("background-image");
+      modulePages.forEach(page=>{
+        page.style.removeProperty("min-height");
+        page.style.removeProperty("background");
+        page.style.removeProperty("background-color");
+        page.style.removeProperty("background-image");
+      });
+    };
+  },[]);
+
   return <>
     <style>{`
       html body main.module-page{
         min-height:100vh!important;
-        background:#031a31!important;
+        background:${HOME_BACKGROUND}!important;
+        background-color:${HOME_BACKGROUND}!important;
         background-image:none!important;
       }
 
-      html body main.module-page .stackup-app-header{
+      html body main.module-page .stackup-home-clone-header{
         position:relative!important;
         isolation:isolate!important;
         overflow:hidden!important;
-        width:100%!important;
-        min-height:174px!important;
-        margin:0 0 22px!important;
-        padding:18px 28px!important;
+        display:block!important;
+        width:min(calc(100% + 36px),864px)!important;
+        aspect-ratio:864/230!important;
+        min-height:0!important;
+        margin:-28px auto 18px!important;
+        padding:0!important;
         border:0!important;
-        border-bottom:2px solid #23b8ff!important;
-        background:#031a31!important;
-        background-image:
-          radial-gradient(circle at 16% 18%,rgba(35,184,255,.22),transparent 30%),
-          linear-gradient(115deg,#073866 0%,#031a31 54%,#062c53 100%)!important;
-        box-shadow:0 8px 22px rgba(0,0,0,.30)!important;
+        border-radius:0!important;
+        background:${HOME_BACKGROUND}!important;
+        background-color:${HOME_BACKGROUND}!important;
+        background-image:none!important;
+        box-shadow:none!important;
         font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;
       }
 
-      html body main.module-page .stackup-brand-lockup{
-        position:relative!important;
-        z-index:4!important;
-        display:flex!important;
-        align-items:center!important;
-        gap:18px!important;
-        width:min(76%,620px)!important;
-        max-width:76%!important;
-        min-width:0!important;
-        padding:0!important;
+      html body main.module-page .stackup-home-clone-link{
+        position:absolute!important;
+        inset:0!important;
+        z-index:1!important;
+        display:block!important;
+        width:100%!important;
+        height:100%!important;
         margin:0!important;
+        padding:0!important;
         border:0!important;
+        border-radius:0!important;
         background:transparent!important;
         background-image:none!important;
         box-shadow:none!important;
         text-decoration:none!important;
+        overflow:hidden!important;
         font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;
       }
 
-      html body main.module-page .stackup-logo{
-        flex:0 0 112px!important;
-        width:112px!important;
-        height:112px!important;
-        display:grid!important;
-        place-items:center!important;
-        overflow:visible!important;
+      html body main.module-page .stackup-home-clone-art{
+        position:absolute!important;
+        z-index:0!important;
+        top:0!important;
+        left:0!important;
+        display:block!important;
+        width:100%!important;
+        height:auto!important;
+        max-width:none!important;
+        margin:0!important;
+        padding:0!important;
         border:0!important;
-        border-radius:50%!important;
+        object-fit:contain!important;
+        pointer-events:none!important;
+      }
+
+      html body main.module-page .stackup-home-clone-text{
+        position:absolute!important;
+        z-index:5!important;
+        display:block!important;
+        margin:0!important;
+        padding:0!important;
+        border:0!important;
         background:transparent!important;
         background-image:none!important;
-        box-shadow:none!important;
-      }
-
-      html body main.module-page .stackup-logo-image{
-        display:block!important;
-        width:112px!important;
-        height:112px!important;
-        object-fit:contain!important;
-        filter:drop-shadow(0 6px 9px rgba(0,0,0,.38)) drop-shadow(0 0 8px rgba(35,184,255,.20))!important;
-      }
-
-      html body main.module-page .stackup-brand-copy{
-        display:flex!important;
-        flex-direction:column!important;
-        align-items:flex-start!important;
-        justify-content:center!important;
-        gap:0!important;
-        min-width:0!important;
-        margin:0!important;
-        padding:0!important;
-        background:transparent!important;
-      }
-
-      html body main.module-page .stackup-app-title{
-        display:flex!important;
-        flex-direction:column!important;
-        align-items:flex-start!important;
-        gap:0!important;
-        margin:0!important;
-        padding:0!important;
         font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;
         font-weight:400!important;
         font-style:normal!important;
-        line-height:1!important;
-        letter-spacing:0!important;
         text-align:left!important;
-        text-transform:uppercase!important;
+        white-space:nowrap!important;
       }
 
-      html body main.module-page .stackup-app-title .stackup-title-main{
-        display:block!important;
-        margin:0!important;
-        padding:0!important;
-        font-size:20px!important;
-        line-height:1.05!important;
-        font-weight:400!important;
-        letter-spacing:0!important;
-        white-space:nowrap!important;
+      html body main.module-page .stackup-home-clone-brand{
+        left:30.7%!important;
+        top:17.7%!important;
+        width:68%!important;
+        font-size:min(7.5348vw,65.136px)!important;
+        line-height:1.02!important;
+        letter-spacing:.02em!important;
         color:#fff!important;
         -webkit-text-fill-color:#fff!important;
-        text-shadow:0 1px 2px rgba(0,0,0,.32)!important;
+        text-shadow:0 1px 2px rgba(0,0,0,.3)!important;
       }
 
-      html body main.module-page .stackup-app-title .stackup-title-heroes{
-        display:block!important;
-        margin:2px 0 0!important;
-        padding:0!important;
+      html body main.module-page .stackup-home-clone-heroes{
+        left:30.6%!important;
+        top:37.7%!important;
+        width:68%!important;
         font-size:26px!important;
-        line-height:1!important;
-        font-weight:400!important;
+        line-height:.88!important;
         letter-spacing:0!important;
-        white-space:nowrap!important;
-        color:#23b8ff!important;
-        -webkit-text-fill-color:#23b8ff!important;
-        text-shadow:0 2px 2px rgba(0,10,35,.90),0 0 5px rgba(35,184,255,.70)!important;
+        font-variant-ligatures:none!important;
+        font-feature-settings:"liga" 0!important;
+        -webkit-text-stroke:0!important;
+        color:${HIGHLIGHT_BLUE}!important;
+        -webkit-text-fill-color:${HIGHLIGHT_BLUE}!important;
+        text-shadow:${HIGHLIGHT_SHADOW}!important;
       }
 
-      html body main.module-page .stackup-app-subtitle{
-        display:block!important;
-        margin:13px 0 0!important;
-        padding:0!important;
-        font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;
-        font-size:12px!important;
+      html body main.module-page .stackup-home-clone-subtitle{
+        left:30.4%!important;
+        top:79.8%!important;
+        width:67.5%!important;
+        font-size:min(2.05vw,17.7px)!important;
         line-height:1.05!important;
-        font-weight:400!important;
-        letter-spacing:.08em!important;
-        white-space:nowrap!important;
-        color:#fff!important;
-        -webkit-text-fill-color:#fff!important;
+        letter-spacing:min(.20vw,1.7px)!important;
+        color:#d7dbe5!important;
+        -webkit-text-fill-color:#d7dbe5!important;
         text-shadow:0 1px 2px rgba(0,0,0,.32)!important;
-      }
-
-      html body main.module-page .stackup-header-deck{
-        position:absolute!important;
-        z-index:1!important;
-        right:18px!important;
-        top:12px!important;
-        width:130px!important;
-        height:150px!important;
-        pointer-events:none!important;
-        opacity:.72!important;
-        background:transparent!important;
-      }
-
-      html body main.module-page .stackup-header-card{
-        position:absolute!important;
-        display:flex!important;
-        align-items:flex-start!important;
-        justify-content:flex-start!important;
-        width:82px!important;
-        height:124px!important;
-        padding:10px!important;
-        border:1px solid rgba(54,161,243,.54)!important;
-        border-radius:12px!important;
-        background:linear-gradient(155deg,#0d5a9d 0%,#073866 52%,#031a31 100%)!important;
-        box-shadow:0 8px 18px rgba(0,0,0,.30)!important;
-        font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;
-        font-size:18px!important;
-        font-weight:400!important;
-        line-height:1!important;
-        color:#041225!important;
-        -webkit-text-fill-color:#041225!important;
-      }
-
-      html body main.module-page .stackup-header-card::after{
-        content:"♠"!important;
-        position:absolute!important;
-        right:10px!important;
-        bottom:12px!important;
-        font-size:40px!important;
-        line-height:1!important;
-        color:rgba(0,10,28,.78)!important;
-        -webkit-text-fill-color:rgba(0,10,28,.78)!important;
-      }
-
-      html body main.module-page .stackup-header-card-back{
-        right:42px!important;
-        top:20px!important;
-        transform:rotate(-13deg)!important;
-      }
-
-      html body main.module-page .stackup-header-card-front{
-        right:0!important;
-        top:0!important;
-        transform:rotate(-9deg)!important;
       }
 
       @media(max-width:560px){
-        html body main.module-page .stackup-app-header{
-          min-height:132px!important;
-          padding:12px 14px!important;
-          margin-bottom:16px!important;
+        html body main.module-page .stackup-home-clone-header{
+          width:calc(100% + 36px)!important;
+          max-width:864px!important;
+          margin:-28px -18px 14px!important;
         }
-        html body main.module-page .stackup-brand-lockup{
-          gap:10px!important;
-          width:82%!important;
-          max-width:82%!important;
-        }
-        html body main.module-page .stackup-logo,
-        html body main.module-page .stackup-logo-image{
-          flex-basis:76px!important;
-          width:76px!important;
-          height:76px!important;
-        }
-        html body main.module-page .stackup-app-title .stackup-title-main{font-size:20px!important}
-        html body main.module-page .stackup-app-title .stackup-title-heroes{font-size:26px!important}
-        html body main.module-page .stackup-app-subtitle{font-size:12px!important;margin-top:8px!important;letter-spacing:.035em!important}
-        html body main.module-page .stackup-header-deck{right:6px!important;top:9px!important;width:82px!important;height:112px!important;opacity:.60!important}
-        html body main.module-page .stackup-header-card{width:56px!important;height:88px!important;padding:7px!important;border-radius:9px!important;font-size:14px!important}
-        html body main.module-page .stackup-header-card::after{right:7px!important;bottom:8px!important;font-size:27px!important}
-        html body main.module-page .stackup-header-card-back{right:24px!important;top:16px!important}
       }
     `}</style>
-    <header className="stackup-app-header" aria-label="STACKUP HOLD'EM HEROES">
-      <Link className="stackup-brand-lockup" href="/" aria-label="STACKUP HOLD'EM HEROES — INÍCIO">
-        <span className="stackup-logo" aria-hidden="true">
-          <img className="stackup-logo-image" src={HEROES_LOGO_SRC} alt="" width="128" height="128" />
-        </span>
-        <span className="stackup-brand-copy">
-          <strong className="stackup-app-title">
-            <span className="stackup-title-main">STACKUP HOLD&apos;EM</span>
-            <span className="stackup-title-heroes">HEROES</span>
-          </strong>
-          <span className="stackup-app-subtitle">AI POKER PERFORMANCE SYSTEM</span>
-        </span>
+
+    <header className="stackup-home-clone-header" aria-label="STACKUP HOLD'EM HEROES">
+      <Link className="stackup-home-clone-link" href="/" aria-label="STACKUP HOLD'EM HEROES — INÍCIO">
+        {backgroundSrc && <img className="stackup-home-clone-art" src={backgroundSrc} alt="" width="864" height="1536" draggable="false"/>}
+        <span className="stackup-home-clone-text stackup-home-clone-brand">STACKUP HOLD’EM</span>
+        <span className="stackup-home-clone-text stackup-home-clone-heroes">HEROES</span>
+        <span className="stackup-home-clone-text stackup-home-clone-subtitle">AI POKER PERFORMANCE SYSTEM</span>
       </Link>
-      <span className="stackup-header-deck" aria-hidden="true">
-        <span className="stackup-header-card stackup-header-card-back">A♠</span>
-        <span className="stackup-header-card stackup-header-card-front">A♠</span>
-      </span>
     </header>
   </>;
 }
