@@ -1,60 +1,49 @@
 "use client";
 
-import { usePathname } from "next/navigation";
-
-const HOME_PATHS = new Set([
-  "/",
-  "/gemeo.stackup.holdem-heroes",
-  "/gemeo.stackup.holdem-heroes/",
-]);
-
 export default function HomeFooterExtension() {
-  const pathname = usePathname();
-  if (!HOME_PATHS.has(pathname)) return null;
-
   return (
     <section id="homeExtraSection" data-manual-type-scale="true" aria-label="IDIOMA PRINCIPAL E MENSAGEM FINAL">
       <style>{`
         html body #homeExtraSection{
           width:min(100vw,864px)!important;
           margin:0 auto!important;
-          padding:14px 5.21% 38px!important;
+          padding:14px 5.21% 42px!important;
           background:#031a31!important;
           font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;
           box-sizing:border-box!important;
         }
         html body #homeLanguageCard{
           width:100%!important;
-          min-height:96px!important;
+          min-height:min(19.45vw,168px)!important;
           display:grid!important;
-          grid-template-columns:72px minmax(0,1fr) 28px!important;
+          grid-template-columns:min(18vw,132px) minmax(0,1fr) 28px!important;
           align-items:center!important;
-          gap:14px!important;
-          padding:10px 14px!important;
+          gap:min(3vw,22px)!important;
+          padding:min(2.8vw,20px) min(3.2vw,24px)!important;
           margin:0!important;
           border:3px solid #148fe3!important;
-          border-radius:22px!important;
+          border-radius:min(4.6vw,26px)!important;
           background:#f7fbff!important;
           box-shadow:0 0 0 2px rgba(104,205,255,.28),0 7px 18px rgba(0,0,0,.24)!important;
           color:#08134c!important;
           box-sizing:border-box!important;
         }
         html body #homeLanguageIcon{
-          width:72px!important;
-          height:72px!important;
+          width:min(18vw,132px)!important;
+          height:min(15.5vw,112px)!important;
           display:flex!important;
           align-items:center!important;
           justify-content:center!important;
           border:2px solid #1c91df!important;
-          border-radius:16px!important;
+          border-radius:min(3.2vw,18px)!important;
           background:#06254a!important;
           box-shadow:inset 0 0 14px rgba(29,163,255,.18)!important;
           color:#dff6ff!important;
           box-sizing:border-box!important;
         }
         html body #homeLanguageIcon svg{
-          width:46px!important;
-          height:46px!important;
+          width:min(9.5vw,70px)!important;
+          height:min(9.5vw,70px)!important;
           display:block!important;
           fill:none!important;
           stroke:#dff6ff!important;
@@ -67,7 +56,7 @@ export default function HomeFooterExtension() {
           display:flex!important;
           flex-direction:column!important;
           justify-content:center!important;
-          gap:7px!important;
+          gap:8px!important;
         }
         html body #homeLanguageTitle{
           margin:0!important;
@@ -109,7 +98,7 @@ export default function HomeFooterExtension() {
         }
         html body #homeMotto{
           width:100%!important;
-          margin:30px 0 0!important;
+          margin:32px 0 0!important;
           padding:0 0 4px!important;
           display:flex!important;
           align-items:baseline!important;
@@ -139,13 +128,6 @@ export default function HomeFooterExtension() {
           color:#23b8ff!important;
           -webkit-text-fill-color:#23b8ff!important;
           text-shadow:0 2px 2px rgba(0,10,35,.95),0 0 6px rgba(32,184,255,.85),0 0 12px rgba(0,157,255,.52)!important;
-        }
-        @media (min-width:600px){
-          html body #homeExtraSection{padding-top:18px!important;padding-bottom:46px!important}
-          html body #homeLanguageCard{min-height:118px!important;grid-template-columns:88px minmax(0,1fr) 38px!important;padding:14px 18px!important;gap:18px!important}
-          html body #homeLanguageIcon{width:88px!important;height:88px!important;border-radius:20px!important}
-          html body #homeLanguageIcon svg{width:54px!important;height:54px!important}
-          html body #homeLanguageArrow{width:38px!important;font-size:52px!important}
         }
       `}</style>
 
