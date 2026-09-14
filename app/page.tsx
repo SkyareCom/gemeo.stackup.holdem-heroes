@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import {useEffect, useRef, useState} from "react";
+import HomeFooterExtension from "@/components/HomeFooterExtension";
 
-const ASSET_VERSION = "20260914-hero-title-v19-fixed-scale";
+const ASSET_VERSION = "20260914-home-v21-language-card";
 const EXPECTED_BASE64_LENGTH = 38700;
 const PART_NAMES = [
   "home-clean-v9.part0",
@@ -88,7 +89,7 @@ export default function Home(){
         html,body{margin:0!important;min-height:100%!important;background:#031a31!important}
         body{overflow-x:hidden!important;-webkit-tap-highlight-color:transparent!important}
         .hxViewport,.hxViewport *{box-sizing:border-box!important}
-        .hxViewport{width:100%!important;min-height:100vh!important;display:flex!important;justify-content:center!important;align-items:flex-start!important;overflow-x:hidden!important;background:#031a31!important;font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important}
+        .hxViewport{width:100%!important;min-height:100vh!important;display:flex!important;flex-direction:column!important;justify-content:flex-start!important;align-items:center!important;overflow-x:hidden!important;background:#031a31!important;font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important}
         .hxScreen{position:relative!important;width:min(100vw,864px)!important;aspect-ratio:864/1536!important;line-height:1!important;background:#031a31!important;overflow:hidden!important;flex:0 0 auto!important;isolation:isolate!important}
         .hxArt{position:absolute!important;inset:0!important;z-index:0!important;display:block!important;width:100%!important;height:100%!important;object-fit:contain!important;pointer-events:none!important;border:0!important;margin:0!important;padding:0!important}
 
@@ -127,6 +128,8 @@ export default function Home(){
           <div className="txt cardCopy" data-preserve-case="true">{item.copy}</div>
         </Link>)}
       </main>
+
+      <HomeFooterExtension />
     </div>
   );
 }
