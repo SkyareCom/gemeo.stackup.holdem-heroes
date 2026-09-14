@@ -19,7 +19,7 @@ const loveYaLikeASister = Love_Ya_Like_A_Sister({
   variable:"--font-love-ya-like-a-sister",
 });
 
-const CACHE_RESET_VERSION = "20260914-v8";
+const CACHE_RESET_VERSION = "20260914-v9";
 
 export const metadata: Metadata = {
   title: "STACKUP HOLD'EM HEROES",
