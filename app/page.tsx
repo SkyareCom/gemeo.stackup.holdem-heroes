@@ -3,7 +3,7 @@
 import Link from "next/link";
 import {useEffect, useRef, useState} from "react";
 
-const ASSET_VERSION = "20260914-hero-title-v18-runtime-lock";
+const ASSET_VERSION = "20260914-hero-title-v19-fixed-scale";
 const EXPECTED_BASE64_LENGTH = 38700;
 const PART_NAMES = [
   "home-clean-v9.part0",
@@ -107,7 +107,7 @@ export default function Home(){
         .cardCopy{left:27.4%!important;top:44%!important;width:68%!important;font-size:min(3.01vw,26px)!important;line-height:1.18!important;color:#26355e!important;text-align:left!important;font-weight:400!important;white-space:nowrap!important}
       `}</style>
 
-      <main className="hxScreen" aria-label="STACKUP HOLD’EM HEROES — menu de treinamento">
+      <main className="hxScreen" data-manual-type-scale="true" aria-label="STACKUP HOLD’EM HEROES — menu de treinamento">
         {backgroundSrc && <img className="hxArt" src={backgroundSrc} alt="" width="432" height="768" draggable="false"/>}
 
         <div id="homeBrand" className="txt">STACKUP HOLD’EM</div>
