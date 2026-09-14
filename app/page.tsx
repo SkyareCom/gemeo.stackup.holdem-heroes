@@ -4,7 +4,7 @@ import Link from "next/link";
 import {useEffect, useRef, useState} from "react";
 import HomeFooterExtension from "@/components/HomeFooterExtension";
 
-const ASSET_VERSION = "20260914-home-v23-exact-card-shell";
+const ASSET_VERSION = "20260914-home-v24-standardized";
 const EXPECTED_BASE64_LENGTH = 38700;
 const PART_NAMES = [
   "home-clean-v9.part0",
@@ -21,6 +21,9 @@ const modules = [
   {href:"/ai-hand-review", className:"card3", title:"ANÁLISE DE MÃOS", copy:<><span>Envie cenários completos e</span><br/><span>receba avaliação estratégica.</span></>},
   {href:"/poker-assistant", className:"card4", title:"PERGUNTE À IA", copy:<><span>Tire dúvidas sobre poker,</span><br/><span>estratégia, ranges e decisões.</span></>},
 ] as const;
+
+const HIGHLIGHT_BLUE = "#23b8ff";
+const HIGHLIGHT_SHADOW = "0 2px 2px rgba(0,10,35,.90),0 0 5px rgba(35,184,255,.70)";
 
 async function fetchPart(name:string){
   const candidates = [
@@ -66,20 +69,21 @@ export default function Home(){
     if(heroes){
       heroes.textContent = "HEROES";
       heroes.style.setProperty("font-size","26px","important");
-      heroes.style.setProperty("color","#23b8ff","important");
-      heroes.style.setProperty("-webkit-text-fill-color","#23b8ff","important");
+      heroes.style.setProperty("color",HIGHLIGHT_BLUE,"important");
+      heroes.style.setProperty("-webkit-text-fill-color",HIGHLIGHT_BLUE,"important");
       heroes.style.setProperty("font-family",'var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive',"important");
       heroes.style.setProperty("letter-spacing","0","important");
       heroes.style.setProperty("font-variant-ligatures","none","important");
       heroes.style.setProperty("-webkit-text-stroke","0","important");
-      heroes.style.setProperty("text-shadow","0 2px 2px rgba(0,10,35,.95),0 0 6px rgba(35,184,255,.95),0 0 12px rgba(0,157,255,.65)","important");
+      heroes.style.setProperty("text-shadow",HIGHLIGHT_SHADOW,"important");
     }
     const finalLine = finalRef.current;
     if(finalLine){
       finalLine.style.setProperty("font-size","18px","important");
-      finalLine.style.setProperty("color","#23b8ff","important");
-      finalLine.style.setProperty("-webkit-text-fill-color","#23b8ff","important");
+      finalLine.style.setProperty("color",HIGHLIGHT_BLUE,"important");
+      finalLine.style.setProperty("-webkit-text-fill-color",HIGHLIGHT_BLUE,"important");
       finalLine.style.setProperty("font-family",'var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive',"important");
+      finalLine.style.setProperty("text-shadow",HIGHLIGHT_SHADOW,"important");
     }
   },[]);
 
@@ -95,12 +99,12 @@ export default function Home(){
 
         .txt{position:absolute!important;z-index:70!important;margin:0!important;padding:0!important;font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;font-weight:400!important;font-style:normal!important}
         #homeBrand{left:30.7%!important;top:2.65%!important;width:68%!important;font-size:min(7.5348vw,65.136px)!important;line-height:1.02!important;color:#fff!important;-webkit-text-fill-color:#fff!important;white-space:nowrap!important;text-align:left!important;text-shadow:0 1px 2px rgba(0,0,0,.3)!important}
-        #homeHeroes{left:30.6%!important;top:5.65%!important;width:68%!important;font-size:26px!important;line-height:.88!important;color:#23b8ff!important;-webkit-text-fill-color:#23b8ff!important;white-space:nowrap!important;text-align:left!important;letter-spacing:0!important;font-variant-ligatures:none!important;font-feature-settings:"liga" 0!important;-webkit-text-stroke:0!important;text-shadow:0 2px 2px rgba(0,10,35,.95),0 0 6px rgba(35,184,255,.95),0 0 12px rgba(0,157,255,.65)!important}
+        #homeHeroes{left:30.6%!important;top:5.65%!important;width:68%!important;font-size:26px!important;line-height:.88!important;color:${HIGHLIGHT_BLUE}!important;-webkit-text-fill-color:${HIGHLIGHT_BLUE}!important;white-space:nowrap!important;text-align:left!important;letter-spacing:0!important;font-variant-ligatures:none!important;font-feature-settings:"liga" 0!important;-webkit-text-stroke:0!important;text-shadow:${HIGHLIGHT_SHADOW}!important}
         .sub{left:30.4%!important;top:11.95%!important;width:67.5%!important;font-size:min(2.05vw,17.7px)!important;line-height:1.05!important;color:#d7dbe5!important;white-space:nowrap!important;letter-spacing:min(.20vw,1.7px)!important;text-align:left!important;z-index:95!important;text-shadow:0 1px 2px rgba(0,0,0,.32)!important}
 
         #homeHeroMessage{position:absolute!important;z-index:80!important;left:5.5%!important;top:22.95%!important;width:89%!important;margin:0!important;padding:0!important;font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;font-size:min(5.1175vw,44.22px)!important;line-height:1.20!important;font-weight:400!important;font-style:normal!important;color:#fff!important;text-align:left!important;text-transform:none!important;text-shadow:0 2px 4px rgba(0,0,0,.42)!important}
         #homeHeroMessage span{display:block!important;white-space:nowrap!important;margin:0!important;padding:0!important;color:#fff!important;-webkit-text-fill-color:#fff!important}
-        #homeHeroFinal{font-size:18px!important;line-height:1.22!important;color:#23b8ff!important;-webkit-text-fill-color:#23b8ff!important;text-shadow:0 1px 0 #dff7ff,0 0 8px rgba(0,166,255,.72),0 2px 4px rgba(0,55,110,.55)!important}
+        #homeHeroFinal{font-size:18px!important;line-height:1.22!important;color:${HIGHLIGHT_BLUE}!important;-webkit-text-fill-color:${HIGHLIGHT_BLUE}!important;text-shadow:${HIGHLIGHT_SHADOW}!important}
 
         .moduleCard{position:absolute!important;z-index:90!important;left:5.21%!important;width:89.58%!important;height:10.94%!important;display:block!important;margin:0!important;padding:0!important;border:0!important;background:transparent!important;text-decoration:none!important;color:inherit!important;font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;box-shadow:none!important}
         .card1{top:45.83%!important}.card2{top:57.75%!important}.card3{top:69.34%!important}.card4{top:81.12%!important}
@@ -129,7 +133,7 @@ export default function Home(){
         </Link>)}
       </main>
 
-      <HomeFooterExtension backgroundSrc={backgroundSrc} />
+      <HomeFooterExtension />
     </div>
   );
 }
