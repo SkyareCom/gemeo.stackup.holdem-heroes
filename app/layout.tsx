@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Love_Ya_Like_A_Sister } from "next/font/google";
 import UppercaseGuard from "@/components/UppercaseGuard";
+import HomeFooterExtension from "@/components/HomeFooterExtension";
 import "./globals.css";
 import "./button-standard.css";
 import "./unified-background.css";
@@ -19,7 +20,7 @@ const loveYaLikeASister = Love_Ya_Like_A_Sister({
   variable:"--font-love-ya-like-a-sister",
 });
 
-const CACHE_RESET_VERSION = "20260914-v4";
+const CACHE_RESET_VERSION = "20260914-v5";
 
 export const metadata: Metadata = {
   title: "STACKUP HOLD'EM HEROES",
@@ -40,6 +41,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className="unified-background">
         <UppercaseGuard />
         {children}
+        <HomeFooterExtension />
       </body>
     </html>
   );
