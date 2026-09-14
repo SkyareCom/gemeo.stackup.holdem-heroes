@@ -1,0 +1,40 @@
+/* Última camada visual das telas internas. HOME fora do escopo. */
+html body #stackup-internal-root.player-dna-screen-shell .saved-analysis-panel .eyebrow,
+html body #stackup-internal-root.player-dna-screen-shell .history-panel .eyebrow{
+  color:#23b8ff!important;
+  -webkit-text-fill-color:#23b8ff!important;
+}
+
+/* O nome do módulo já aparece abaixo do cabeçalho; não repetir dentro do card. */
+html body #stackup-internal-root.math-screen-shell main.module-page section.panel>div>div:first-child>div:first-child>h2,
+html body #stackup-internal-root.assistant-screen-shell main.module-page section.panel>div>h2{
+  display:none!important;
+}
+
+/* Cards de escolha com proporção e leitura próximas da HOME. */
+html body #stackup-internal-root.player-dna-screen-shell .mode-choices label,
+html body #stackup-internal-root.player-dna-screen-shell .depth-choices>button{
+  min-height:68px!important;
+  border-radius:14px!important;
+}
+html body #stackup-internal-root.player-dna-screen-shell .depth-choices>button strong{
+  color:#08134c!important;
+  -webkit-text-fill-color:#08134c!important;
+}
+html body #stackup-internal-root.player-dna-screen-shell .depth-choices>button span{
+  color:#3c5b86!important;
+  -webkit-text-fill-color:#3c5b86!important;
+}
+html body #stackup-internal-root.player-dna-screen-shell .depth-choices>button[aria-pressed="true"] strong,
+html body #stackup-internal-root.player-dna-screen-shell .depth-choices>button[aria-pressed="true"] span{
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+}
+
+/* Campos e áreas de texto devem permanecer legíveis sobre os cards claros. */
+html body #stackup-internal-root input::placeholder,
+html body #stackup-internal-root textarea::placeholder{
+  color:#60708a!important;
+  -webkit-text-fill-color:#60708a!important;
+  opacity:1!important;
+}
