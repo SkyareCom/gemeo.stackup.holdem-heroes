@@ -1,6 +1,42 @@
 "use client";
 
+import {useEffect} from "react";
+
 export default function HomeFooterExtension() {
+  useEffect(()=>{
+    const syncTypography=()=>{
+      const sourceTitle=document.querySelector<HTMLElement>(".moduleCard .cardTitle");
+      const sourceCopy=document.querySelector<HTMLElement>(".moduleCard .cardCopy");
+      const targetTitle=document.getElementById("homeLanguageTitle");
+      const targetCopy=document.getElementById("homeLanguageCopy");
+
+      if(sourceTitle&&targetTitle){
+        const style=getComputedStyle(sourceTitle);
+        targetTitle.style.setProperty("font-size",style.fontSize,"important");
+        targetTitle.style.setProperty("line-height",style.lineHeight,"important");
+        targetTitle.style.setProperty("font-family",style.fontFamily,"important");
+        targetTitle.style.setProperty("font-weight",style.fontWeight,"important");
+        targetTitle.style.setProperty("letter-spacing",style.letterSpacing,"important");
+      }
+      if(sourceCopy&&targetCopy){
+        const style=getComputedStyle(sourceCopy);
+        targetCopy.style.setProperty("font-size",style.fontSize,"important");
+        targetCopy.style.setProperty("line-height",style.lineHeight,"important");
+        targetCopy.style.setProperty("font-family",style.fontFamily,"important");
+        targetCopy.style.setProperty("font-weight",style.fontWeight,"important");
+        targetCopy.style.setProperty("letter-spacing",style.letterSpacing,"important");
+      }
+    };
+
+    syncTypography();
+    const raf=requestAnimationFrame(syncTypography);
+    window.addEventListener("resize",syncTypography);
+    return()=>{
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize",syncTypography);
+    };
+  },[]);
+
   return (
     <section id="homeExtraSection" data-manual-type-scale="true" aria-label="IDIOMA PRINCIPAL E MENSAGEM FINAL">
       <style>{`
@@ -24,7 +60,7 @@ export default function HomeFooterExtension() {
           height:min(19.45vw,168px)!important;
           min-height:0!important;
           display:grid!important;
-          grid-template-columns:min(18vw,132px) minmax(0,1fr) 28px!important;
+          grid-template-columns:min(18vw,132px) minmax(0,1fr) min(8vw,56px)!important;
           align-items:center!important;
           gap:min(3vw,22px)!important;
           padding:min(1.1vw,8px) min(3.2vw,24px)!important;
@@ -94,15 +130,23 @@ export default function HomeFooterExtension() {
           display:flex!important;
           align-items:center!important;
           justify-content:center!important;
-          width:28px!important;
-          height:54px!important;
+          width:min(8vw,56px)!important;
+          height:min(10vw,72px)!important;
           margin:0!important;
           padding:0!important;
-          font-size:min(6vw,44px)!important;
-          line-height:1!important;
           color:#108ee1!important;
           -webkit-text-fill-color:#108ee1!important;
-          text-shadow:0 0 4px rgba(16,142,225,.22)!important;
+        }
+        html body #homeLanguageArrow svg{
+          width:min(4.8vw,34px)!important;
+          height:min(7vw,50px)!important;
+          display:block!important;
+          fill:none!important;
+          stroke:#108ee1!important;
+          stroke-width:3.6!important;
+          stroke-linecap:round!important;
+          stroke-linejoin:round!important;
+          filter:drop-shadow(0 0 3px rgba(16,142,225,.22))!important;
         }
         html body #homeMotto{
           width:100%!important;
@@ -150,7 +194,9 @@ export default function HomeFooterExtension() {
           <div id="homeLanguageTitle">IDIOMA PRINCIPAL</div>
           <div id="homeLanguageCopy" data-preserve-case="true">Escolha o idioma para usar no aplicativo</div>
         </div>
-        <div id="homeLanguageArrow" aria-hidden="true">›</div>
+        <div id="homeLanguageArrow" aria-hidden="true">
+          <svg viewBox="0 0 24 40" focusable="false" aria-hidden="true"><path d="M5 4l12 16L5 36" /></svg>
+        </div>
       </div>
 
       <div id="homeMotto" aria-label="ENTENDA. TREINE. EVOLUA.">
