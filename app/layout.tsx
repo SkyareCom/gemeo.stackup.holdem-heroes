@@ -12,6 +12,8 @@ import "./heroes-typography-v3.css";
 import "./button-state-contract.css";
 import "./home-typography-final.css";
 import "./home-balance-v20.css";
+import "./internal-visual-system.css";
+import "./internal-route-shell.css";
 
 const loveYaLikeASister = Love_Ya_Like_A_Sister({
   subsets:["latin"],
@@ -19,7 +21,7 @@ const loveYaLikeASister = Love_Ya_Like_A_Sister({
   variable:"--font-love-ya-like-a-sister",
 });
 
-const CACHE_RESET_VERSION = "20260914-v17-secondary-home-clone";
+const CACHE_RESET_VERSION = "20260914-v18-internal-visual-system";
 
 export const metadata: Metadata = {
   title: "STACKUP HOLD'EM HEROES",
