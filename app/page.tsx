@@ -1,10 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import {useEffect, useRef, useState} from "react";
-import HomeFooterExtension from "@/components/HomeFooterExtension";
+import HomeModuleCard from "@/components/HomeModuleCard";
 
-const ASSET_VERSION = "20260914-home-v24-standardized";
+const ASSET_VERSION = "20260914-home-v25-unified-cards";
 const EXPECTED_BASE64_LENGTH = 38700;
 const PART_NAMES = [
   "home-clean-v9.part0",
@@ -16,10 +15,10 @@ const PART_NAMES = [
 ] as const;
 
 const modules = [
-  {href:"/player-dna", className:"card1", title:"PLAYER DNA", copy:<><span>Descubra seu perfil técnico</span><br/><span>com spots de treino variados.</span></>},
-  {href:"/poker-math-lab", className:"card2", title:"MATEMÁTICA DO POKER", copy:<><span>Aprenda odds, pot odds, MDF,</span><br/><span>SPR e conceitos essenciais.</span></>},
-  {href:"/ai-hand-review", className:"card3", title:"ANÁLISE DE MÃOS", copy:<><span>Envie cenários completos e</span><br/><span>receba avaliação estratégica.</span></>},
-  {href:"/poker-assistant", className:"card4", title:"PERGUNTE À IA", copy:<><span>Tire dúvidas sobre poker,</span><br/><span>estratégia, ranges e decisões.</span></>},
+  {href:"/player-dna", className:"card1", title:"PLAYER DNA", icon:"player" as const, copyLines:["Descubra seu perfil técnico","com spots de treino variados."] as const},
+  {href:"/poker-math-lab", className:"card2", title:"MATEMÁTICA DO POKER", icon:"math" as const, copyLines:["Aprenda odds, pot odds, MDF,","SPR e conceitos essenciais."] as const},
+  {href:"/ai-hand-review", className:"card3", title:"ANÁLISE DE MÃOS", icon:"hand" as const, copyLines:["Envie cenários completos e","receba avaliação estratégica."] as const},
+  {href:"/poker-assistant", className:"card4", title:"PERGUNTE À IA", icon:"assistant" as const, copyLines:["Tire dúvidas sobre poker,","estratégia, ranges e decisões."] as const},
 ] as const;
 
 const HIGHLIGHT_BLUE = "#23b8ff";
@@ -106,10 +105,24 @@ export default function Home(){
         #homeHeroMessage span{display:block!important;white-space:nowrap!important;margin:0!important;padding:0!important;color:#fff!important;-webkit-text-fill-color:#fff!important}
         #homeHeroFinal{font-size:18px!important;line-height:1.22!important;color:${HIGHLIGHT_BLUE}!important;-webkit-text-fill-color:${HIGHLIGHT_BLUE}!important;text-shadow:${HIGHLIGHT_SHADOW}!important}
 
-        .moduleCard{position:absolute!important;z-index:90!important;left:5.21%!important;width:89.58%!important;height:10.94%!important;display:block!important;margin:0!important;padding:0!important;border:0!important;background:transparent!important;text-decoration:none!important;color:inherit!important;font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;box-shadow:none!important}
+        /* ONE VISUAL COMPONENT FOR ALL FIVE HOME CARDS */
+        .homeModuleCard{z-index:120!important;display:block!important;margin:0!important;padding:0!important;overflow:hidden!important;box-sizing:border-box!important;text-decoration:none!important;font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;color:#08134c!important;border:1px solid #9edfff!important;border-radius:min(3.55vw,24px)!important;background:linear-gradient(180deg,#ffffff 0%,#f8fcff 54%,#eef8ff 100%)!important;box-shadow:0 0 0 1px #18a9f0,0 0 0 3px #073b69,0 2px 4px rgba(0,0,0,.17),inset 0 0 0 1px rgba(255,255,255,.94)!important}
+        .heroModuleCard{position:absolute!important;left:5.21%!important;width:89.58%!important;height:10.94%!important}
         .card1{top:45.83%!important}.card2{top:57.75%!important}.card3{top:69.34%!important}.card4{top:81.12%!important}
-        .cardTitle{left:27.1%!important;top:12%!important;width:66%!important;font-size:min(4.28vw,37px)!important;line-height:1!important;color:#08134c!important;white-space:nowrap!important;text-align:left!important;font-weight:400!important}
-        .cardCopy{left:27.4%!important;top:44%!important;width:68%!important;font-size:min(3.01vw,26px)!important;line-height:1.18!important;color:#26355e!important;text-align:left!important;font-weight:400!important;white-space:nowrap!important}
+        .footerModuleCard{position:relative!important;width:100%!important;height:min(19.45vw,168px)!important}
+
+        .homeModuleIcon{position:absolute!important;z-index:2!important;left:4.15%!important;top:11%!important;width:18.05%!important;height:78%!important;display:flex!important;align-items:center!important;justify-content:center!important;border:1px solid #168bc8!important;border-radius:min(2.45vw,15px)!important;background:linear-gradient(180deg,#082b54 0%,#061f41 100%)!important;box-shadow:inset 0 0 8px rgba(35,184,255,.08)!important;color:#e8f8ff!important}
+        .homeModuleIcon svg{display:block!important;width:58%!important;height:58%!important;color:#e8f8ff!important;fill:#e8f8ff!important;stroke:#e8f8ff!important}
+        .homeModuleTitle{position:absolute!important;z-index:3!important;left:27.1%!important;top:12%!important;width:64%!important;margin:0!important;padding:0!important;font-size:min(4.28vw,37px)!important;line-height:1!important;font-weight:400!important;letter-spacing:.02em!important;color:#08134c!important;-webkit-text-fill-color:#08134c!important;white-space:nowrap!important;text-align:left!important}
+        .homeModuleCopy{position:absolute!important;z-index:3!important;left:27.4%!important;top:44%!important;width:66%!important;margin:0!important;padding:0!important;font-size:min(3.01vw,26px)!important;line-height:1.18!important;font-weight:400!important;letter-spacing:.02em!important;color:#26355e!important;-webkit-text-fill-color:#26355e!important;white-space:nowrap!important;text-align:left!important;text-transform:none!important}
+        .homeModuleArrow{position:absolute!important;z-index:3!important;right:4.45%!important;top:50%!important;transform:translateY(-50%)!important;width:min(3.45vw,26px)!important;height:min(5.8vw,43px)!important;display:flex!important;align-items:center!important;justify-content:center!important;color:#0d8fe2!important}
+        .homeModuleArrow svg{width:100%!important;height:100%!important;display:block!important;fill:none!important;stroke:#0d8fe2!important;stroke-width:4.5!important;stroke-linecap:round!important;stroke-linejoin:round!important}
+
+        #homeFooterSection{position:relative!important;z-index:130!important;width:min(100vw,864px)!important;margin:max(-109px,-12.62vw) auto 0!important;padding:0 5.21% 34px!important;background:transparent!important;border:0!important;box-shadow:none!important;overflow:visible!important;font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important}
+        #homeMotto{width:100%!important;margin:min(3.1vw,23px) 0 0!important;padding:0 0 4px!important;display:flex!important;align-items:baseline!important;justify-content:center!important;gap:7px!important;white-space:nowrap!important;text-align:center!important;font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;font-weight:400!important}
+        #homeMottoUnderstand{font-size:18px!important;line-height:1!important;color:#fff!important;-webkit-text-fill-color:#fff!important;text-shadow:0 2px 3px rgba(0,0,0,.5)!important}
+        #homeMottoTrain{font-size:20px!important;line-height:1!important;color:#fff!important;-webkit-text-fill-color:#fff!important;text-shadow:0 2px 3px rgba(0,0,0,.5)!important}
+        #homeMottoEvolve{font-size:26px!important;line-height:1!important;color:${HIGHLIGHT_BLUE}!important;-webkit-text-fill-color:${HIGHLIGHT_BLUE}!important;text-shadow:${HIGHLIGHT_SHADOW}!important}
       `}</style>
 
       <main className="hxScreen" data-manual-type-scale="true" aria-label="STACKUP HOLD’EM HEROES — menu de treinamento">
@@ -127,13 +140,17 @@ export default function Home(){
           <span ref={finalRef} id="homeHeroFinal">Domine a mesa.</span>
         </div>
 
-        {modules.map(item=><Link key={item.href} className={`moduleCard ${item.className}`} href={item.href} aria-label={item.title}>
-          <div className="txt cardTitle">{item.title}</div>
-          <div className="txt cardCopy" data-preserve-case="true">{item.copy}</div>
-        </Link>)}
+        {modules.map(item=><HomeModuleCard key={item.href} href={item.href} className={`heroModuleCard ${item.className}`} title={item.title} copyLines={item.copyLines} icon={item.icon}/>) }
       </main>
 
-      <HomeFooterExtension />
+      <section id="homeFooterSection" data-manual-type-scale="true" aria-label="IDIOMA PRINCIPAL E MENSAGEM FINAL">
+        <HomeModuleCard className="footerModuleCard" title="IDIOMA PRINCIPAL" copyLines={["Escolha o idioma para usar no","aplicativo"]} icon="language"/>
+        <div id="homeMotto" aria-label="ENTENDA. TREINE. EVOLUA.">
+          <span id="homeMottoUnderstand">ENTENDA.</span>
+          <span id="homeMottoTrain">TREINE.</span>
+          <span id="homeMottoEvolve">EVOLUA.</span>
+        </div>
+      </section>
     </div>
   );
 }
