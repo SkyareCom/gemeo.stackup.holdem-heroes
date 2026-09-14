@@ -1,141 +1,212 @@
-/* Wrapper das telas internas. A HOME não usa esta classe. */
-.internal-screen-shell{
+/* TELAS INTERNAS — a HOME permanece fora deste escopo. */
+html body .internal-screen-shell{
+  position:relative!important;
   min-height:100vh!important;
   width:100%!important;
   margin:0!important;
-  padding:0!important;
+  padding:0 0 42px!important;
   overflow-x:hidden!important;
   background:#031a31!important;
+  background-color:#031a31!important;
   background-image:none!important;
   color:#fff!important;
   font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;
 }
-.internal-screen-shell > .stackup-app-header{
+
+/* Cabeçalho: recorte real da arte da HOME. */
+html body .internal-screen-shell>.internal-header-host{
+  position:relative!important;
+  z-index:20!important;
   width:100%!important;
-  min-height:116px!important;
-  height:116px!important;
   margin:0!important;
-  padding:12px 18px!important;
-  display:flex!important;
-  align-items:center!important;
+  padding:0!important;
+  overflow:hidden!important;
+  background:#031a31!important;
   border:0!important;
-  border-bottom:1px solid rgba(35,184,255,.45)!important;
+}
+html body .internal-screen-shell>.internal-header-host .stackup-home-clone-header{
+  position:relative!important;
+  isolation:isolate!important;
+  display:block!important;
+  width:min(100%,864px)!important;
+  max-width:864px!important;
+  aspect-ratio:864/230!important;
+  min-height:0!important;
+  margin:0 auto!important;
+  padding:0!important;
+  overflow:hidden!important;
+  border:0!important;
+  border-bottom:1px solid rgba(35,184,255,.55)!important;
   border-radius:0!important;
   background:#031a31!important;
   background-image:none!important;
   box-shadow:none!important;
-  overflow:hidden!important;
 }
-.internal-screen-shell > .stackup-app-header .stackup-app-header-link{
-  display:flex!important;
-  align-items:center!important;
-  gap:11px!important;
+html body .internal-screen-shell>.internal-header-host .stackup-home-clone-link{
+  position:absolute!important;
+  inset:0!important;
+  z-index:1!important;
+  display:block!important;
   width:100%!important;
-  min-width:0!important;
+  height:100%!important;
   margin:0!important;
   padding:0!important;
-  color:inherit!important;
+  overflow:hidden!important;
+  border:0!important;
+  background:transparent!important;
   text-decoration:none!important;
-  background:transparent!important;
-  border:0!important;
-  box-shadow:none!important;
 }
-.internal-screen-shell > .stackup-app-header .stackup-app-header-logo{
-  flex:0 0 76px!important;
-  width:76px!important;
-  height:76px!important;
+html body .internal-screen-shell>.internal-header-host .stackup-home-clone-art{
+  position:absolute!important;
+  z-index:0!important;
+  top:0!important;
+  left:0!important;
+  display:block!important;
+  width:100%!important;
+  height:auto!important;
+  max-width:none!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
   object-fit:contain!important;
+  pointer-events:none!important;
+}
+html body .internal-screen-shell>.internal-header-host .stackup-home-clone-text{
+  position:absolute!important;
+  z-index:5!important;
   display:block!important;
   margin:0!important;
+  padding:0!important;
   border:0!important;
   background:transparent!important;
-  filter:drop-shadow(0 3px 6px rgba(0,0,0,.28))!important;
+  font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;
+  font-weight:400!important;
+  font-style:normal!important;
+  text-align:left!important;
+  white-space:nowrap!important;
 }
-.internal-screen-shell > .stackup-app-header .stackup-app-header-copy{
-  display:flex!important;
-  flex-direction:column!important;
-  align-items:flex-start!important;
-  justify-content:center!important;
-  min-width:0!important;
-  gap:0!important;
-  background:transparent!important;
-}
-.internal-screen-shell > .stackup-app-header .stackup-app-header-brand{
-  display:block!important;
-  margin:0!important;
+html body .internal-screen-shell>.internal-header-host .stackup-home-clone-brand{
+  left:30.7%!important;
+  top:17.7%!important;
+  width:68%!important;
+  font-size:min(7.5348vw,65.136px)!important;
+  line-height:1.02!important;
+  letter-spacing:.02em!important;
   color:#fff!important;
   -webkit-text-fill-color:#fff!important;
-  font-size:20px!important;
-  line-height:1.02!important;
-  font-weight:400!important;
-  white-space:nowrap!important;
-  letter-spacing:0!important;
-  text-shadow:0 1px 2px rgba(0,0,0,.28)!important;
+  text-shadow:0 1px 2px rgba(0,0,0,.3)!important;
 }
-.internal-screen-shell > .stackup-app-header .stackup-app-header-heroes{
-  display:block!important;
-  margin:1px 0 0!important;
+html body .internal-screen-shell>.internal-header-host .stackup-home-clone-heroes{
+  left:30.6%!important;
+  top:37.7%!important;
+  width:68%!important;
+  font-size:26px!important;
+  line-height:.88!important;
+  letter-spacing:0!important;
   color:#23b8ff!important;
   -webkit-text-fill-color:#23b8ff!important;
-  font-size:26px!important;
-  line-height:1!important;
-  font-weight:400!important;
-  white-space:nowrap!important;
-  letter-spacing:0!important;
-  text-shadow:0 1px 1px rgba(0,10,35,.72),0 0 4px rgba(35,184,255,.42)!important;
+  text-shadow:0 2px 2px rgba(0,10,35,.90),0 0 5px rgba(35,184,255,.70)!important;
 }
-.internal-screen-shell > .stackup-app-header .stackup-app-header-subtitle{
-  display:block!important;
-  margin:7px 0 0!important;
-  color:#fff!important;
-  -webkit-text-fill-color:#fff!important;
-  font-size:12px!important;
+html body .internal-screen-shell>.internal-header-host .stackup-home-clone-subtitle{
+  left:30.4%!important;
+  top:79.8%!important;
+  width:67.5%!important;
+  font-size:min(2.05vw,17.7px)!important;
   line-height:1.05!important;
-  font-weight:400!important;
-  white-space:nowrap!important;
-  letter-spacing:.035em!important;
-  text-shadow:0 1px 2px rgba(0,0,0,.28)!important;
+  letter-spacing:min(.20vw,1.7px)!important;
+  color:#d7dbe5!important;
+  -webkit-text-fill-color:#d7dbe5!important;
+  text-shadow:0 1px 2px rgba(0,0,0,.32)!important;
 }
-.internal-screen-shell > .module-screen-title{
+
+/* Título do módulo imediatamente abaixo do cabeçalho. */
+html body .internal-screen-shell>.module-screen-title{
   width:auto!important;
-  margin:14px 18px 12px!important;
+  margin:12px 18px 10px!important;
   padding:0!important;
   color:#23b8ff!important;
   -webkit-text-fill-color:#23b8ff!important;
-  font-size:20px!important;
-  line-height:1.15!important;
-  font-weight:400!important;
-  text-align:left!important;
+  font:400 20px/1.15 var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;
   letter-spacing:.02em!important;
+  text-align:left!important;
   text-shadow:none!important;
 }
-/* A antiga tentativa de copiar/cortar a HOME não é exibida nas telas internas. */
-.internal-screen-shell main.module-page .stackup-home-clone-header{
-  display:none!important;
-}
-/* O conteúdo começa abaixo do novo cabeçalho/título. */
-.internal-screen-shell main.module-page{
+
+/* Conteúdo interno. */
+html body .internal-screen-shell main.module-page{
+  position:relative!important;
+  z-index:2!important;
   min-height:0!important;
-  padding-top:0!important;
+  width:100%!important;
+  margin:0!important;
+  padding:0 18px 42px!important;
+  overflow:visible!important;
   background:#031a31!important;
+  background-color:#031a31!important;
   background-image:none!important;
+  color:#fff!important;
 }
+html body .internal-screen-shell main.module-page::before,
+html body .internal-screen-shell main.module-page::after{
+  display:none!important;
+  content:none!important;
+}
+/* arte temática muito discreta apenas no topo */
+html body .internal-screen-shell::before,
+html body .internal-screen-shell::after{
+  content:""!important;
+  position:absolute!important;
+  z-index:0!important;
+  top:245px!important;
+  width:64px!important;
+  height:92px!important;
+  border:1px solid rgba(255,255,255,.055)!important;
+  border-radius:9px!important;
+  background:transparent!important;
+  pointer-events:none!important;
+}
+html body .internal-screen-shell::before{right:28px!important;transform:rotate(-11deg)!important}
+html body .internal-screen-shell::after{right:78px!important;top:267px!important;transform:rotate(8deg)!important}
+
+/* Navegação: cards brancos no padrão HOME. */
+html body .internal-screen-shell main.module-page nav.module-navigation{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:10px!important;
+  width:100%!important;
+  margin:0 0 16px!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+}
+html body .internal-screen-shell main.module-page nav.module-navigation>a.module-back,
+html body .internal-screen-shell main.module-page nav.module-navigation>button.module-back,
+html body .internal-screen-shell main.module-page nav.module-navigation>.player-dna-nav-button{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:100%!important;
+  min-width:0!important;
+  height:50px!important;
+  min-height:50px!important;
+  max-height:50px!important;
+  margin:0!important;
+  padding:8px 10px!important;
+  border:2px solid #23b8ff!important;
+  border-radius:15px!important;
+  background:#f8fbff!important;
+  background-color:#f8fbff!important;
+  background-image:none!important;
+  color:#08134c!important;
+  -webkit-text-fill-color:#08134c!important;
+  box-shadow:0 2px 7px rgba(0,0,0,.14)!important;
+  font:400 14px/1 var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;
+  letter-spacing:0!important;
+  text-decoration:none!important;
+  text-align:center!important;
+}
+
 @media(min-width:700px){
-  .internal-screen-shell > .stackup-app-header{
-    min-height:126px!important;
-    height:126px!important;
-    padding:14px 24px!important;
-  }
-  .internal-screen-shell > .stackup-app-header .stackup-app-header-logo{
-    flex-basis:86px!important;
-    width:86px!important;
-    height:86px!important;
-  }
-  .internal-screen-shell > .module-screen-title{margin-left:24px!important;margin-right:24px!important}
-}
-@media(max-width:380px){
-  .internal-screen-shell > .stackup-app-header .stackup-app-header-brand{font-size:18px!important}
-  .internal-screen-shell > .stackup-app-header .stackup-app-header-heroes{font-size:24px!important}
-  .internal-screen-shell > .stackup-app-header .stackup-app-header-subtitle{font-size:11px!important}
-  .internal-screen-shell > .stackup-app-header .stackup-app-header-logo{flex-basis:70px!important;width:70px!important;height:70px!important}
+  html body .internal-screen-shell>.module-screen-title{margin-left:24px!important;margin-right:24px!important}
+  html body .internal-screen-shell main.module-page{padding-left:24px!important;padding-right:24px!important}
 }
