@@ -1,42 +1,6 @@
 "use client";
 
-import {useEffect} from "react";
-
 export default function HomeFooterExtension() {
-  useEffect(()=>{
-    const syncTypography=()=>{
-      const sourceTitle=document.querySelector<HTMLElement>(".moduleCard .cardTitle");
-      const sourceCopy=document.querySelector<HTMLElement>(".moduleCard .cardCopy");
-      const targetTitle=document.getElementById("homeLanguageTitle");
-      const targetCopy=document.getElementById("homeLanguageCopy");
-
-      if(sourceTitle&&targetTitle){
-        const style=getComputedStyle(sourceTitle);
-        targetTitle.style.setProperty("font-size",style.fontSize,"important");
-        targetTitle.style.setProperty("line-height",style.lineHeight,"important");
-        targetTitle.style.setProperty("font-family",style.fontFamily,"important");
-        targetTitle.style.setProperty("font-weight",style.fontWeight,"important");
-        targetTitle.style.setProperty("letter-spacing",style.letterSpacing,"important");
-      }
-      if(sourceCopy&&targetCopy){
-        const style=getComputedStyle(sourceCopy);
-        targetCopy.style.setProperty("font-size",style.fontSize,"important");
-        targetCopy.style.setProperty("line-height",style.lineHeight,"important");
-        targetCopy.style.setProperty("font-family",style.fontFamily,"important");
-        targetCopy.style.setProperty("font-weight",style.fontWeight,"important");
-        targetCopy.style.setProperty("letter-spacing",style.letterSpacing,"important");
-      }
-    };
-
-    syncTypography();
-    const raf=requestAnimationFrame(syncTypography);
-    window.addEventListener("resize",syncTypography);
-    return()=>{
-      cancelAnimationFrame(raf);
-      window.removeEventListener("resize",syncTypography);
-    };
-  },[]);
-
   return (
     <section id="homeExtraSection" data-manual-type-scale="true" aria-label="IDIOMA PRINCIPAL E MENSAGEM FINAL">
       <style>{`
@@ -56,25 +20,26 @@ export default function HomeFooterExtension() {
           box-sizing:border-box!important;
         }
         html body #homeLanguageCard{
+          position:relative!important;
           width:100%!important;
           height:min(19.45vw,168px)!important;
           min-height:0!important;
-          display:grid!important;
-          grid-template-columns:min(18vw,132px) minmax(0,1fr) min(8vw,56px)!important;
-          align-items:center!important;
-          gap:min(3vw,22px)!important;
-          padding:min(1.1vw,8px) min(3.2vw,24px)!important;
           margin:0!important;
+          padding:0!important;
           border:3px solid #148fe3!important;
           border-radius:min(4vw,24px)!important;
           background:#f7fbff!important;
           box-shadow:0 0 0 1px rgba(104,205,255,.20),0 4px 10px rgba(0,0,0,.22)!important;
           color:#08134c!important;
           box-sizing:border-box!important;
+          overflow:hidden!important;
         }
         html body #homeLanguageIcon{
-          width:min(17vw,122px)!important;
-          height:min(15vw,108px)!important;
+          position:absolute!important;
+          left:4.0%!important;
+          top:10%!important;
+          width:17.8%!important;
+          height:80%!important;
           display:flex!important;
           align-items:center!important;
           justify-content:center!important;
@@ -86,8 +51,8 @@ export default function HomeFooterExtension() {
           box-sizing:border-box!important;
         }
         html body #homeLanguageIcon svg{
-          width:min(8vw,58px)!important;
-          height:min(8vw,58px)!important;
+          width:46%!important;
+          height:46%!important;
           display:block!important;
           fill:none!important;
           stroke:#dff6ff!important;
@@ -95,51 +60,46 @@ export default function HomeFooterExtension() {
           stroke-linecap:round!important;
           stroke-linejoin:round!important;
         }
-        html body #homeLanguageText{
-          min-width:0!important;
-          display:flex!important;
-          flex-direction:column!important;
-          justify-content:center!important;
-          gap:min(1.1vw,8px)!important;
-        }
-        html body #homeLanguageTitle{
+        html body #homeLanguageCard #homeLanguageTitle.cardTitle{
+          left:27.1%!important;
+          top:12%!important;
+          width:66%!important;
           margin:0!important;
           padding:0!important;
-          font-size:min(4.28vw,37px)!important;
-          line-height:1!important;
-          font-weight:400!important;
           color:#08134c!important;
           -webkit-text-fill-color:#08134c!important;
           white-space:nowrap!important;
           text-align:left!important;
         }
-        html body #homeLanguageCopy{
+        html body #homeLanguageCard #homeLanguageCopy.cardCopy{
+          left:27.4%!important;
+          top:44%!important;
+          width:68%!important;
           margin:0!important;
           padding:0!important;
-          font-size:min(3.01vw,26px)!important;
-          line-height:1.18!important;
-          font-weight:400!important;
           color:#26355e!important;
           -webkit-text-fill-color:#26355e!important;
           text-align:left!important;
           text-transform:none!important;
-          white-space:normal!important;
-          overflow-wrap:normal!important;
+          white-space:nowrap!important;
         }
         html body #homeLanguageArrow{
+          position:absolute!important;
+          right:3.5%!important;
+          top:50%!important;
+          transform:translateY(-50%)!important;
+          width:min(5vw,36px)!important;
+          height:min(7vw,50px)!important;
           display:flex!important;
           align-items:center!important;
           justify-content:center!important;
-          width:min(8vw,56px)!important;
-          height:min(10vw,72px)!important;
           margin:0!important;
           padding:0!important;
           color:#108ee1!important;
-          -webkit-text-fill-color:#108ee1!important;
         }
         html body #homeLanguageArrow svg{
-          width:min(4.8vw,34px)!important;
-          height:min(7vw,50px)!important;
+          width:min(4.2vw,30px)!important;
+          height:min(6vw,43px)!important;
           display:block!important;
           fill:none!important;
           stroke:#108ee1!important;
@@ -190,9 +150,9 @@ export default function HomeFooterExtension() {
             <path d="M6 24h36M24 6c5 5 8 11 8 18s-3 13-8 18M24 6c-5 5-8 11-8 18s3 13 8 18" />
           </svg>
         </div>
-        <div id="homeLanguageText">
-          <div id="homeLanguageTitle">IDIOMA PRINCIPAL</div>
-          <div id="homeLanguageCopy" data-preserve-case="true">Escolha o idioma para usar no aplicativo</div>
+        <div id="homeLanguageTitle" className="txt cardTitle">IDIOMA PRINCIPAL</div>
+        <div id="homeLanguageCopy" className="txt cardCopy" data-preserve-case="true">
+          <span>Escolha o idioma para usar no</span><br/><span>aplicativo</span>
         </div>
         <div id="homeLanguageArrow" aria-hidden="true">
           <svg viewBox="0 0 24 40" focusable="false" aria-hidden="true"><path d="M5 4l12 16L5 36" /></svg>
