@@ -18,6 +18,8 @@ const loveYaLikeASister = Love_Ya_Like_A_Sister({
   variable:"--font-love-ya-like-a-sister",
 });
 
+const CACHE_RESET_VERSION = "20260914-v3";
+
 export const metadata: Metadata = {
   title: "STACKUP HOLD'EM HEROES",
   description: "AI POKER PERFORMANCE SYSTEM.",
@@ -31,7 +33,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="pt-BR" className={`${loveYaLikeASister.className} ${loveYaLikeASister.variable}`}>
       <head>
-        <script dangerouslySetInnerHTML={{__html:`(()=>{try{const k='heroes-cache-reset-20260911-v2';if(localStorage.getItem(k))return;localStorage.setItem(k,'1');if('serviceWorker'in navigator){navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>{if(r.scope.includes('/gemeo.stackup.holdem-heroes/'))r.unregister();}));}if('caches'in window){caches.keys().then(ks=>ks.forEach(x=>caches.delete(x)));}}catch(e){}})();`}} />
+        <script dangerouslySetInnerHTML={{__html:`(()=>{const APP='/gemeo.stackup.holdem-heroes/';const VERSION='${CACHE_RESET_VERSION}';const KEY='heroes-cache-reset-'+VERSION;const RELOAD_KEY=KEY+'-reload';const cleanup=async()=>{try{if('serviceWorker'in navigator){const regs=await navigator.serviceWorker.getRegistrations();await Promise.all(regs.filter(r=>{try{return new URL(r.scope).pathname.startsWith(APP)}catch(_){return false}}).map(r=>r.unregister()));}if(!localStorage.getItem(KEY)&&'caches'in window){const names=await caches.keys();await Promise.all(names.map(async name=>{try{const cache=await caches.open(name);const reqs=await cache.keys();const belongs=reqs.some(req=>{try{return new URL(req.url).pathname.startsWith(APP)}catch(_){return false}});if(belongs)await caches.delete(name);}catch(_){}}));localStorage.setItem(KEY,'1');if(!sessionStorage.getItem(RELOAD_KEY)){sessionStorage.setItem(RELOAD_KEY,'1');const url=new URL(location.href);url.searchParams.set('_hv',VERSION);location.replace(url.toString());}}}catch(_){}};cleanup();})();`}} />
         <style>{`html body, html body *, html body *::before, html body *::after { text-transform: uppercase !important; } html body [data-preserve-case="true"], html body [data-preserve-case="true"] * { text-transform: none !important; }`}</style>
       </head>
       <body className="unified-background">
