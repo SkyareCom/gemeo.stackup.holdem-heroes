@@ -4,7 +4,7 @@ import Link from "next/link";
 import {useEffect, useRef, useState} from "react";
 import HomeFooterExtension from "@/components/HomeFooterExtension";
 
-const ASSET_VERSION = "20260914-home-v22-unified-blue";
+const ASSET_VERSION = "20260914-home-v23-exact-card-shell";
 const EXPECTED_BASE64_LENGTH = 38700;
 const PART_NAMES = [
   "home-clean-v9.part0",
@@ -129,7 +129,7 @@ export default function Home(){
         </Link>)}
       </main>
 
-      <HomeFooterExtension />
+      <HomeFooterExtension backgroundSrc={backgroundSrc} />
     </div>
   );
 }
