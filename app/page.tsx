@@ -3,7 +3,7 @@
 import Link from "next/link";
 import {useEffect, useState} from "react";
 
-const ASSET_VERSION = "20260914-hero-title-v16";
+const ASSET_VERSION = "20260914-hero-title-v17-26px-contrast";
 const EXPECTED_BASE64_LENGTH = 38700;
 const PART_NAMES = [
   "home-clean-v9.part0",
@@ -70,8 +70,8 @@ export default function Home(){
 
         .txt{position:absolute!important;z-index:70!important;margin:0!important;padding:0!important;font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;font-weight:400!important;font-style:normal!important}
         #homeBrand{left:30.7%!important;top:2.65%!important;width:68%!important;font-size:min(7.5348vw,65.136px)!important;line-height:1.02!important;color:#fff!important;-webkit-text-fill-color:#fff!important;white-space:nowrap!important;text-align:left!important;text-shadow:0 1px 2px rgba(0,0,0,.3)!important}
-        #homeHeroes{left:30.6%!important;top:5.65%!important;width:68%!important;font-size:20px!important;line-height:.88!important;color:#23b8ff!important;-webkit-text-fill-color:#23b8ff!important;white-space:nowrap!important;text-align:left!important;letter-spacing:0!important;font-variant-ligatures:none!important;font-feature-settings:"liga" 0!important;text-shadow:0 1px 0 #dff7ff,0 0 8px rgba(0,166,255,.72),0 2px 4px rgba(0,55,110,.55)!important}
-        #homeHeroes .heroH{display:inline-block!important;color:#23b8ff!important;-webkit-text-fill-color:#23b8ff!important;font-family:inherit!important;font-size:inherit!important;font-weight:inherit!important;font-style:inherit!important;text-shadow:none!important}
+        #homeHeroes{left:30.6%!important;top:5.65%!important;width:68%!important;font-size:26px!important;line-height:.88!important;color:#20b8ff!important;-webkit-text-fill-color:#20b8ff!important;white-space:nowrap!important;text-align:left!important;letter-spacing:0!important;font-variant-ligatures:none!important;font-feature-settings:"liga" 0!important;-webkit-text-stroke:.35px rgba(220,247,255,.95)!important;text-shadow:0 1px 0 rgba(235,250,255,.95),0 0 4px rgba(70,205,255,.95),0 0 10px rgba(0,157,255,.9),0 2px 3px rgba(0,18,48,.95)!important}
+        #homeHeroes .heroH{display:inline-block!important;color:#20b8ff!important;-webkit-text-fill-color:#20b8ff!important;font-family:inherit!important;font-size:inherit!important;font-weight:inherit!important;font-style:inherit!important;-webkit-text-stroke:inherit!important;text-shadow:inherit!important}
         .sub{left:30.4%!important;top:11.95%!important;width:67.5%!important;font-size:min(2.05vw,17.7px)!important;line-height:1.05!important;color:#d7dbe5!important;white-space:nowrap!important;letter-spacing:min(.20vw,1.7px)!important;text-align:left!important;z-index:95!important;text-shadow:0 1px 2px rgba(0,0,0,.32)!important}
 
         #homeHeroMessage{position:absolute!important;z-index:80!important;left:5.5%!important;top:22.95%!important;width:89%!important;margin:0!important;padding:0!important;font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;font-size:min(5.1175vw,44.22px)!important;line-height:1.20!important;font-weight:400!important;font-style:normal!important;color:#fff!important;text-align:left!important;text-transform:none!important;text-shadow:0 2px 4px rgba(0,0,0,.42)!important}
