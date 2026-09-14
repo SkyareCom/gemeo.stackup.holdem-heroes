@@ -1,150 +1,203 @@
-/* Complemento do sistema visual interno. HOME permanece fora deste escopo. */
+/* STACKUP HOLD'EM HEROES — conteúdo das telas internas.
+   A HOME não usa .internal-screen-shell e permanece intocada. */
 
-/* Nome do módulo imediatamente abaixo do cabeçalho nas rotas sem título próprio. */
-html body .math-screen-shell main.module-page .module-navigation::before,
-html body .assistant-screen-shell main.module-page .module-navigation::before,
-html body .hand-review-screen-shell main.module-page .module-navigation::before{
-  grid-column:1/-1!important;
-  display:block!important;
+/* Card principal de cada módulo. */
+html body .internal-screen-shell main.module-page section.panel,
+html body .internal-screen-shell main.player-dna-page section.panel.profile-panel,
+html body .internal-screen-shell main.ai-hand-review-page section.panel.hand-review-panel{
   width:100%!important;
-  margin:0 0 4px!important;
-  padding:0!important;
+  margin:0!important;
+  padding:16px!important;
+  box-sizing:border-box!important;
+  border:2px solid #23b8ff!important;
+  border-radius:18px!important;
+  background:#f8fbff!important;
+  background-color:#f8fbff!important;
+  background-image:none!important;
+  color:#08134c!important;
+  box-shadow:0 3px 10px rgba(0,0,0,.14)!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+
+/* Tipografia interna. */
+html body .internal-screen-shell main.module-page section.panel h2,
+html body .internal-screen-shell main.module-page section.panel h3,
+html body .internal-screen-shell main.module-page section.panel h4,
+html body .internal-screen-shell main.module-page section.panel .eyebrow,
+html body .internal-screen-shell main.ai-hand-review-page section.hand-review-panel h2,
+html body .internal-screen-shell main.ai-hand-review-page section.hand-review-panel h3,
+html body .internal-screen-shell main.ai-hand-review-page section.hand-review-panel h4,
+html body .internal-screen-shell main.ai-hand-review-page section.hand-review-panel .eyebrow{
   color:#23b8ff!important;
   -webkit-text-fill-color:#23b8ff!important;
-  font:400 20px/1.15 var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;
-  letter-spacing:.02em!important;
-  text-align:left!important;
   text-shadow:none!important;
 }
-html body .math-screen-shell main.module-page .module-navigation::before{content:"MATEMÁTICA DO POKER"!important}
-html body .assistant-screen-shell main.module-page .module-navigation::before{content:"PERGUNTE À IA"!important}
-html body .hand-review-screen-shell main.module-page .module-navigation::before{content:"ANÁLISE DE MÃOS"!important}
+html body .internal-screen-shell main.module-page section.panel p,
+html body .internal-screen-shell main.module-page section.panel label,
+html body .internal-screen-shell main.module-page section.panel span,
+html body .internal-screen-shell main.module-page section.panel small,
+html body .internal-screen-shell main.module-page section.panel b,
+html body .internal-screen-shell main.module-page section.panel strong,
+html body .internal-screen-shell main.ai-hand-review-page section.hand-review-panel p,
+html body .internal-screen-shell main.ai-hand-review-page section.hand-review-panel label,
+html body .internal-screen-shell main.ai-hand-review-page section.hand-review-panel span,
+html body .internal-screen-shell main.ai-hand-review-page section.hand-review-panel small,
+html body .internal-screen-shell main.ai-hand-review-page section.hand-review-panel b,
+html body .internal-screen-shell main.ai-hand-review-page section.hand-review-panel strong{
+  color:#08134c!important;
+  -webkit-text-fill-color:#08134c!important;
+}
 
-/* MATEMÁTICA: cards brancos, borda azul, texto marinho. */
-html body .math-screen-shell main.module-page .panel [class*="MathLabWorkspace_explanation"],
-html body .math-screen-shell main.module-page .panel [class*="MathLabWorkspace_problem"],
-html body .math-screen-shell main.module-page .panel [class*="MathLabWorkspace_trainingInfo"],
-html body .math-screen-shell main.module-page .panel [class*="MathLabWorkspace_card"],
-html body .math-screen-shell main.module-page .panel [class*="MathLabWorkspace_context"] > span,
-html body .math-screen-shell main.module-page .panel [class*="MathLabWorkspace_metric"],
-html body .math-screen-shell main.module-page .panel [class*="MathLabWorkspace_aiAnswer"],
-html body .math-screen-shell main.module-page .panel [class*="MathLabWorkspace_feedback"]{
+/* Controles brancos, borda azul; seleção azul sólida. */
+html body .internal-screen-shell main.module-page section.panel button:not(.primary),
+html body .internal-screen-shell main.module-page section.panel input,
+html body .internal-screen-shell main.module-page section.panel textarea,
+html body .internal-screen-shell main.module-page section.panel select,
+html body .internal-screen-shell main.ai-hand-review-page section.hand-review-panel button:not(.primary),
+html body .internal-screen-shell main.ai-hand-review-page section.hand-review-panel input,
+html body .internal-screen-shell main.ai-hand-review-page section.hand-review-panel textarea,
+html body .internal-screen-shell main.ai-hand-review-page section.hand-review-panel select{
+  border:1.5px solid #23b8ff!important;
   background:#fff!important;
+  background-color:#fff!important;
   background-image:none!important;
-  border-color:rgba(35,184,255,.72)!important;
+  color:#08134c!important;
+  -webkit-text-fill-color:#08134c!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+html body .internal-screen-shell main.module-page section.panel button.primary,
+html body .internal-screen-shell main.module-page section.panel button[aria-pressed="true"],
+html body .internal-screen-shell main.module-page section.panel button[aria-selected="true"],
+html body .internal-screen-shell main.ai-hand-review-page section.hand-review-panel button.primary,
+html body .internal-screen-shell main.ai-hand-review-page section.hand-review-panel button[aria-pressed="true"],
+html body .internal-screen-shell main.ai-hand-review-page section.hand-review-panel button[aria-selected="true"]{
+  border:2px solid #f8fbff!important;
+  background:#168ee8!important;
+  background-color:#168ee8!important;
+  background-image:none!important;
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+  box-shadow:0 0 0 2px #23b8ff!important;
+}
+html body .internal-screen-shell main.module-page section.panel button.primary *,
+html body .internal-screen-shell main.module-page section.panel button[aria-pressed="true"] *,
+html body .internal-screen-shell main.module-page section.panel button[aria-selected="true"] *,
+html body .internal-screen-shell main.ai-hand-review-page section.hand-review-panel button.primary *,
+html body .internal-screen-shell main.ai-hand-review-page section.hand-review-panel button[aria-pressed="true"] *,
+html body .internal-screen-shell main.ai-hand-review-page section.hand-review-panel button[aria-selected="true"] *{
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+}
+
+/* PLAYER DNA — configuração, análises e histórico. */
+html body .player-dna-screen-shell main.player-dna-page section.profile-panel{
+  padding:16px!important;
+}
+html body .player-dna-screen-shell main.player-dna-page .mode-choices label,
+html body .player-dna-screen-shell main.player-dna-page .depth-choices>button,
+html body .player-dna-screen-shell main.player-dna-page .saved-analysis-panel,
+html body .player-dna-screen-shell main.player-dna-page .history-panel,
+html body .player-dna-screen-shell main.player-dna-page .player-comment-card{
+  border-color:#23b8ff!important;
+  background:#fff!important;
+  background-color:#fff!important;
+  background-image:none!important;
   color:#08134c!important;
   box-shadow:none!important;
   backdrop-filter:none!important;
   -webkit-backdrop-filter:none!important;
 }
-html body .math-screen-shell main.module-page .panel [class*="MathLabWorkspace_"] p,
-html body .math-screen-shell main.module-page .panel [class*="MathLabWorkspace_"] small,
-html body .math-screen-shell main.module-page .panel [class*="MathLabWorkspace_"] span,
-html body .math-screen-shell main.module-page .panel [class*="MathLabWorkspace_"] b,
-html body .math-screen-shell main.module-page .panel [class*="MathLabWorkspace_"] strong{
+html body .player-dna-screen-shell main.player-dna-page .mode-choices label *,
+html body .player-dna-screen-shell main.player-dna-page .saved-analysis-panel *,
+html body .player-dna-screen-shell main.player-dna-page .history-panel *,
+html body .player-dna-screen-shell main.player-dna-page .player-comment-card *{
   color:#08134c!important;
   -webkit-text-fill-color:#08134c!important;
 }
-html body .math-screen-shell main.module-page .panel [class*="MathLabWorkspace_"] h3{
-  color:#23b8ff!important;
-  -webkit-text-fill-color:#23b8ff!important;
+html body .player-dna-screen-shell main.player-dna-page .mode-choices label:has(input:checked){
+  border:2px solid #f8fbff!important;
+  background:#168ee8!important;
+  color:#fff!important;
+  box-shadow:0 0 0 2px #23b8ff!important;
+}
+html body .player-dna-screen-shell main.player-dna-page .mode-choices label:has(input:checked) *{
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
 }
 
-/* PERGUNTE À IA: remover blocos pretos/translúcidos e gradientes. */
-html body .assistant-screen-shell main.module-page .panel [class*="PokerAssistantWorkspace_usage"],
-html body .assistant-screen-shell main.module-page .panel [class*="PokerAssistantWorkspace_preview"],
-html body .assistant-screen-shell main.module-page .panel [class*="PokerAssistantWorkspace_composer"],
-html body .assistant-screen-shell main.module-page .panel [class*="PokerAssistantWorkspace_answer"],
-html body .assistant-screen-shell main.module-page .panel [class*="PokerAssistantWorkspace_error"]{
-  background:#fff!important;
+/* MATEMÁTICA — remove o aspecto escuro e corrige tabs no mobile. */
+html body .math-screen-shell main.module-page section.panel>div{
+  background:transparent!important;
   background-image:none!important;
-  border-color:rgba(35,184,255,.72)!important;
-  color:#08134c!important;
+}
+html body .math-screen-shell main.module-page section.panel>div>div:first-child{
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  gap:12px!important;
+  align-items:start!important;
+}
+html body .math-screen-shell main.module-page section.panel>div>div:first-child>div:last-child{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:8px!important;
+  width:100%!important;
+}
+html body .math-screen-shell main.module-page section.panel>div>div:first-child>div:last-child>button{
+  width:100%!important;
+  min-width:0!important;
+  min-height:46px!important;
+  padding:8px 4px!important;
+}
+html body .math-screen-shell main.module-page section.panel article,
+html body .math-screen-shell main.module-page section.panel aside,
+html body .math-screen-shell main.module-page section.panel section,
+html body .math-screen-shell main.module-page section.panel [class]{
   box-shadow:none!important;
   backdrop-filter:none!important;
   -webkit-backdrop-filter:none!important;
 }
-html body .assistant-screen-shell main.module-page .panel [class*="PokerAssistantWorkspace_"] p,
-html body .assistant-screen-shell main.module-page .panel [class*="PokerAssistantWorkspace_"] span,
-html body .assistant-screen-shell main.module-page .panel [class*="PokerAssistantWorkspace_"] small,
-html body .assistant-screen-shell main.module-page .panel [class*="PokerAssistantWorkspace_"] b,
-html body .assistant-screen-shell main.module-page .panel [class*="PokerAssistantWorkspace_"] div{
-  color:#08134c;
+
+/* PERGUNTE À IA — composer e respostas claros. */
+html body .assistant-screen-shell main.module-page section.panel article,
+html body .assistant-screen-shell main.module-page section.panel textarea,
+html body .assistant-screen-shell main.module-page section.panel [class]{
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
 }
-html body .assistant-screen-shell main.module-page .panel [class*="PokerAssistantWorkspace_composer"] textarea{
+html body .assistant-screen-shell main.module-page section.panel article{
+  border-color:#23b8ff!important;
   background:#fff!important;
+  background-image:none!important;
   color:#08134c!important;
-  -webkit-text-fill-color:#08134c!important;
 }
-html body .assistant-screen-shell main.module-page .panel [class*="PokerAssistantWorkspace_composer"] textarea::placeholder{
+html body .assistant-screen-shell main.module-page section.panel textarea::placeholder{
   color:#61718a!important;
   -webkit-text-fill-color:#61718a!important;
 }
 
-/* ANÁLISE DE MÃOS: o workspace inteiro passa a ser o card principal branco. */
-html body .hand-review-screen-shell main.ai-hand-review-page > [class*="HandReviewWorkspace_workspace"]{
-  width:100%!important;
-  margin:0!important;
-  padding:14px!important;
-  border:1.5px solid #23b8ff!important;
-  border-radius:16px!important;
-  background:#f8fbff!important;
+/* ANÁLISE DE MÃOS — workspace dentro de um único card branco. */
+html body .hand-review-screen-shell main.ai-hand-review-page section.hand-review-panel>div,
+html body .hand-review-screen-shell main.ai-hand-review-page section.hand-review-panel section,
+html body .hand-review-screen-shell main.ai-hand-review-page section.hand-review-panel header{
+  background:transparent!important;
   background-image:none!important;
-  color:#08134c!important;
-  box-shadow:0 3px 12px rgba(0,0,0,.16)!important;
-  backdrop-filter:none!important;
-  -webkit-backdrop-filter:none!important;
-}
-html body .hand-review-screen-shell main.ai-hand-review-page [class*="HandReviewWorkspace_step"],
-html body .hand-review-screen-shell main.ai-hand-review-page [class*="HandReviewWorkspace_section"],
-html body .hand-review-screen-shell main.ai-hand-review-page [class*="HandReviewWorkspace_moneyField"],
-html body .hand-review-screen-shell main.ai-hand-review-page [class*="HandReviewWorkspace_summary"] > div,
-html body .hand-review-screen-shell main.ai-hand-review-page [class*="HandReviewWorkspace_analysisCard"],
-html body .hand-review-screen-shell main.ai-hand-review-page [class*="HandReviewWorkspace_metric"],
-html body .hand-review-screen-shell main.ai-hand-review-page [class*="HandReviewWorkspace_verdict"]{
-  background:#fff!important;
-  background-image:none!important;
-  border-color:rgba(35,184,255,.72)!important;
-  color:#08134c!important;
   box-shadow:none!important;
   backdrop-filter:none!important;
   -webkit-backdrop-filter:none!important;
-}
-html body .hand-review-screen-shell main.ai-hand-review-page [class*="HandReviewWorkspace_"] h2,
-html body .hand-review-screen-shell main.ai-hand-review-page [class*="HandReviewWorkspace_"] h3,
-html body .hand-review-screen-shell main.ai-hand-review-page [class*="HandReviewWorkspace_"] h4,
-html body .hand-review-screen-shell main.ai-hand-review-page [class*="HandReviewWorkspace_stepHead"] strong{
-  color:#23b8ff!important;
-  -webkit-text-fill-color:#23b8ff!important;
-}
-html body .hand-review-screen-shell main.ai-hand-review-page [class*="HandReviewWorkspace_"] p,
-html body .hand-review-screen-shell main.ai-hand-review-page [class*="HandReviewWorkspace_"] span,
-html body .hand-review-screen-shell main.ai-hand-review-page [class*="HandReviewWorkspace_"] small,
-html body .hand-review-screen-shell main.ai-hand-review-page [class*="HandReviewWorkspace_"] label,
-html body .hand-review-screen-shell main.ai-hand-review-page [class*="HandReviewWorkspace_"] b,
-html body .hand-review-screen-shell main.ai-hand-review-page [class*="HandReviewWorkspace_"] strong{
-  color:#08134c;
-}
-html body .hand-review-screen-shell main.ai-hand-review-page input,
-html body .hand-review-screen-shell main.ai-hand-review-page textarea,
-html body .hand-review-screen-shell main.ai-hand-review-page select,
-html body .hand-review-screen-shell main.ai-hand-review-page button:not(.primary){
-  background:#fff!important;
-  background-image:none!important;
-  color:#08134c!important;
-  -webkit-text-fill-color:#08134c!important;
-  border-color:rgba(35,184,255,.72)!important;
-  box-shadow:none!important;
 }
 
-/* Mantém títulos principais das seções em azul em todos os módulos. */
-html body main.module-page .panel h2,
-html body main.module-page .panel h3,
-html body main.module-page .panel h4,
-html body .hand-review-screen-shell main.ai-hand-review-page h2,
-html body .hand-review-screen-shell main.ai-hand-review-page h3,
-html body .hand-review-screen-shell main.ai-hand-review-page h4{
-  color:#23b8ff!important;
-  -webkit-text-fill-color:#23b8ff!important;
-  text-shadow:none!important;
+/* Não repetir rótulo do módulo dentro do card como se fosse outro cabeçalho. */
+html body .player-dna-screen-shell main.player-dna-page section.profile-panel>.setup>.eyebrow{
+  display:none!important;
+}
+
+@media(max-width:520px){
+  html body .internal-screen-shell main.module-page section.panel,
+  html body .internal-screen-shell main.ai-hand-review-page section.hand-review-panel{
+    padding:14px!important;
+  }
 }
