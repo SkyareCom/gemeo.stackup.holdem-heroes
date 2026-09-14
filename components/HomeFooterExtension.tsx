@@ -20,20 +20,20 @@ export default function HomeFooterExtension() {
           font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;
         }
 
-        /* Fifth card: same geometry and typography contract as the four cards above. */
+        /* Fifth module follows the same visible envelope as the four artwork cards above. */
         html body #homeLanguageCard{
           position:relative!important;
-          width:100%!important;
-          height:min(19.45vw,168px)!important;
+          width:calc(100% - 6px)!important;
+          height:calc(min(19.45vw,168px) - 6px)!important;
           min-height:0!important;
-          margin:0!important;
+          margin:3px auto 0!important;
           padding:0!important;
           overflow:hidden!important;
           box-sizing:border-box!important;
           border:1px solid #9edfff!important;
-          border-radius:min(4.05vw,25px)!important;
-          background:linear-gradient(180deg,#fbfdff 0%,#f2f8ff 100%)!important;
-          box-shadow:0 0 0 3px #119fe9,0 0 0 6px #06345f,0 2px 6px rgba(0,0,0,.20),inset 0 0 0 1px rgba(255,255,255,.95)!important;
+          border-radius:min(3.75vw,24px)!important;
+          background:linear-gradient(180deg,#ffffff 0%,#f7fbff 54%,#edf7ff 100%)!important;
+          box-shadow:0 0 0 1px #18a9f0,0 0 0 3px #073b69,0 2px 4px rgba(0,0,0,.16),inset 0 0 0 1px rgba(255,255,255,.92)!important;
           color:#08134c!important;
         }
 
@@ -48,15 +48,15 @@ export default function HomeFooterExtension() {
           align-items:center!important;
           justify-content:center!important;
           box-sizing:border-box!important;
-          border:1px solid #167fb8!important;
-          border-radius:min(2.55vw,16px)!important;
-          background:linear-gradient(180deg,#082c57 0%,#061f42 100%)!important;
-          box-shadow:inset 0 0 12px rgba(28,157,230,.12)!important;
+          border:1px solid #168bc8!important;
+          border-radius:min(2.45vw,15px)!important;
+          background:linear-gradient(180deg,#082b54 0%,#061f41 100%)!important;
+          box-shadow:inset 0 0 8px rgba(35,184,255,.08)!important;
           color:#e8f8ff!important;
         }
         html body #homeLanguageIcon svg{
-          width:50%!important;
-          height:50%!important;
+          width:48%!important;
+          height:48%!important;
           display:block!important;
           fill:none!important;
           stroke:#e8f8ff!important;
@@ -78,6 +78,7 @@ export default function HomeFooterExtension() {
           font-size:min(4.28vw,37px)!important;
           line-height:1!important;
           font-weight:400!important;
+          letter-spacing:.02em!important;
         }
         html body #homeLanguageCard #homeLanguageCopy.cardCopy{
           left:27.4%!important;
@@ -93,6 +94,7 @@ export default function HomeFooterExtension() {
           font-size:min(3.01vw,26px)!important;
           line-height:1.18!important;
           font-weight:400!important;
+          letter-spacing:.02em!important;
         }
 
         html body #homeLanguageArrow{
@@ -101,8 +103,8 @@ export default function HomeFooterExtension() {
           right:4.45%!important;
           top:50%!important;
           transform:translateY(-50%)!important;
-          width:min(3.7vw,28px)!important;
-          height:min(6.2vw,46px)!important;
+          width:min(3.45vw,26px)!important;
+          height:min(5.8vw,43px)!important;
           display:flex!important;
           align-items:center!important;
           justify-content:center!important;
@@ -116,7 +118,7 @@ export default function HomeFooterExtension() {
           display:block!important;
           fill:none!important;
           stroke:#0d8fe2!important;
-          stroke-width:4.6!important;
+          stroke-width:4.5!important;
           stroke-linecap:round!important;
           stroke-linejoin:round!important;
           filter:none!important;
@@ -124,15 +126,16 @@ export default function HomeFooterExtension() {
 
         html body #homeMotto{
           width:100%!important;
-          margin:min(3vw,22px) 0 0!important;
+          margin:min(3.1vw,23px) 0 0!important;
           padding:0 0 4px!important;
           display:flex!important;
           align-items:baseline!important;
           justify-content:center!important;
-          gap:8px!important;
+          gap:7px!important;
           white-space:nowrap!important;
           text-align:center!important;
           font-family:var(--font-love-ya-like-a-sister),"Love Ya Like A Sister",cursive!important;
+          font-weight:400!important;
         }
         html body #homeMottoUnderstand{
           font-size:18px!important;
