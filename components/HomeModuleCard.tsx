@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import {useEffect,useRef} from "react";
 
 type HomeModuleIcon = "player" | "math" | "hand" | "assistant" | "language";
 
@@ -37,10 +38,45 @@ function CardContents({title,copyLines,icon}:{title:string;copyLines:readonly [s
   </>;
 }
 
+function forceSurface(node:HTMLElement|null, icon:HomeModuleIcon){
+  if(!node) return;
+  node.style.setProperty("background-color","#ffffff","important");
+  node.style.setProperty("background-image","linear-gradient(180deg,#ffffff 0%,#f8fcff 54%,#eef8ff 100%)","important");
+  node.style.setProperty("border-color","#9edfff","important");
+
+  const iconBox=node.querySelector<HTMLElement>(".homeModuleIcon");
+  if(iconBox){
+    iconBox.style.setProperty("background-color","#061f41","important");
+    iconBox.style.setProperty("background-image","linear-gradient(180deg,#082b54 0%,#061f41 100%)","important");
+    iconBox.style.setProperty("border-color","#168bc8","important");
+    iconBox.style.setProperty("color","#e8f8ff","important");
+  }
+
+  const svg=iconBox?.querySelector<SVGSVGElement>("svg");
+  if(svg){
+    svg.style.setProperty("fill","none","important");
+    svg.style.setProperty("stroke","#e8f8ff","important");
+    svg.style.setProperty("color","#e8f8ff","important");
+    if(icon==="math"){
+      svg.querySelectorAll<SVGRectElement>("rect").forEach(rect=>{
+        rect.style.setProperty("fill","#e8f8ff","important");
+        rect.style.setProperty("stroke","none","important");
+      });
+    }
+  }
+}
+
 export default function HomeModuleCard({title,copyLines,icon,href,className=""}:HomeModuleCardProps){
   const classes = `homeModuleCard ${className}`.trim();
+  const linkRef=useRef<HTMLAnchorElement>(null);
+  const divRef=useRef<HTMLDivElement>(null);
+
+  useEffect(()=>{
+    forceSurface(href ? linkRef.current : divRef.current,icon);
+  },[href,icon]);
+
   if(href){
-    return <Link className={classes} href={href} aria-label={title}><CardContents title={title} copyLines={copyLines} icon={icon}/></Link>;
+    return <Link ref={linkRef} className={classes} href={href} aria-label={title}><CardContents title={title} copyLines={copyLines} icon={icon}/></Link>;
   }
-  return <div className={classes} aria-label={title}><CardContents title={title} copyLines={copyLines} icon={icon}/></div>;
+  return <div ref={divRef} className={classes} aria-label={title}><CardContents title={title} copyLines={copyLines} icon={icon}/></div>;
 }
