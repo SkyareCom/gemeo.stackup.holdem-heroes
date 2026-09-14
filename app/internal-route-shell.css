@@ -1,5 +1,5 @@
 /* TELAS INTERNAS — a HOME permanece fora deste escopo. */
-html body .internal-screen-shell{
+html body #stackup-internal-root.internal-screen-shell{
   position:relative!important;
   min-height:100vh!important;
   width:100%!important;
@@ -14,7 +14,7 @@ html body .internal-screen-shell{
 }
 
 /* Cabeçalho: recorte real da arte da HOME. */
-html body .internal-screen-shell>.internal-header-host{
+html body #stackup-internal-root>.internal-header-host{
   position:relative!important;
   z-index:20!important;
   width:100%!important;
@@ -24,7 +24,7 @@ html body .internal-screen-shell>.internal-header-host{
   background:#031a31!important;
   border:0!important;
 }
-html body .internal-screen-shell>.internal-header-host .stackup-home-clone-header{
+html body #stackup-internal-root>.internal-header-host .stackup-home-clone-header{
   position:relative!important;
   isolation:isolate!important;
   display:block!important;
@@ -42,7 +42,7 @@ html body .internal-screen-shell>.internal-header-host .stackup-home-clone-heade
   background-image:none!important;
   box-shadow:none!important;
 }
-html body .internal-screen-shell>.internal-header-host .stackup-home-clone-link{
+html body #stackup-internal-root>.internal-header-host .stackup-home-clone-link{
   position:absolute!important;
   inset:0!important;
   z-index:1!important;
@@ -56,7 +56,7 @@ html body .internal-screen-shell>.internal-header-host .stackup-home-clone-link{
   background:transparent!important;
   text-decoration:none!important;
 }
-html body .internal-screen-shell>.internal-header-host .stackup-home-clone-art{
+html body #stackup-internal-root>.internal-header-host .stackup-home-clone-art{
   position:absolute!important;
   z-index:0!important;
   top:0!important;
@@ -71,7 +71,7 @@ html body .internal-screen-shell>.internal-header-host .stackup-home-clone-art{
   object-fit:contain!important;
   pointer-events:none!important;
 }
-html body .internal-screen-shell>.internal-header-host .stackup-home-clone-text{
+html body #stackup-internal-root>.internal-header-host .stackup-home-clone-text{
   position:absolute!important;
   z-index:5!important;
   display:block!important;
@@ -85,7 +85,7 @@ html body .internal-screen-shell>.internal-header-host .stackup-home-clone-text{
   text-align:left!important;
   white-space:nowrap!important;
 }
-html body .internal-screen-shell>.internal-header-host .stackup-home-clone-brand{
+html body #stackup-internal-root>.internal-header-host .stackup-home-clone-brand{
   left:30.7%!important;
   top:17.7%!important;
   width:68%!important;
@@ -96,7 +96,7 @@ html body .internal-screen-shell>.internal-header-host .stackup-home-clone-brand
   -webkit-text-fill-color:#fff!important;
   text-shadow:0 1px 2px rgba(0,0,0,.3)!important;
 }
-html body .internal-screen-shell>.internal-header-host .stackup-home-clone-heroes{
+html body #stackup-internal-root>.internal-header-host .stackup-home-clone-heroes{
   left:30.6%!important;
   top:37.7%!important;
   width:68%!important;
@@ -107,7 +107,7 @@ html body .internal-screen-shell>.internal-header-host .stackup-home-clone-heroe
   -webkit-text-fill-color:#23b8ff!important;
   text-shadow:0 2px 2px rgba(0,10,35,.90),0 0 5px rgba(35,184,255,.70)!important;
 }
-html body .internal-screen-shell>.internal-header-host .stackup-home-clone-subtitle{
+html body #stackup-internal-root>.internal-header-host .stackup-home-clone-subtitle{
   left:30.4%!important;
   top:79.8%!important;
   width:67.5%!important;
@@ -120,7 +120,7 @@ html body .internal-screen-shell>.internal-header-host .stackup-home-clone-subti
 }
 
 /* Título do módulo imediatamente abaixo do cabeçalho. */
-html body .internal-screen-shell>.module-screen-title{
+html body #stackup-internal-root>.module-screen-title{
   width:auto!important;
   margin:12px 18px 10px!important;
   padding:0!important;
@@ -133,7 +133,7 @@ html body .internal-screen-shell>.module-screen-title{
 }
 
 /* Conteúdo interno. */
-html body .internal-screen-shell main.module-page{
+html body #stackup-internal-root main.module-page{
   position:relative!important;
   z-index:2!important;
   min-height:0!important;
@@ -146,30 +146,30 @@ html body .internal-screen-shell main.module-page{
   background-image:none!important;
   color:#fff!important;
 }
-html body .internal-screen-shell main.module-page::before,
-html body .internal-screen-shell main.module-page::after{
+html body #stackup-internal-root main.module-page::before,
+html body #stackup-internal-root main.module-page::after{
   display:none!important;
   content:none!important;
 }
 /* arte temática muito discreta apenas no topo */
-html body .internal-screen-shell::before,
-html body .internal-screen-shell::after{
+html body #stackup-internal-root::before,
+html body #stackup-internal-root::after{
   content:""!important;
   position:absolute!important;
   z-index:0!important;
   top:245px!important;
   width:64px!important;
   height:92px!important;
-  border:1px solid rgba(255,255,255,.055)!important;
+  border:1px solid rgba(255,255,255,.045)!important;
   border-radius:9px!important;
   background:transparent!important;
   pointer-events:none!important;
 }
-html body .internal-screen-shell::before{right:28px!important;transform:rotate(-11deg)!important}
-html body .internal-screen-shell::after{right:78px!important;top:267px!important;transform:rotate(8deg)!important}
+html body #stackup-internal-root::before{right:28px!important;transform:rotate(-11deg)!important}
+html body #stackup-internal-root::after{right:78px!important;top:267px!important;transform:rotate(8deg)!important}
 
 /* Navegação: cards brancos no padrão HOME. */
-html body .internal-screen-shell main.module-page nav.module-navigation{
+html body #stackup-internal-root main.module-page nav.module-navigation{
   display:grid!important;
   grid-template-columns:repeat(2,minmax(0,1fr))!important;
   gap:10px!important;
@@ -179,9 +179,9 @@ html body .internal-screen-shell main.module-page nav.module-navigation{
   border:0!important;
   background:transparent!important;
 }
-html body .internal-screen-shell main.module-page nav.module-navigation>a.module-back,
-html body .internal-screen-shell main.module-page nav.module-navigation>button.module-back,
-html body .internal-screen-shell main.module-page nav.module-navigation>.player-dna-nav-button{
+html body #stackup-internal-root main.module-page nav.module-navigation>a.module-back,
+html body #stackup-internal-root main.module-page nav.module-navigation>button.module-back,
+html body #stackup-internal-root main.module-page nav.module-navigation>.player-dna-nav-button{
   display:flex!important;
   align-items:center!important;
   justify-content:center!important;
@@ -207,6 +207,6 @@ html body .internal-screen-shell main.module-page nav.module-navigation>.player-
 }
 
 @media(min-width:700px){
-  html body .internal-screen-shell>.module-screen-title{margin-left:24px!important;margin-right:24px!important}
-  html body .internal-screen-shell main.module-page{padding-left:24px!important;padding-right:24px!important}
+  html body #stackup-internal-root>.module-screen-title{margin-left:24px!important;margin-right:24px!important}
+  html body #stackup-internal-root main.module-page{padding-left:24px!important;padding-right:24px!important}
 }
