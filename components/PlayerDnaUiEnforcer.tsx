@@ -8,11 +8,11 @@ const COMMAND_FONT_SIZE="14px";
 const TABLE_FONT_SIZE="10px";
 const TABLE_FONT_FAMILY='var(--font-love-ya-like-a-sister), "Love Ya Like A Sister", cursive';
 const SELECTED_BORDER="#F8FBFF";
-const NORMAL_BORDER="#238FDF";
-const NORMAL_TEXT="#238FDF";
+const NORMAL_BORDER="#23B8FF";
+const NORMAL_TEXT="#08134C";
 const SELECTED_TEXT="#F8FBFF";
-const SECONDARY_TEXT="#238FDF";
-const COMMAND_BACKGROUND="#071A2D";
+const SECONDARY_TEXT="#3C5B86";
+const COMMAND_BACKGROUND="#F8FBFF";
 const SELECTED_BACKGROUND="#168EE8";
 
 function forceFooter(){
