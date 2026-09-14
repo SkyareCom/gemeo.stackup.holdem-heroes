@@ -26,10 +26,10 @@ export default function HomeFooterExtension() {
           min-height:0!important;
           margin:0!important;
           padding:0!important;
-          border:3px solid #148fe3!important;
+          border:2px solid #119ce9!important;
           border-radius:min(4vw,24px)!important;
           background:#f7fbff!important;
-          box-shadow:0 0 0 1px rgba(104,205,255,.20),0 4px 10px rgba(0,0,0,.22)!important;
+          box-shadow:0 0 0 2px rgba(0,73,135,.68),0 2px 7px rgba(0,0,0,.20)!important;
           color:#08134c!important;
           box-sizing:border-box!important;
           overflow:hidden!important;
@@ -37,22 +37,22 @@ export default function HomeFooterExtension() {
         html body #homeLanguageIcon{
           position:absolute!important;
           left:4.0%!important;
-          top:10%!important;
+          top:12%!important;
           width:17.8%!important;
-          height:80%!important;
+          height:76%!important;
           display:flex!important;
           align-items:center!important;
           justify-content:center!important;
-          border:2px solid #1c91df!important;
-          border-radius:min(2.9vw,18px)!important;
+          border:2px solid #168fd8!important;
+          border-radius:min(2.8vw,17px)!important;
           background:#06254a!important;
-          box-shadow:inset 0 0 12px rgba(29,163,255,.16)!important;
+          box-shadow:inset 0 0 10px rgba(29,163,255,.14)!important;
           color:#dff6ff!important;
           box-sizing:border-box!important;
         }
         html body #homeLanguageIcon svg{
-          width:46%!important;
-          height:46%!important;
+          width:56%!important;
+          height:56%!important;
           display:block!important;
           fill:none!important;
           stroke:#dff6ff!important;
@@ -85,11 +85,11 @@ export default function HomeFooterExtension() {
         }
         html body #homeLanguageArrow{
           position:absolute!important;
-          right:3.5%!important;
+          right:4.9%!important;
           top:50%!important;
           transform:translateY(-50%)!important;
-          width:min(5vw,36px)!important;
-          height:min(7vw,50px)!important;
+          width:min(4.2vw,30px)!important;
+          height:min(6.4vw,46px)!important;
           display:flex!important;
           align-items:center!important;
           justify-content:center!important;
@@ -98,15 +98,15 @@ export default function HomeFooterExtension() {
           color:#108ee1!important;
         }
         html body #homeLanguageArrow svg{
-          width:min(4.2vw,30px)!important;
-          height:min(6vw,43px)!important;
+          width:min(3.7vw,27px)!important;
+          height:min(5.8vw,42px)!important;
           display:block!important;
           fill:none!important;
           stroke:#108ee1!important;
-          stroke-width:3.6!important;
+          stroke-width:4.2!important;
           stroke-linecap:round!important;
           stroke-linejoin:round!important;
-          filter:drop-shadow(0 0 3px rgba(16,142,225,.22))!important;
+          filter:drop-shadow(0 0 2px rgba(16,142,225,.18))!important;
         }
         html body #homeMotto{
           width:100%!important;
