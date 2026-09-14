@@ -12,5 +12,5 @@ export default function BackButton({eventName}:{eventName?:string}){
     if(eventName){window.dispatchEvent(new Event(eventName));return}
     router.back();
   };
-  return <button type="button" className="module-back" onClick={goBack}>← ANTERIOR</button>;
+  return <button type="button" className="module-back" onClick={goBack}>← VOLTAR</button>;
 }
