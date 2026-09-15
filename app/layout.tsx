@@ -23,7 +23,7 @@ const loveYaLikeASister = Love_Ya_Like_A_Sister({
   variable:"--font-love-ya-like-a-sister",
 });
 
-const CACHE_RESET_VERSION = "20260915-v25-player-dna-nav-height";
+const CACHE_RESET_VERSION = "20260915-v26-player-dna-outer-transparent";
 
 export const metadata: Metadata = {
   title: "STACKUP HOLD'EM HEROES",
