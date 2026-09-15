@@ -38,3 +38,121 @@ html body #stackup-internal-root textarea::placeholder{
   -webkit-text-fill-color:#60708a!important;
   opacity:1!important;
 }
+
+/* PADRÃO TIPOGRÁFICO GLOBAL DAS TELAS INTERNAS
+ * - títulos: 18px
+ * - demais textos: 14px
+ * - um único azul de destaque: #23B8FF
+ * - textos sobre o fundo azul: branco
+ * - botões/controles preservam suas cores próprias
+ * - textos em superfícies brancas permanecem azul-marinho por contraste
+ * HOME permanece fora deste escopo.
+ */
+html body #stackup-internal-root{
+  --stackup-text-blue:#23b8ff;
+  --stackup-text-white:#ffffff;
+  --stackup-text-on-light:#08134c;
+}
+
+html body #stackup-internal-root main{
+  font-size:14px!important;
+  color:var(--stackup-text-white)!important;
+  -webkit-text-fill-color:var(--stackup-text-white)!important;
+}
+
+/* Títulos e rótulos de seção: mesmo tamanho e mesmo azul em todo o app interno. */
+html body #stackup-internal-root>.module-screen-title,
+html body #stackup-internal-root main h1,
+html body #stackup-internal-root main h2,
+html body #stackup-internal-root main h3,
+html body #stackup-internal-root main h4,
+html body #stackup-internal-root main h5,
+html body #stackup-internal-root main h6,
+html body #stackup-internal-root main .eyebrow,
+html body #stackup-internal-root main [class*="title" i]:not(button):not(button *){
+  font-size:18px!important;
+  line-height:1.2!important;
+  color:var(--stackup-text-blue)!important;
+  -webkit-text-fill-color:var(--stackup-text-blue)!important;
+  text-shadow:none!important;
+}
+
+html body #stackup-internal-root main h1 *,
+html body #stackup-internal-root main h2 *,
+html body #stackup-internal-root main h3 *,
+html body #stackup-internal-root main h4 *,
+html body #stackup-internal-root main h5 *,
+html body #stackup-internal-root main h6 *{
+  font-size:18px!important;
+  color:var(--stackup-text-blue)!important;
+  -webkit-text-fill-color:var(--stackup-text-blue)!important;
+}
+
+/* Texto comum diretamente sobre o fundo da aplicação. */
+html body #stackup-internal-root main p,
+html body #stackup-internal-root main small,
+html body #stackup-internal-root main li,
+html body #stackup-internal-root main dd,
+html body #stackup-internal-root main dt,
+html body #stackup-internal-root main legend,
+html body #stackup-internal-root main figcaption,
+html body #stackup-internal-root main blockquote{
+  font-size:14px!important;
+  line-height:1.35!important;
+  color:var(--stackup-text-white)!important;
+  -webkit-text-fill-color:var(--stackup-text-white)!important;
+}
+
+/* Elementos textuais fora de botões/controles seguem 14px e branco. */
+html body #stackup-internal-root main span:not(button *):not(.mode-choices label *):not(.depth-choices button *),
+html body #stackup-internal-root main b:not(button *):not(.mode-choices label *):not(.depth-choices button *),
+html body #stackup-internal-root main strong:not(button *):not(.mode-choices label *):not(.depth-choices button *){
+  font-size:14px!important;
+  color:var(--stackup-text-white)!important;
+  -webkit-text-fill-color:var(--stackup-text-white)!important;
+}
+
+/* Superfícies claras: mantém contraste sem criar um segundo tom de azul de destaque. */
+html body #stackup-internal-root main section.panel p,
+html body #stackup-internal-root main section.panel small,
+html body #stackup-internal-root main section.panel li,
+html body #stackup-internal-root main section.panel dd,
+html body #stackup-internal-root main section.panel dt,
+html body #stackup-internal-root main section.panel label:not(.mode-choices label),
+html body #stackup-internal-root main section.panel span:not(button *):not(.mode-choices label *):not(.depth-choices button *),
+html body #stackup-internal-root main section.panel b:not(button *):not(.mode-choices label *):not(.depth-choices button *),
+html body #stackup-internal-root main section.panel strong:not(button *):not(.mode-choices label *):not(.depth-choices button *),
+html body #stackup-internal-root main .saved-analysis-panel p,
+html body #stackup-internal-root main .saved-analysis-panel small,
+html body #stackup-internal-root main .saved-analysis-panel span:not(button *),
+html body #stackup-internal-root main .saved-analysis-panel b:not(button *),
+html body #stackup-internal-root main .saved-analysis-panel strong:not(button *),
+html body #stackup-internal-root main .history-panel p,
+html body #stackup-internal-root main .history-panel small,
+html body #stackup-internal-root main .history-panel span:not(button *),
+html body #stackup-internal-root main .history-panel b:not(button *),
+html body #stackup-internal-root main .history-panel strong:not(button *),
+html body #stackup-internal-root main .player-comment-card p,
+html body #stackup-internal-root main .player-comment-card small,
+html body #stackup-internal-root main .player-comment-card span:not(button *),
+html body #stackup-internal-root main .player-comment-card b:not(button *),
+html body #stackup-internal-root main .player-comment-card strong:not(button *){
+  font-size:14px!important;
+  line-height:1.35!important;
+  color:var(--stackup-text-on-light)!important;
+  -webkit-text-fill-color:var(--stackup-text-on-light)!important;
+}
+
+/* Títulos continuam azuis mesmo quando estão dentro de cards brancos. */
+html body #stackup-internal-root main section.panel h1,
+html body #stackup-internal-root main section.panel h2,
+html body #stackup-internal-root main section.panel h3,
+html body #stackup-internal-root main section.panel h4,
+html body #stackup-internal-root main section.panel h5,
+html body #stackup-internal-root main section.panel h6,
+html body #stackup-internal-root main section.panel .eyebrow,
+html body #stackup-internal-root main section.panel [class*="title" i]:not(button):not(button *){
+  font-size:18px!important;
+  color:var(--stackup-text-blue)!important;
+  -webkit-text-fill-color:var(--stackup-text-blue)!important;
+}
