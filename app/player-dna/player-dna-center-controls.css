@@ -67,3 +67,13 @@ html body #stackup-internal-root:not(#stackup-hard-a):not(#stackup-hard-b):not(#
   min-height:41.6px!important;
   max-height:41.6px!important;
 }
+
+/* PLAYER DNA — CARD EXTERNO
+ * Remove somente o fundo branco do container externo do Player DNA.
+ * Bordas, espaçamentos e cards internos permanecem inalterados.
+ */
+html body #stackup-internal-root:not(#stackup-hard-a):not(#stackup-hard-b):not(#stackup-hard-c):not(#stackup-hard-d):not(#stackup-hard-e):not(#stackup-hard-f):not(#stackup-hard-g):not(#stackup-hard-h).player-dna-screen-shell main.player-dna-page section.panel.profile-panel.profile-panel{
+  background:transparent!important;
+  background-color:transparent!important;
+  background-image:none!important;
+}
