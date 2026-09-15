@@ -57,3 +57,13 @@ html body main.player-dna-page .mode-choices>label>strong{
   width:100%!important;
   text-align:center!important;
 }
+
+/* PLAYER DNA — NAVEGAÇÃO SUPERIOR
+ * Redução solicitada: 20% da altura original de 52px = 41.6px.
+ * Mantém largura, fonte, cores, borda e alinhamento inalterados.
+ */
+html body #stackup-internal-root:not(#stackup-hard-a):not(#stackup-hard-b):not(#stackup-hard-c):not(#stackup-hard-d):not(#stackup-hard-e):not(#stackup-hard-f):not(#stackup-hard-g):not(#stackup-hard-h).player-dna-screen-shell main.player-dna-page nav.module-navigation.player-dna-navigation>a.player-dna-nav-button{
+  height:41.6px!important;
+  min-height:41.6px!important;
+  max-height:41.6px!important;
+}
