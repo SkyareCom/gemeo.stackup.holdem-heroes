@@ -17,13 +17,10 @@ html body #stackup-internal-root.player-dna-screen-shell .depth-choices>button{
   min-height:68px!important;
   border-radius:14px!important;
 }
-html body #stackup-internal-root.player-dna-screen-shell .depth-choices>button strong{
-  color:#08134c!important;
-  -webkit-text-fill-color:#08134c!important;
-}
+html body #stackup-internal-root.player-dna-screen-shell .depth-choices>button strong,
 html body #stackup-internal-root.player-dna-screen-shell .depth-choices>button span{
-  color:#3c5b86!important;
-  -webkit-text-fill-color:#3c5b86!important;
+  color:#23b8ff!important;
+  -webkit-text-fill-color:#23b8ff!important;
 }
 html body #stackup-internal-root.player-dna-screen-shell .depth-choices>button[aria-pressed="true"] strong,
 html body #stackup-internal-root.player-dna-screen-shell .depth-choices>button[aria-pressed="true"] span{
@@ -31,27 +28,25 @@ html body #stackup-internal-root.player-dna-screen-shell .depth-choices>button[a
   -webkit-text-fill-color:#fff!important;
 }
 
-/* Campos e áreas de texto devem permanecer legíveis sobre os cards claros. */
+/* Campos e áreas de texto: somente o azul oficial. */
 html body #stackup-internal-root input::placeholder,
 html body #stackup-internal-root textarea::placeholder{
-  color:#60708a!important;
-  -webkit-text-fill-color:#60708a!important;
+  color:#23b8ff!important;
+  -webkit-text-fill-color:#23b8ff!important;
   opacity:1!important;
 }
 
 /* PADRÃO TIPOGRÁFICO GLOBAL DAS TELAS INTERNAS
  * - títulos: 18px
  * - demais textos: 14px
- * - um único azul de destaque: #23B8FF
- * - textos sobre o fundo azul: branco
- * - botões/controles preservam suas cores próprias
- * - textos em superfícies brancas permanecem azul-marinho por contraste
- * HOME permanece fora deste escopo.
+ * - única cor azul: #23B8FF
+ * - única segunda cor tipográfica: #FFFFFF
+ * - HOME permanece fora deste escopo.
  */
 html body #stackup-internal-root{
   --stackup-text-blue:#23b8ff;
   --stackup-text-white:#ffffff;
-  --stackup-text-on-light:#08134c;
+  --stackup-text-on-light:#23b8ff;
 }
 
 html body #stackup-internal-root main{
@@ -112,7 +107,7 @@ html body #stackup-internal-root main strong:not(button *):not(.mode-choices lab
   -webkit-text-fill-color:var(--stackup-text-white)!important;
 }
 
-/* Superfícies claras: mantém contraste sem criar um segundo tom de azul de destaque. */
+/* Superfícies claras: usa apenas o mesmo azul oficial para manter contraste. */
 html body #stackup-internal-root main section.panel p,
 html body #stackup-internal-root main section.panel small,
 html body #stackup-internal-root main section.panel li,
@@ -143,7 +138,7 @@ html body #stackup-internal-root main .player-comment-card strong:not(button *){
   -webkit-text-fill-color:var(--stackup-text-on-light)!important;
 }
 
-/* Títulos continuam azuis mesmo quando estão dentro de cards brancos. */
+/* Títulos continuam no mesmo azul oficial também dentro de cards brancos. */
 html body #stackup-internal-root main section.panel h1,
 html body #stackup-internal-root main section.panel h2,
 html body #stackup-internal-root main section.panel h3,
