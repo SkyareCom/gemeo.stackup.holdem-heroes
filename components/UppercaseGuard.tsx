@@ -6,7 +6,13 @@ const ATTRIBUTES = ["placeholder", "title", "aria-label", "alt"] as const;
 const SKIP_TAGS = new Set(["SCRIPT", "STYLE", "NOSCRIPT"]);
 const PRESERVE_CASE_SELECTOR = '[data-preserve-case="true"]';
 const MANUAL_TYPE_SCALE_SELECTOR = '[data-manual-type-scale="true"]';
+const INTERNAL_ROOT_SELECTOR = "#stackup-internal-root";
+const INTERNAL_HEADER_SELECTOR = ".stackup-internal-brand-header";
 const FONT_FAMILY = 'var(--font-love-ya-like-a-sister), "Love Ya Like A Sister", cursive';
+const INTERNAL_BLUE = "#23B8FF";
+const INTERNAL_WHITE = "#FFFFFF";
+const INTERNAL_TITLE_SIZE = "18px";
+const INTERNAL_TEXT_SIZE = "14px";
 
 const TITLE_RE = /(^|[\s_-])(title|heading|prompt|question)([\s_-]|$)/i;
 const SUBTITLE_RE = /(^|[\s_-])(subtitle|lead|status|count)([\s_-]|$)/i;
@@ -20,6 +26,20 @@ function shouldPreserveCase(node: Node) {
 
 function hasManualTypeScale(element: Element) {
   return Boolean(element.closest(MANUAL_TYPE_SCALE_SELECTOR));
+}
+
+function getInternalRoot(element: Element) {
+  const direct = element.closest(INTERNAL_ROOT_SELECTOR);
+  if (direct) return direct;
+  const root = element.getRootNode();
+  if (root instanceof ShadowRoot) return root.host.closest(INTERNAL_ROOT_SELECTOR);
+  return null;
+}
+
+function isInternalTitle(element: HTMLElement) {
+  if (/^H[1-6]$/.test(element.tagName)) return true;
+  const className = element.getAttribute("class") ?? "";
+  return TITLE_RE.test(className) || /(^|[\s_-])eyebrow([\s_-]|$)/i.test(className) || className.toLowerCase().includes("module-screen-title");
 }
 
 function uppercaseTextNode(node: Node) {
@@ -40,6 +60,13 @@ function applyGlobalFont(element: Element) {
 function getTypeScale(element: HTMLElement) {
   if (element.closest('[aria-hidden="true"]')) return null;
   if (hasManualTypeScale(element)) return null;
+
+  const internalRoot = getInternalRoot(element);
+  if (internalRoot) {
+    if (element.closest(INTERNAL_HEADER_SELECTOR)) return null;
+    if (isInternalTitle(element)) return { size: INTERNAL_TITLE_SIZE, lineHeight: "1.2" };
+    return { size: INTERNAL_TEXT_SIZE, lineHeight: "1.35" };
+  }
 
   const tag = element.tagName;
   const className = element.getAttribute("class") ?? "";
@@ -67,6 +94,81 @@ function applyTypeScale(element: Element) {
   element.style.setProperty("line-height", scale.lineHeight, "important");
 }
 
+function parseBackground(color: string) {
+  const match = color.match(/rgba?\((\d+(?:\.\d+)?)[,\s]+(\d+(?:\.\d+)?)[,\s]+(\d+(?:\.\d+)?)(?:[,\s/]+(\d+(?:\.\d+)?))?\)/i);
+  if (!match) return null;
+  return { r: Number(match[1]), g: Number(match[2]), b: Number(match[3]), a: match[4] === undefined ? 1 : Number(match[4]) };
+}
+
+function isLightBackground(color: string) {
+  const parsed = parseBackground(color);
+  if (!parsed || parsed.a < 0.2) return false;
+  return parsed.r >= 220 && parsed.g >= 220 && parsed.b >= 220;
+}
+
+function isSelectedControl(element: Element) {
+  const button = element.closest("button");
+  if (button) {
+    if (button.getAttribute("aria-pressed") === "true" || button.getAttribute("aria-selected") === "true") return true;
+    if (button.classList.contains("primary") || button.classList.contains("active") || button.classList.contains("selected")) return true;
+    const className = button.getAttribute("class") ?? "";
+    if (/(^|[\s_-])(active|selected)([\s_-]|$)/i.test(className)) return true;
+  }
+  const label = element.closest("label");
+  return Boolean(label?.querySelector('input:checked'));
+}
+
+function controlTextColor(element: Element) {
+  const control = element.closest("button,a,input,textarea,select,label");
+  if (!control || !(control instanceof HTMLElement)) return null;
+  if (isSelectedControl(element)) return INTERNAL_WHITE;
+  const background = getComputedStyle(control).backgroundColor;
+  return isLightBackground(background) ? INTERNAL_BLUE : INTERNAL_WHITE;
+}
+
+function isInsideLightSurface(element: Element) {
+  const internalRoot = getInternalRoot(element);
+  if (!internalRoot) return false;
+
+  let current: Element | null = element;
+  while (current && current !== internalRoot) {
+    if (current instanceof HTMLElement && isLightBackground(getComputedStyle(current).backgroundColor)) return true;
+    if (current.parentElement) {
+      current = current.parentElement;
+      continue;
+    }
+    const root = current.getRootNode();
+    if (root instanceof ShadowRoot) {
+      current = root.host;
+      continue;
+    }
+    break;
+  }
+  return false;
+}
+
+function applyInternalTextPalette(element: Element) {
+  if (!(element instanceof HTMLElement || element instanceof SVGElement)) return;
+  if (!getInternalRoot(element)) return;
+
+  let color = INTERNAL_WHITE;
+
+  if (element.matches(".stackup-internal-brand-heroes")) {
+    color = INTERNAL_BLUE;
+  } else if (element.matches(".stackup-internal-brand-name,.stackup-internal-brand-subtitle")) {
+    color = INTERNAL_WHITE;
+  } else if (element instanceof HTMLElement && isInternalTitle(element)) {
+    color = INTERNAL_BLUE;
+  } else {
+    const controlColor = controlTextColor(element);
+    if (controlColor) color = controlColor;
+    else if (isInsideLightSurface(element)) color = INTERNAL_BLUE;
+  }
+
+  element.style.setProperty("color", color, "important");
+  element.style.setProperty("-webkit-text-fill-color", color, "important");
+}
+
 function applyOverflowSafety(element: Element) {
   if (!(element instanceof HTMLElement || element instanceof SVGElement)) return;
 
@@ -92,6 +194,7 @@ function applyOverflowSafety(element: Element) {
 function lockElement(element: Element) {
   applyGlobalFont(element);
   applyTypeScale(element);
+  applyInternalTextPalette(element);
   applyOverflowSafety(element);
 
   if (!shouldPreserveCase(element) && element instanceof HTMLElement) {
@@ -162,7 +265,7 @@ export default function UppercaseGuard() {
       attributeFilter: [...ATTRIBUTES],
     });
 
-    const enforce = window.setInterval(() => enforceTree(document.body), 500);
+    const enforce = window.setInterval(() => enforceTree(document.body), 300);
 
     return () => {
       observer.disconnect();
