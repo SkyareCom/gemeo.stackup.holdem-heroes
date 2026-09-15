@@ -77,3 +77,14 @@ html body #stackup-internal-root:not(#stackup-hard-a):not(#stackup-hard-b):not(#
   background-color:transparent!important;
   background-image:none!important;
 }
+
+/* PLAYER DNA — TEXTOS SECUNDÁRIOS DA TELA DE CONFIGURAÇÃO
+ * Com o card externo transparente, as descrições que ficam diretamente
+ * sobre o fundo azul passam a usar branco. Textos internos dos cards
+ * brancos permanecem no azul-marinho original para preservar contraste.
+ */
+html body #stackup-internal-root:not(#stackup-hard-a):not(#stackup-hard-b):not(#stackup-hard-c):not(#stackup-hard-d):not(#stackup-hard-e):not(#stackup-hard-f):not(#stackup-hard-g):not(#stackup-hard-h).player-dna-screen-shell main.player-dna-page section.profile-panel .setup-intro,
+html body #stackup-internal-root:not(#stackup-hard-a):not(#stackup-hard-b):not(#stackup-hard-c):not(#stackup-hard-d):not(#stackup-hard-e):not(#stackup-hard-f):not(#stackup-hard-g):not(#stackup-hard-h).player-dna-screen-shell main.player-dna-page section.profile-panel .analysis-balance-note{
+  color:#ffffff!important;
+  -webkit-text-fill-color:#ffffff!important;
+}
